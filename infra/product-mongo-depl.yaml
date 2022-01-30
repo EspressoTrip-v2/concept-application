@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-mongo-depl
+  labels:
+    app: product-mongo
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: product-mongo
+    spec:
+      containers:
+        - name: product-mongo
+          image: mongo
+          imagePullPolicy: IfNotPresent
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: product-mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-mongo-service
+spec:
+  selector:
+    app: product-mongo
+  ports:
+    - port: 27017
+      targetPort: 27017
+      name: db
