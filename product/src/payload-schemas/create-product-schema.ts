@@ -14,6 +14,5 @@ export const createProductSchema = Joi
     price: Joi.number().required(),
     description: Joi.string().required(),
     orderId: Joi.custom(validObjectId, "Validate objectId").allow(Joi.string(), null),
-    userId: Joi.custom(validObjectId, "Validate objectId"),
     itemCode: Joi.string().required(),
 })

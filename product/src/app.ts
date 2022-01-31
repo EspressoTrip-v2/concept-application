@@ -16,6 +16,7 @@ app.use(
     })
 );
 
+
 /** Routes */
 app.use(Routers.createProductRouter);
 app.use(Routers.getProductsRouter);

@@ -34,10 +34,8 @@ async function main(): Promise<void> {
             rabbitClient.connection.close();
             mongoose.connection.close();
         });
-
         /** Rabbit consumers */
         await new ProductUpdatedConsumer(rabbitClient.connection).listen();
-
     } catch (error) {
         console.error(error);
     }

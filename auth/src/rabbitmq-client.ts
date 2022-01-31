@@ -1,11 +1,11 @@
 import amqp from "amqplib";
-import { DatabaseConnectionError } from "@common";
+import { MongooseError } from "@common";
 
 export class RabbitClient {
     private _connection?: amqp.Connection;
 
     get connection(): amqp.Connection {
-        if (!this._connection) throw new DatabaseConnectionError("RabbitMQ not connected");
+        if (!this._connection) throw new MongooseError("RabbitMQ not connected");
         return this._connection;
     }
 

@@ -2,7 +2,7 @@
 apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
-    name: product-mongo
+    name: order-mongo
 spec:
     members: 1
     type: ReplicaSet
@@ -12,9 +12,9 @@ spec:
             modes: ["SCRAM"]
     users:
         - name: root
-          db: admin
+          db: order
           passwordSecretRef:
-              name: product-mongo-password
+              name: order-mongo-password
           roles:
               - name: clusterAdmin
                 db: admin
@@ -28,7 +28,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-    name: product-mongo-password
+    name: order-mongo-password
 type: Opaque
 stringData:
     password: "8103"
