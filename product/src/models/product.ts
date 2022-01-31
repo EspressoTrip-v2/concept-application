@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { ProductModel, ProductAttrs, ProductDoc } from "./interfaces";
+import { ProductAttrs, ProductDoc, ProductModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
 /**
@@ -8,7 +8,7 @@ import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 const productSchema = new mongoose.Schema(
     {
         quantity: {
-            typeL: Number,
+            type: Number,
             required: true,
         },
         title: {
@@ -56,6 +56,19 @@ productSchema.plugin(updateIfCurrentPlugin);
  */
 productSchema.statics.build = function (attributes: ProductAttrs): ProductDoc {
     return new Product(attributes);
+};
+
+productSchema.statics.toPublisherMessage = function (product: ProductDoc) {
+    return {
+        id: product.id,
+        price: product.price,
+        itemCode: product.itemCode,
+        userId: product.userId,
+        title: product.title,
+        description: product.description,
+        orderId: product.orderId,
+        version: product.version,
+    };
 };
 
 /** Create model from schema */

@@ -1,0 +1,3 @@
+Apply mongo crd (kubectl apply -f ./crd.yaml)
+Apply mongo-roles-bindings (kubectl apply -k ./mongo-roles-bindings/)
+Apply mongo operator (kubectl apply -f ./operator.yaml)

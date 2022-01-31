@@ -1,10 +1,11 @@
 import express, { Response, Request } from "express";
+import { requireAuth } from "@espressotrip-org/concept-common";
 
 const router = express.Router();
 
-router.get("/api/products/:id", (req: Request, res: Response) => {
+router.get("/api/product/:id", requireAuth, async (req: Request, res: Response) => {
     console.log(req.params);
-    res.send({status: 'success'})
+    res.send({ status: "success" });
 });
 
-export {router as getSingleProductRouter}
+export { router as getSingleProductRouter };

@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { CreateProductPublisherMsg } from "@espressotrip-org/concept-common";
 
 /** Product Interface */
 export interface ProductAttrs {
@@ -14,6 +15,7 @@ export interface ProductAttrs {
 /** Static build method to model */
 export interface ProductModel extends mongoose.Model<ProductDoc> {
     build(attributes: ProductAttrs): ProductDoc;
+    toPublisherMessage(product: ProductDoc): CreateProductPublisherMsg;
 }
 
 /** Extend mongoose document with product document values */

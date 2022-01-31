@@ -1,7 +1,8 @@
 import { app } from "./app";
-import { rabbitConnection } from "./rabbitmq-client";
+import { rabbitClient } from "./rabbitmq-client";
 import mongoose from "mongoose";
 import { EnvError } from "@espressotrip-org/concept-common";
+import { ProductUpdatedConsumer } from "./events";
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
@@ -18,21 +19,31 @@ async function main(): Promise<void> {
 
     try {
         /** Create RabbitMQ connection */
-        await rabbitConnection.connect(process.env.Rabbit_URI!);
-        process.on("SIGTERM", () => rabbitConnection.connection.close());
-        process.on("SIGINT", () => rabbitConnection.connection.close());
-
-        /** Create Mongoose connection */
+        await rabbitClient.connect(process.env.RABBIT_URI!);
+        console.log(`[product:rabbitmq]: Connected successfully`);
+        // /** Create Mongoose connection */
         await mongoose.connect(process.env.MONGO_URI!);
         console.log(`[product:mongo]: Connected successfully`);
 
+        /** Process shutdown */
+        process.on("SIGINT", () => {
+            rabbitClient.connection.close();
+            mongoose.connection.close();
+        });
+        process.on("SIGTERM", () => {
+            rabbitClient.connection.close();
+            mongoose.connection.close();
+        });
+
+        /** Rabbit consumers */
+        await new ProductUpdatedConsumer(rabbitClient.connection).listen();
+
     } catch (error) {
-        console.error(error)
+        console.error(error);
     }
 }
 
 app.listen(PORT, async () => {
     console.log(`[product:service]: listening port ${PORT}`);
 });
-
 main();

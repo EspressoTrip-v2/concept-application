@@ -17,9 +17,9 @@ app.use(
 );
 
 /** Routes */
+app.use(Routers.createProductRouter);
 app.use(Routers.getProductsRouter);
 app.use(Routers.getSingleProductRouter);
-app.use(Routers.createProductRouter);
 
 /** Not Found */
 app.all("*", async () => {

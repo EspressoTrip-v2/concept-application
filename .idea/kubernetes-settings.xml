@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="KubernetesSettings">
+    <specSources>
+      <SpecSource>
+        <option name="pathOrUrl" value="$PROJECT_DIR$/global-yaml/rabbit-operator.yml" />
+      </SpecSource>
+      <SpecSource>
+        <option name="pathOrUrl" value="$PROJECT_DIR$/global-yaml/mongodbcommunity.mongodb.com_mongodbcommunity.yaml" />
+      </SpecSource>
+      <SpecSource>
+        <option name="pathOrUrl" value="$PROJECT_DIR$/global-yaml/mongo-operator/crd.yaml" />
+      </SpecSource>
+      <SpecSource>
+        <option name="pathOrUrl" value="$PROJECT_DIR$/global-yaml/rabbit-operator/operator.yaml" />
+      </SpecSource>
+    </specSources>
+  </component>
+</project>

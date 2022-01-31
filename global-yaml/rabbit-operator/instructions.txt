@@ -1,0 +1,2 @@
+Apply rabbitmq operator (kubectl apply -f ./operator.yaml)
+Apply rabbitmq cluster (kubectl apply -f ./rabbit.yaml)

@@ -16,5 +16,4 @@ export const createProductSchema = Joi
     orderId: Joi.custom(validObjectId, "Validate objectId").allow(Joi.string(), null),
     userId: Joi.custom(validObjectId, "Validate objectId"),
     itemCode: Joi.string().required(),
-
 })

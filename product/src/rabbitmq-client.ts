@@ -22,5 +22,4 @@ export class RabbitClient {
         return this;
     }
 }
-
-export const rabbitConnection = new RabbitClient();
+export const rabbitClient = new RabbitClient();

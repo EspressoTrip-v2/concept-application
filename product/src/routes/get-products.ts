@@ -1,8 +1,9 @@
 import express, { Response, Request } from "express";
+import { requireAuth } from "@espressotrip-org/concept-common";
 
 const router = express.Router();
 
-router.get("/api/products", (req: Request, res: Response) => {
+router.get("/api/product",requireAuth ,async (req: Request, res: Response) => {
     res.send({status: 'success'})
 });
 
