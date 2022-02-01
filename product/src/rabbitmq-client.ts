@@ -2,15 +2,15 @@ import amqp from "amqplib";
 import { RabbitmqError } from "@espressotrip-org/concept-common";
 
 export class RabbitClient {
-    private _connection?: amqp.Connection;
+    private m_connection?: amqp.Connection;
 
     get connection(): amqp.Connection {
-        if (!this._connection) throw new RabbitmqError("RabbitMQ not connected");
-        return this._connection;
+        if (!this.m_connection) throw new RabbitmqError("RabbitMQ not connected");
+        return this.m_connection;
     }
 
     get isConnected(): boolean {
-        return !!this._connection;
+        return !!this.m_connection;
     }
 
     /**
@@ -18,7 +18,7 @@ export class RabbitClient {
      * @param rabbitUrl {string} - RabbitMQ connection URL
      */
     async connect(rabbitUrl: string): Promise<RabbitClient> {
-        this._connection = await amqp.connect(rabbitUrl);
+        this.m_connection = await amqp.connect(rabbitUrl);
         return this;
     }
 }

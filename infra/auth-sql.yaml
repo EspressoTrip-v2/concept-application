@@ -1,0 +1,39 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-sql-depl
+  labels:
+    app: auth-sql
+spec:
+  replicas: 1
+  template:
+    metadata:
+      name: auth-sql
+      labels:
+        app: auth-sql
+    spec:
+      containers:
+        - name: auth-sql
+          image: postgres
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: global-secret
+      restartPolicy: Always
+  selector:
+    matchLabels:
+      app: auth-sql
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-sql-service
+spec:
+  selector:
+    app: auth-sql
+  ports:
+    - port: 5432
+      targetPort: 5432
+      name: auth-sql
+  type: ClusterIP

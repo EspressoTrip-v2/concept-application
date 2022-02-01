@@ -11,14 +11,14 @@ build:
     #
     artifacts:
         #    # Auth service
-        #    - image: espressotrip/concept-auth
-        #      context: auth
-        #      docker:
-        #        dockerfile: Dockerfile
-        #      sync:
-        #        manual:
-        #          - src: "src/**/*.ts"
-        #            dest: .
+        - image: espressotrip/concept-auth
+          context: auth
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*.ts"
+                dest: .
         #    # Product service
         - image: espressotrip/concept-product
           context: product

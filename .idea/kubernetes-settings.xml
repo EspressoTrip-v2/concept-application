@@ -3,16 +3,10 @@
   <component name="KubernetesSettings">
     <specSources>
       <SpecSource>
-        <option name="pathOrUrl" value="$PROJECT_DIR$/global-yaml/rabbit-operator.yml" />
+        <option name="pathOrUrl" value="$PROJECT_DIR$/infra-external/global-yaml/rabbit-operator/operator.yaml" />
       </SpecSource>
       <SpecSource>
-        <option name="pathOrUrl" value="$PROJECT_DIR$/global-yaml/mongodbcommunity.mongodb.com_mongodbcommunity.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="$PROJECT_DIR$/global-yaml/mongo-operator/crd.yaml" />
-      </SpecSource>
-      <SpecSource>
-        <option name="pathOrUrl" value="$PROJECT_DIR$/global-yaml/rabbit-operator/operator.yaml" />
+        <option name="pathOrUrl" value="$PROJECT_DIR$/infra-external/global-yaml/mongo-operator/crd.yaml" />
       </SpecSource>
     </specSources>
   </component>

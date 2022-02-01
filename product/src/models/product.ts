@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { ProductAttrs, ProductDoc, ProductModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
+import { ProductMsg } from "@espressotrip-org/concept-common";
 
 /**
  * Product model that uses update-if-current version incrementation
@@ -58,7 +59,7 @@ productSchema.statics.build = function (attributes: ProductAttrs): ProductDoc {
     return new Product(attributes);
 };
 
-productSchema.statics.toPublisherMessage = function (product: ProductDoc) {
+productSchema.statics.toPublisherMessage = function (product: ProductDoc): ProductMsg {
     return {
         id: product.id,
         price: product.price,

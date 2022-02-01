@@ -9,6 +9,7 @@ function validObjectId(value: string | Types.ObjectId): Types.ObjectId {
 
 export const createProductSchema = Joi
 .object({
+    id: Joi.custom(validObjectId, "Validate objectId"),
     quantity: Joi.number().required(),
     title: Joi.string().required(),
     price: Joi.number().required(),

@@ -13,7 +13,7 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
  * RABBIT_URI - RabbitMQ URI for the message event bus
  */
 async function main(): Promise<void> {
-    if (!process.env.JWT_KEY) throw new EnvError("JWY_KEY must be defined");
+    if (!process.env.SESSION_SECRET) throw new EnvError("SESSION_SECRET must be defined");
     if (!process.env.MONGO_URI) throw new EnvError("MONGO_URI must be defined");
     if (!process.env.RABBIT_URI) throw new EnvError("RABBIT_URI must be defined");
 
