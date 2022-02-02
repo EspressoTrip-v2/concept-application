@@ -1,5 +1,4 @@
-import { AbstractPublisher, CreateUserEvent } from "@espressotrip-org/concept-common";
-import { ExchangeNames, ExchangeTypes, QueueInfo } from "@common";
+import { AbstractPublisher, CreateUserEvent, ExchangeNames, ExchangeTypes, QueueInfo } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 
 export class CreateUserPublisher extends AbstractPublisher<CreateUserEvent> {

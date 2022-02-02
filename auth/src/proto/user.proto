@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package userPackage;
+
+message User{
+    string id = 1;
+    string name = 2;
+    string email = 3;
+    string gitHubId = 4;
+    string googleId = 5;
+    repeated string userRoles = 6;
+    repeated string groups = 7;
+    int32 version = 8;
+}
+
+message ServerStreamUserResponse {
+    repeated User users = 1;
+}
+
+message ClientUsersRequest {}
+
+service UserService {
+    rpc GetAllUsers(ClientUsersRequest) returns (stream ServerStreamUserResponse) {};
+}

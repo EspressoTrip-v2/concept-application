@@ -5,6 +5,10 @@ metadata:
 data:
     PORT: "3000"
     RABBIT_URI: "amqp://rabbit-cluster"
+    MONGO_URI: "mongodb://root:8103@auth-mongo-0.auth-mongo-svc.default.svc.cluster.local:27017/auth?ssl=false"
+    GOOGLE_CALLBACK_URL: '/api/user/google/redirect'
+    GITHUB_CALLBACK_URL: '/api/user/github/redirect'
+    FACEBOOK_CALLBACK_URL: '/api/user/facebook/redirect'
 
 ---
 apiVersion: apps/v1

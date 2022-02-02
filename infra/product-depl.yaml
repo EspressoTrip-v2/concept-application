@@ -4,7 +4,7 @@ metadata:
     name: product-config
 data:
     PORT: "3000"
-    MONGO_URI: "mongodb://root:8103@product-mongo-svc:27017/product"
+    MONGO_URI: "mongodb://root:8103@product-mongo-0.product-mongo-svc.default.svc.cluster.local:27017/product?ssl=false"
     RABBIT_URI: "amqp://rabbit-cluster"
 
 ---

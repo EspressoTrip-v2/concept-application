@@ -10,5 +10,8 @@ export class ProductUpdatedConsumer extends AbstractConsumer<UpdateProductEvent>
         super(rabbitConnection, "update-product");
     }
 
-    onMessage(data: UpdateProductEvent["data"], message: amqp.ConsumeMessage): void {}
+    onMessage(data: UpdateProductEvent["data"], message: amqp.ConsumeMessage): void {
+
+        this.acknowledge(message)
+    }
 }

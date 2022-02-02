@@ -16,11 +16,9 @@ spec:
           passwordSecretRef:
               name: order-mongo-password
           roles:
-              - name: clusterAdmin
+              - name: root
                 db: admin
-              - name: userAdminAnyDatabase
-                db: admin
-          scramCredentialsSecretName: my-scram
+          scramCredentialsSecretName: order-scram
     additionalMongodConfig:
         storage.wiredTiger.engineConfig.journalCompressor: zlib
 

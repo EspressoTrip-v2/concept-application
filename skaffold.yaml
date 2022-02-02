@@ -28,12 +28,12 @@ build:
               manual:
                   - src: "src/**/*.ts"
                     dest: .
-#    # Order service
-#    - image: espressotrip/concept-order
-#      context: order
-#      docker:
-#        dockerfile: Dockerfile
-#      sync:
-#        manual:
-#          - src: "src/**/*.ts"
-#            dest: .
+    #    # Client service
+        - image: espressotrip/concept-client
+          context: client
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*.ts"
+                dest: .

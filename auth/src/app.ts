@@ -4,6 +4,7 @@ import { errorHandler, NotFoundError } from "@espressotrip-org/concept-common";
 import * as Routers from "./routes";
 import session from "express-session";
 import passport from "passport";
+import './passport/passport-setup'
 
 const app = express();
 
@@ -26,6 +27,10 @@ app.use(passport.session());
 
 
 /** Routes */
+app.use(Routers.facebookAuthRouter);
+app.use(Routers.googleAuthRouter);
+app.use(Routers.githubAuthRouter);
+
 app.use(Routers.signUpRouter);
 app.use(Routers.signInRouter);
 app.use(Routers.signOutRouter);

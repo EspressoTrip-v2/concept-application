@@ -2,7 +2,7 @@
 apiVersion: mongodbcommunity.mongodb.com/v1
 kind: MongoDBCommunity
 metadata:
-    name: product-mongo
+    name: auth-mongo
 spec:
     members: 1
     type: ReplicaSet
@@ -12,13 +12,13 @@ spec:
             modes: ["SCRAM"]
     users:
         - name: root
-          db: product
+          db: auth
           passwordSecretRef:
-              name: product-mongo-password
+              name: auth-mongo-password
           roles:
               - name: root
                 db: admin
-          scramCredentialsSecretName: product-scram
+          scramCredentialsSecretName: auth-scram
     additionalMongodConfig:
         storage.wiredTiger.engineConfig.journalCompressor: zlib
 
@@ -26,7 +26,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-    name: product-mongo-password
+    name: auth-mongo-password
 type: Opaque
 stringData:
     password: "8103"
