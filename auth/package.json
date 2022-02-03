@@ -7,13 +7,6 @@
         "test": "jest --watchAll  --detectOpenHandles  --no-cache",
         "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/proto/ src/proto/*.proto"
     },
-    "jest": {
-        "preset": "ts-jest",
-        "testEnvironment": "node",
-        "setupFilesAfterEnv": [
-            "./src/test/setup.ts"
-        ]
-    },
     "author": "",
     "license": "ISC",
     "dependencies": {
@@ -23,9 +16,7 @@
         "@types/amqplib": "^0.8.2",
         "@types/cookie-session": "^2.0.44",
         "@types/express": "^4.17.13",
-        "@types/express-flash": "0.0.2",
         "@types/express-session": "^1.17.4",
-        "@types/module-alias": "^2.0.1",
         "@types/passport": "^1.0.7",
         "@types/passport-facebook": "^2.1.11",
         "@types/passport-github2": "^1.2.5",
@@ -34,9 +25,7 @@
         "amqplib": "^0.8.0",
         "express": "^4.17.2",
         "express-async-errors": "^3.1.1",
-        "express-flash": "0.0.2",
         "express-session": "^1.17.2",
-        "module-alias": "^2.2.2",
         "mongoose": "^6.1.10",
         "mongoose-update-if-current": "^1.4.0",
         "passport": "^0.5.2",
@@ -44,11 +33,7 @@
         "passport-github2": "^0.1.12",
         "passport-google-oauth": "^2.0.0",
         "passport-local": "^1.0.0",
-        "pg": "^8.7.1",
         "ts-node-dev": "^1.1.8"
     },
-    "devDependencies": {},
-    "_moduleAliases": {
-        "@common": "../common/src/"
-    }
+    "devDependencies": {}
 }

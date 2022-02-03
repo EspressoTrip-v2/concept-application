@@ -4,7 +4,6 @@ import { errorHandler, NotFoundError } from "@espressotrip-org/concept-common";
 import * as Routers from "./routes";
 import session from "express-session";
 import passport from "passport";
-import flash from "express-flash";
 import './passport/passport-setup'
 
 const app = express();
@@ -26,7 +25,6 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash())
 
 
 /** Routes */
