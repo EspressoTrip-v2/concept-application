@@ -4,6 +4,7 @@ import { errorHandler, NotFoundError } from "@espressotrip-org/concept-common";
 import * as Routers from "./routes";
 import session from "express-session";
 import passport from "passport";
+import flash from "express-flash";
 import './passport/passport-setup'
 
 const app = express();
@@ -17,6 +18,7 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
+            maxAge: 24 * 60 * 1000,
             secure: process.env.NODE_ENV === "production",
             signed: false,
         },
@@ -24,12 +26,14 @@ app.use(
 );
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(flash())
 
 
 /** Routes */
 app.use(Routers.facebookAuthRouter);
 app.use(Routers.googleAuthRouter);
 app.use(Routers.githubAuthRouter);
+app.use(Routers.localAuthRouter);
 
 app.use(Routers.signUpRouter);
 app.use(Routers.signInRouter);

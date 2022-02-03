@@ -17,21 +17,33 @@ const Login = () => {
 
     return (
         <div className="login">
+            <h1 className="loginTitle">Login Method</h1>
             <div className="wrapper">
                 <div className="left">
-                    <div className="loginButton google" onClick={google}>
+                    <button className="loginButton google" onClick={google}>
                         <img src={Google} alt="" className="icon" />
                         Google
-                    </div>
-                    <div className="loginButton facebook" onClick={facebook}>
+                    </button>
+                    <button className="loginButton facebook" onClick={facebook} disabled>
                         <img src={Facebook} alt="" className="icon" />
                         Facebook
-                    </div>
-                    <div className="loginButton github" onClick={github}>
+                    </button>
+                    <button className="loginButton github" onClick={github}>
                         <img src={Github} alt="" className="icon" />
                         Github
-                    </div>
+                    </button>
                 </div>
+                <div className="center">
+                    <div className="line" />
+                    <div className="or">OR</div>
+                </div>
+                <form className="right" action='/api/user/local' method='POST'>
+                    <div className="right">
+                        <input name='email' type="email" placeholder="Email" />
+                        <input name={'password'} type="password" placeholder="Password" />
+                        <button className="submit">Login</button>
+                    </div>
+                </form>
             </div>
         </div>
     );

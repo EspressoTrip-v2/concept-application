@@ -17,7 +17,9 @@ message ServerStreamUserResponse {
     repeated User users = 1;
 }
 
-message ClientUsersRequest {}
+message ClientUsersRequest {
+    string serviceName = 1;
+}
 
 service UserService {
     rpc GetAllUsers(ClientUsersRequest) returns (stream ServerStreamUserResponse) {};
