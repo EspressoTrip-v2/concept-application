@@ -1,9 +1,10 @@
 import express, { Request, Response } from "express";
 
-const router = express.Router()
+const router = express.Router();
 
-router.get('/api/user/signout', (req: Request, res: Response)=>{
-    res.send('sign-out')
-})
+router.post("/api/auth/signout", (req: Request, res: Response) => {
+    req.logout();
+    res.send({ user: false, cookie: req.headers.cookie });
+});
 
-export {router as signOutRouter}
+export { router as signOutRouter };

@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema(
         email: {
             type: String,
             required: true,
-            unique: true
         },
         signInType: {
             type: String,
@@ -55,7 +54,7 @@ userSchema.plugin(updateIfCurrentPlugin);
 
 /** Encrypt the password on save */
 userSchema.pre("save", async function (done) {
-    const password = this.get('password');
+    const password = this.get("password");
     if (password && this.isModified("password")) {
         const hashed = await Password.toHash(this.get("password"));
         this.set("password", hashed);
@@ -82,7 +81,7 @@ userSchema.statics.buildUserFromGitHub = function (profile: GitHubProfile): User
         providerId: profile.id,
         signInType: SignInTypes.GITHUB,
         // @ts-ignore
-        email: profile._json.email,
+        email: profile.emails[0].value,
     };
 };
 

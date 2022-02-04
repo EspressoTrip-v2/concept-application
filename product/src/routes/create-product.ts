@@ -16,7 +16,8 @@ router.post("/api/product", requireAuth, payloadValidation(createProductSchema),
         quantity: req.body.quantity,
         price: req.body.price,
         itemCode: req.body.itemCode,
-        userId: req.currentUser?.id! || "612c95423a6899886c7bc6e8", // TODO: TEST
+        // @ts-ignore
+        userId: req.user.id
     });
     await product.save().catch(error => {
         if (error) throw new MongooseError(error.message);

@@ -1,6 +1,11 @@
 import { Link } from "react-router-dom";
+import axios from "axios";
 
-const Navbar = ({ user }) => {
+const Navbar = ({ userData, setUserData }) => {
+    const signOut = async () => {
+        await axios.post("/api/auth/signout");
+        setUserData(false);
+    };
     return (
         <div className="navbar">
             <span className="logo">
@@ -8,14 +13,10 @@ const Navbar = ({ user }) => {
                     Microservice Authentication
                 </Link>
             </span>
-            {user ? (
-                <Link className="link" to="/">
+            {userData.user && (
+                <button className="link-button" onClick={signOut}>
                     Sign Out
-                </Link>
-            ) : (
-                <Link className="link" to="login">
-                    Sign In
-                </Link>
+                </button>
             )}
         </div>
     );

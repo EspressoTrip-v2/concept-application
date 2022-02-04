@@ -4,7 +4,7 @@ import passport from "passport";
 const router = express.Router();
 
 router.post(
-    "/api/user/local",
+    "/api/auth/local",
     passport.authenticate("local", {
         successRedirect: "/",
         failureRedirect: "/login",

@@ -1,4 +1,3 @@
-import "module-alias";
 import { app } from "./app";
 import { rabbitClient } from "./rabbitmq-client";
 import mongoose from "mongoose";
