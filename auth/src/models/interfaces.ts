@@ -1,16 +1,8 @@
 import mongoose from "mongoose";
-import { UserRoles } from "@espressotrip-org/concept-common";
+import { SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Profile as GitHubProfile } from "passport-github2";
 import { Profile as GoogleProfile } from "passport-google-oauth";
 import { Profile as FaceBookProfile } from "passport-facebook";
-
-export const enum SignInTypes{
-    GOOGLE = 'google',
-    GITHUB =   'github',
-    FACEBOOK= 'facebook',
-    LOCAL = 'local'
-}
-
 
 /** User Interface */
 export interface UserAttrs {
@@ -19,13 +11,13 @@ export interface UserAttrs {
     signInType: SignInTypes;
     userRoles?: Array<UserRoles>;
     groups?: Array<string>;
-    password?: string | null
-    providerId?: string | null
+    password?: string | null;
+    providerId?: string | null;
 }
 
-export interface FormValues{
+export interface FormValues {
     email: string;
-    password: string
+    password: string;
 }
 
 export interface UserSessionId {
@@ -41,7 +33,7 @@ export interface UserModel extends mongoose.Model<UserDoc> {
     buildUserFromGitHub(profile: GitHubProfile): UserAttrs;
     buildUserFromGoogle(profile: GoogleProfile): UserAttrs;
     buildUserFromLocal(profile: FormValues): UserAttrs;
-    buildUserFromFaceBook(profile: FaceBookProfile): UserAttrs
+    buildUserFromFaceBook(profile: FaceBookProfile): UserAttrs;
 }
 
 /** Extend mongoose document with product document values */

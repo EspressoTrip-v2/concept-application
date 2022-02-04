@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
-import { FormValues, SignInTypes, UserAttrs, UserDoc, UserModel } from "./interfaces";
+import { FormValues, UserAttrs, UserDoc, UserModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { UserRoles } from "@espressotrip-org/concept-common";
+import { SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Profile as GitHubProfile } from "passport-github2";
 import { Profile as GoogleProfile } from "passport-google-oauth";
 import { Profile as FaceBookProfile } from "passport-facebook";
