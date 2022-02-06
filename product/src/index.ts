@@ -1,7 +1,6 @@
 import { app } from "./app";
 import { rabbitClient } from "./rabbitmq-client";
 import mongoose from "mongoose";
-import { EnvError } from "@espressotrip-org/concept-common";
 import { ProductUpdatedConsumer } from "./events";
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
@@ -13,10 +12,10 @@ const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
  * RABBIT_URI - RabbitMQ URI for the message event bus
  */
 async function main(): Promise<void> {
-    if (!process.env.JWT_KEY) throw new EnvError("JWT_KEY must be defined");
-    if (!process.env.MONGO_URI) throw new EnvError("MONGO_URI must be defined");
-    if (!process.env.RABBIT_URI) throw new EnvError("RABBIT_URI must be defined");
-    if (!process.env.BASE_URI) throw new EnvError("BASE_URI must be defined");
+    if (!process.env.JWT_KEY) throw new Error("JWT_KEY must be defined");
+    if (!process.env.MONGO_URI) throw new Error("MONGO_URI must be defined");
+    if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
+    if (!process.env.BASE_URI) throw new Error("BASE_URI must be defined");
 
     try {
         /** Create RabbitMQ connection */

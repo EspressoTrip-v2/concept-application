@@ -1,27 +1,42 @@
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
-import { UserServiceHandlers } from "./proto/userPackage/UserService";
 import { ClientUsersRequest } from "./proto/userPackage/ClientUsersRequest";
 import { ServerStreamUserResponse } from "./proto/userPackage/ServerStreamUserResponse";
 import { User } from "./models";
 
-const PROTO_PATH = "./proto/user.proto";
-const PORT = process.env.GRPC_PORT!;
+export class GrpcServer {
+    private readonly m_protoPath = __dirname + "/proto/user.proto";
+    private readonly m_port = process.env.GRPC_PORT!;
 
-/** Load definition */
-const packageDefinition = protoLoader.loadSync(PROTO_PATH, { defaults: true, longs: String, enums: String, keepCase: true });
+    private readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
+    private readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
+    private readonly m_userPackage = this.m_grpcObject.userPackage;
 
-/** Dynamically create the package from the proto file */
-const grpcObject = grpc.loadPackageDefinition(packageDefinition) as unknown as ProtoGrpcType;
-const userPackage = grpcObject.userPackage;
+    private m_server = new grpc.Server();
 
-/** Create the RPC methods */
-const rpcMethods: UserServiceHandlers = {
     async GetAllUsers(call: grpc.ServerWritableStream<ClientUsersRequest, ServerStreamUserResponse>): Promise<void> {
-        // Get 1000 user at a time and stream the data to the request
-        await User.find() // TODO: COMPLETE THIS
-    },
-};
+        User.find({})
+            .cursor()
+            .on("data", user => {
+                call.write(user);
+            })
+            .on("end", () => {
+                call.end();
+            });
+    }
 
-// Finish the server connection
+    listen(): void {
+        this.m_server.addService(this.m_userPackage.UserService.service, {
+            GetAllUsers: this.GetAllUsers,
+        });
+
+        this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error| null, port: number)=>{
+            if(error) throw new Error(error.message);
+            console.log(`[auth:gRPC]: Listening port 50051`);
+            this.m_server.start();
+        })
+    }
+}
+
+export const grpcServer = new GrpcServer();

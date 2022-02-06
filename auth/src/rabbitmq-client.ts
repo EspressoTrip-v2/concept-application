@@ -1,11 +1,10 @@
 import amqp from "amqplib";
-import { RabbitmqError } from "@espressotrip-org/concept-common";
 
 export class RabbitClient {
     private m_connection?: amqp.Connection;
 
     get connection(): amqp.Connection {
-        if (!this.m_connection) throw new RabbitmqError("RabbitMQ not connected");
+        if (!this.m_connection) throw new Error("RabbitMQ not connected");
         return this.m_connection;
     }
 
