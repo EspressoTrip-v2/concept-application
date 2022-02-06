@@ -9,7 +9,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@espressotrip-org/concept-common": "^1.0.64",
+        "@espressotrip-org/concept-common": "^1.0.66",
         "@types/amqplib": "^0.8.2",
         "@types/cookie-session": "^2.0.44",
         "@types/express": "^4.17.13",

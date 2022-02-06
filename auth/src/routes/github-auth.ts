@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { BadRequestError, GitHubAuthProfile, GoogleAuthProfile, NotFoundError, SignInTypes } from "@espressotrip-org/concept-common";
 import { User, UserDoc } from "../models";
 import { generateJwt } from "../services/generate-jwt";
-import { CreateUserPublisher } from "../events/publishers/create-user-publisher";
+import { CreateUserPublisher } from "../events/publishers";
 import { rabbitClient } from "../rabbitmq-client";
 const router = express.Router();
 

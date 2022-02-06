@@ -1,14 +1,13 @@
 import express, { Response, Request } from "express";
 import { createProductSchema } from "../payload-schemas";
-import { MongooseError, payloadValidation, requireAuth } from "@espressotrip-org/concept-common";
+import { payloadValidation, requireAuth } from "@espressotrip-org/concept-common";
 import { CreateProductPublisher } from "../events";
 import { rabbitClient } from "../rabbitmq-client";
 import { Product } from "../models";
 
 const router = express.Router();
 
-router.post("/api/product", payloadValidation(createProductSchema), async (req: Request, res: Response) => {
-
+router.post("/api/product", requireAuth, payloadValidation(createProductSchema), async (req: Request, res: Response) => {
     /* Create product */
     const product = Product.build({
         title: req.body.title,
@@ -17,11 +16,9 @@ router.post("/api/product", payloadValidation(createProductSchema), async (req: 
         price: req.body.price,
         itemCode: req.body.itemCode,
         // @ts-ignore
-        userId: req.user.id
+        userId: req.user.id,
     });
-    await product.save().catch(error => {
-        if (error) throw new MongooseError(error.message);
-    });
+    await product.save();
 
     /** Publish event */
     await new CreateProductPublisher(rabbitClient.connection).publish(Product.toPublisherMessage(product));

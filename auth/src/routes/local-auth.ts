@@ -3,7 +3,7 @@ import { User, UserDoc } from "../models";
 import { BadRequestError, NotAuthorizedError, NotFoundError, SignInTypes } from "@espressotrip-org/concept-common";
 import { Password } from "../services";
 import { generateJwt } from "../services/generate-jwt";
-import { CreateUserPublisher } from "../events/publishers/create-user-publisher";
+import { CreateUserPublisher } from "../events/publishers";
 import { rabbitClient } from "../rabbitmq-client";
 
 const router = express.Router();

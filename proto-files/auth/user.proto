@@ -2,19 +2,17 @@ syntax = "proto3";
 
 package userPackage;
 
-message User{
+
+message ServerStreamUserResponse {
     string id = 1;
     string name = 2;
     string email = 3;
-    string gitHubId = 4;
-    string googleId = 5;
-    repeated string userRoles = 6;
-    repeated string groups = 7;
-    int32 version = 8;
-}
-
-message ServerStreamUserResponse {
-    repeated User users = 1;
+    string signInType = 4;
+    string providerId = 5;
+    repeated string groups = 6;
+    repeated string userRoles = 7;
+    string password = 8;
+    int32 version = 9;
 }
 
 message ClientUsersRequest {

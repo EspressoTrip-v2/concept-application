@@ -1,6 +1,6 @@
 import express, { Response, Request } from "express";
 import { createProductSchema } from "../payload-schemas";
-import { MongooseError, NotFoundError, payloadValidation, requireAuth } from "@espressotrip-org/concept-common";
+import { NotFoundError, payloadValidation, requireAuth } from "@espressotrip-org/concept-common";
 import { rabbitClient } from "../rabbitmq-client";
 import { Product } from "../models";
 import { UpdateProductPublisher } from "../events/publishers/update-product-publisher";
@@ -11,9 +11,7 @@ router.post("/api/product", requireAuth, payloadValidation(createProductSchema),
     const updatedProduct = req.body;
 
     /** Update product */
-    const product = await Product.findOne(updatedProduct.id).catch(error => {
-        if (error) throw new MongooseError(error.message);
-    });
+    const product = await Product.findOne(updatedProduct.id)
     if (!product) throw new NotFoundError("Product not found");
     product.set(req.body);
     await product.save();

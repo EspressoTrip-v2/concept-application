@@ -11,6 +11,14 @@ export interface UserAttrs {
     password?: string | null;
     providerId?: string | null;
 }
+
+export interface UserUpdateAttrs {
+    name?: string;
+    userRoles?: Array<UserRoles>;
+    groups?: Array<string>;
+    password?: string | null;
+    providerId?: string | null;
+}
 /** Static build method to model */
 export interface UserModel extends mongoose.Model<UserDoc> {
     build(attributes: UserAttrs): UserDoc;
