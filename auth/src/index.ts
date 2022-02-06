@@ -12,9 +12,10 @@ const PORT = process.env.PORT || 3000;
  * RABBIT_URI - RabbitMQ URI for the message event bus
  */
 async function main(): Promise<void> {
-    if (!process.env.SESSION_SECRET) throw new EnvError("SESSION_SECRET must be defined");
+    if (!process.env.JWT_KEY) throw new EnvError("JWT_KEY must be defined");
     if (!process.env.RABBIT_URI) throw new EnvError("RABBIT_URI must be defined");
     if (!process.env.MONGO_URI) throw new EnvError("MONGO_URI must be defined");
+    if (!process.env.BASE_URI) throw new EnvError("BASE_URI must be defined");
 
     /** gRPC */
     // if (!process.env.GRPC_PORT) throw new EnvError("GRPC_PORT must be defined");
@@ -28,11 +29,6 @@ async function main(): Promise<void> {
     if (!process.env.GITHUB_CLIENT_ID) throw new EnvError("GITHUB_CLIENT_ID must be defined");
     if (!process.env.GITHUB_SECRET) throw new EnvError("GITHUB_SECRET must be defined");
     if (!process.env.GITHUB_CALLBACK_URL) throw new EnvError("GITHUB_CALLBACK must be defined");
-
-    /** Facebook */
-    if (!process.env.FACEBOOK_CLIENT_ID) throw new EnvError("FACEBOOK_CLIENT_ID must be defined");
-    if (!process.env.FACEBOOK_SECRET) throw new EnvError("FACEBOOK_SECRET must be defined");
-    if (!process.env.FACEBOOK_CALLBACK_URL) throw new EnvError("FACEBOOK_CALLBACK must be defined");
 
     try {
         /** Create RabbitMQ connection */

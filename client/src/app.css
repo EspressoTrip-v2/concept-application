@@ -1,5 +1,5 @@
 .navbar {
-    height: 5vh;
+    height: 6vh;
     background-color: dodgerblue;
     color: white;
     display: flex;
@@ -9,21 +9,10 @@
 }
 
 .logo {
-    font-size: 20px;
+    font-size: 2.5vh;
     font-weight: bold;
 }
 
-.list {
-    display: flex;
-    align-items: center;
-    list-style: none;
-}
-
-.listItem {
-    margin-right: 20px;
-    font-weight: 500;
-    cursor: pointer;
-}
 
 .home {
     display: flex;
@@ -32,63 +21,11 @@
     height: 50vh;
 }
 
-.card {
-    width: 30%;
-    padding: 10px;
-    border-radius: 20px;
-    -webkit-box-shadow: 0px 5px 33px -21px rgba(66, 68, 90, 1);
-    -moz-box-shadow: 0px 5px 33px -21px rgba(66, 68, 90, 1);
-    box-shadow: 0px 5px 33px -21px rgba(66, 68, 90, 1);
-}
-
 .img {
     width: 100%;
     height: 200px;
     object-fit: cover;
     margin: 20px 0px;
-}
-
-.desc {
-    color: #333;
-    margin-bottom: 20px;
-    line-height: 25px;
-}
-
-.cardButton {
-    border: none;
-    border-radius: 10px;
-    background-color: dodgerblue;
-    padding: 10px;
-    color: white;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.post {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.postImg {
-    width: 100%;
-    height: 300px;
-    object-fit: cover;
-    margin-bottom: 20px;
-}
-
-.postDesc {
-    padding: 0 100px;
-    font-size: 24px;
-    font-weight: 300;
-    color: gray;
-    margin-top: 50px;
-}
-
-.postLongDesc {
-    padding: 50px 100px 100px;
-    font-size: 18px;
-    line-height: 24px;
 }
 
 .login {
@@ -119,24 +56,33 @@
     border-radius: 20px;
 }
 
-.home-container{
+.home-container {
     display: flex;
     width: 100%;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 }
-h3{
-    padding: 2vh;
+h3 {
+    padding: 1vh;
     width: 100%;
-    text-align: center;
+    text-align: start;
 }
 
-p{
+p {
     padding: 2vh;
-
+    overflow-wrap: anywhere;
 }
-.home-internal{
+
+.cookie{
+    display: flex;
+    margin: 3vh 0;
+    flex-direction: column;
+    justify-content: start;
+    border: 1px solid lightgrey;
+}
+
+.home-internal {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -145,7 +91,6 @@ p{
     padding: 2vh;
     height: 100%;
 }
-
 
 .left,
 .right {
@@ -215,7 +160,6 @@ p{
     font-size: 2vh;
 }
 
-
 .google {
     background-color: #df4930;
 }
@@ -271,4 +215,19 @@ input {
     background-color: dodgerblue;
     cursor: pointer;
     font-weight: bold;
+}
+.signType {
+    width: 2vw;
+    padding: 1vh 1vw;
+    margin-bottom: 1vh;
+    font-size: 2vh;
+}
+
+.checkbox {
+    display: flex;
+    width: 12vw;
+    justify-content: flex-start;
+    padding: 1vh;
+    font-weight: bolder;
+    color: dodgerblue;
 }

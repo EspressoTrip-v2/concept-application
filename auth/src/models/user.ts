@@ -1,10 +1,7 @@
 import mongoose from "mongoose";
-import { FormValues, UserAttrs, UserDoc, UserModel } from "./interfaces";
+import { UserAttrs, UserDoc, UserModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { Profile as GitHubProfile } from "passport-github2";
-import { Profile as GoogleProfile } from "passport-google-oauth";
-import { Profile as FaceBookProfile } from "passport-facebook";
+import { GitHubAuthProfile, GoogleAuthProfile, LocalAuthProfile, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Password } from "../services";
 
 /**
@@ -16,6 +13,7 @@ const userSchema = new mongoose.Schema(
         email: {
             type: String,
             required: true,
+            unique: true,
         },
         signInType: {
             type: String,
@@ -71,54 +69,39 @@ userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
 };
 
 /**
- * Creates a user attributes object from Github profile
- * @param profile {GitHubProfile}
+ * Creates a user attributes object from GitHub profile
+ * @param profile {GitHubAuthProfile}
  * @return {UserAttrs}
  */
-userSchema.statics.buildUserFromGitHub = function (profile: GitHubProfile): UserAttrs {
+userSchema.statics.buildUserFromGitHub = function (profile: GitHubAuthProfile): UserAttrs {
     return {
-        name: profile.displayName,
-        providerId: profile.id,
+        name: profile.name,
+        providerId: profile.id.toString(),
         signInType: SignInTypes.GITHUB,
-        // @ts-ignore
-        email: profile.emails[0].value,
-    };
-};
-
-/**
- * Creates a user attributes object from Facebook profile
- * @param profile {FaceBookProfile}
- * @return {UserAttrs}
- */
-userSchema.statics.buildUserFromFaceBook = function (profile: FaceBookProfile): UserAttrs {
-    return {
-        name: profile.displayName,
-        providerId: profile.id,
-        signInType: SignInTypes.FACEBOOK,
-        email: profile._json.email,
+        email: profile.email,
     };
 };
 
 /**
  * Creates a user attributes object from Google profile
- * @param profile {GoogleProfile}
+ * @param profile {GoogleAuthProfile}
  */
-userSchema.statics.buildUserFromGoogle = function (profile: GoogleProfile): UserAttrs {
+userSchema.statics.buildUserFromGoogle = function (profile: GoogleAuthProfile): UserAttrs {
     return {
-        name: profile.displayName,
-        providerId: profile.id,
+        name: profile.name,
+        providerId: profile.sub,
         signInType: SignInTypes.GOOGLE,
-        email: profile._json.email,
+        email: profile.email,
     };
 };
 
 /**
  * Creates a user attributes object from Local profile
- * @param profile {FormValues}
+ * @param profile {LocalAuthProfile}
  */
-userSchema.statics.buildUserFromLocal = function (profile: FormValues): UserAttrs {
+userSchema.statics.buildUserFromLocal = function (profile: LocalAuthProfile): UserAttrs {
     return {
-        name: profile.email,
+        name: profile.name,
         email: profile.email,
         password: profile.password,
         signInType: SignInTypes.LOCAL,

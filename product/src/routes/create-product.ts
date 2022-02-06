@@ -7,7 +7,7 @@ import { Product } from "../models";
 
 const router = express.Router();
 
-router.post("/api/product", requireAuth, payloadValidation(createProductSchema), async (req: Request, res: Response) => {
+router.post("/api/product", payloadValidation(createProductSchema), async (req: Request, res: Response) => {
 
     /* Create product */
     const product = Product.build({

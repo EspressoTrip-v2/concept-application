@@ -2,48 +2,29 @@ import express from "express";
 import "express-async-errors";
 import { errorHandler, NotFoundError } from "@espressotrip-org/concept-common";
 import * as Routers from "./routes";
-import session from "express-session";
-import passport from "passport";
-import { PassportAuthentication } from "@espressotrip-org/concept-common/build/passport";
-import { UserSessionId } from "./models";
-import { googleFunction, googleOptions, faceBookFunction, faceBookOptions } from "./passport";
-import { gitHubFunction, gitHubOptions } from "./passport/gitHub-function";
-import { localFunction, localOptions } from "./passport/local-function";
-import { passportSerialize } from "./passport/serialize";
-import { passportDeserialize } from "./passport/deserialize";
+import cookieSession from "cookie-session";
+import grant from "grant";
+import { grantConfig } from "./services";
 
 const app = express();
-/** Passport Authentication Class */
-new PassportAuthentication<UserSessionId>(passport)
-    .google(googleOptions, googleFunction)
-    .faceBook(faceBookOptions, faceBookFunction)
-    .gitHub(gitHubOptions, gitHubFunction)
-    .local(localOptions, localFunction)
-    .serializeUser(passportSerialize)
-    .deserializeUser(passportDeserialize);
+app.set("trust proxy", true);
 
 /** Middleware */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
-    session({
-        secret: process.env.SESSION_SECRET!,
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-            maxAge: 24 * 60 * 1000,
-            secure: process.env.NODE_ENV === "production",
-            signed: false,
-        },
+    cookieSession({
+        signed: false,
+        secure: process.env.NODE_ENV === "production",
     })
 );
-app.use(passport.initialize());
-app.use(passport.session());
+
+/** OAuth route */
+app.use(grant.express(grantConfig()));
 
 /** Routes */
-app.use(Routers.facebookAuthRouter);
 app.use(Routers.googleAuthRouter);
-app.use(Routers.githubAuthRouter);
+app.use(Routers.gitHubAuthRouter);
 app.use(Routers.localAuthRouter);
 app.use(Routers.signOutRouter);
 app.use(Routers.checkLogInRouter);

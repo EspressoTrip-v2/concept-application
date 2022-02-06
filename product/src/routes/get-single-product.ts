@@ -4,7 +4,6 @@ import { requireAuth } from "@espressotrip-org/concept-common";
 const router = express.Router();
 
 router.get("/api/product/:id", requireAuth, async (req: Request, res: Response) => {
-    console.log(req.params);
     res.send({ status: "success" });
 });
 
