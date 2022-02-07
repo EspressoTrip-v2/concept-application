@@ -1,11 +1,11 @@
 import express, { Request, Response } from "express";
-import { NotFoundError, payloadValidation, requireAuth } from "@espressotrip-org/concept-common";
+import { NotFoundError, payloadValidation, requireAuth, requiredRoles, UserRoles } from "@espressotrip-org/concept-common";
 import { User, UserUpdateAttrs } from "../models";
 import { updateUserSchema } from "../payload-schemas";
 
 const router = express.Router();
 
-router.patch("/api/auth/user/:id", requireAuth, payloadValidation(updateUserSchema), async (req: Request, res: Response) => {
+router.patch("/api/auth/user/:id", requireAuth, requiredRoles(UserRoles.SUPER), payloadValidation(updateUserSchema), async (req: Request, res: Response) => {
     const userId = req.params;
     const userUpdate: UserUpdateAttrs = req.body;
 
