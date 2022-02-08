@@ -5,7 +5,9 @@ import Login from "./pages/Login";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
+toast.configure()
 const App = () => {
     const [userData, setUserData] = useState(false);
 
@@ -23,7 +25,7 @@ const App = () => {
                 <Navbar userData={userData} setUserData={setUserData} />
                 <Routes>
                     <Route path="/" element={userData.user ? <Home cookie={userData.cookie} /> : <Navigate to="/login" />} />
-                    <Route path="/login" element={userData.user ? <Navigate to="/" /> : <Login setUserData={setUserData} />} />
+                    <Route path="/login" element={userData.user ? <Navigate to="/" /> : <Login  />} />
                 </Routes>
             </div>
         </BrowserRouter>

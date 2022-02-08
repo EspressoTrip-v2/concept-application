@@ -19,9 +19,9 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        userRoles: {
-            type: Array,
-            default: [UserRoles.BASIC],
+        userRole: {
+            type: String,
+            default: UserRoles.BASIC,
         },
         groups: {
             type: Array,

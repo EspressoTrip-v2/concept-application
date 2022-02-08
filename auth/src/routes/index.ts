@@ -3,3 +3,4 @@ export * from "./check-login";
 export * from './google-auth'
 export * from './github-auth'
 export * from './local-auth'
+export * from './update-user'

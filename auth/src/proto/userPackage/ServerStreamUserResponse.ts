@@ -8,7 +8,7 @@ export interface ServerStreamUserResponse {
   'signInType'?: (string);
   'providerId'?: (string);
   'groups'?: (string)[];
-  'userRoles'?: (string)[];
+  'userRole'?: (string);
   'password'?: (string);
   'version'?: (number);
 }
@@ -20,7 +20,7 @@ export interface ServerStreamUserResponse__Output {
   'signInType': (string);
   'providerId': (string);
   'groups': (string)[];
-  'userRoles': (string)[];
+  'userRole': (string);
   'password': (string);
   'version': (number);
 }

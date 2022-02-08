@@ -23,7 +23,7 @@ router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
     }
 
     /** Generate the JWT */
-    const userJwt = generateJwt(user as UserDoc);
+    const userJwt = generateJwt(user);
     req.session = {
         jwt: userJwt,
     };

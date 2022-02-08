@@ -24,7 +24,7 @@ router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
         await new CreateUserPublisher(rabbitClient.connection).publish(user)
     }
     /** Generate the JWT */
-    const userJwt = generateJwt(user as UserDoc);
+    const userJwt = generateJwt(user);
     req.session = {
         jwt: userJwt,
     };

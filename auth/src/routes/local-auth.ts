@@ -30,7 +30,7 @@ router.post("/api/auth/local", async (req: Request, res: Response) => {
     }
 
     /** Generate the JWT */
-    const userJwt = generateJwt(user as UserDoc);
+    const userJwt = generateJwt(user!);
     req.session = {
         jwt: userJwt,
     };
@@ -40,10 +40,10 @@ router.post("/api/auth/local", async (req: Request, res: Response) => {
         id: user?.id,
         name: user?.name,
         email: user?.email,
-        userRoles: user?.userRoles,
+        userRole: user?.userRole,
     };
 
-    res.send({ user: userSession, cookie: userJwt });
+    res.send({ user: userSession, cookie: req.get('cookie') });
 });
 
 export { router as localAuthRouter };

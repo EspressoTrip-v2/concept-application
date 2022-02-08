@@ -10,7 +10,7 @@ function validObjectId(value: string | Types.ObjectId): Types.ObjectId {
 
 export const updateUserSchema = Joi.object({
     name: Joi.string().min(3),
-    userRoles: Joi.array().items(UserRoles),
+    userRole: Joi.string(),
     groups: Joi.array().items(Joi.string()),
     password: Joi.string().allow(null),
     providerId: Joi.string().allow(null),

@@ -6,7 +6,7 @@ export interface UserAttrs {
     name: string;
     email: string;
     signInType: SignInTypes;
-    userRoles?: Array<UserRoles>;
+    userRole?: UserRoles;
     groups?: Array<string>;
     password?: string | null;
     providerId?: string | null;
@@ -14,7 +14,7 @@ export interface UserAttrs {
 
 export interface UserUpdateAttrs {
     name?: string;
-    userRoles?: Array<UserRoles>;
+    userRole?: UserRoles;
     groups?: Array<string>;
     password?: string | null;
     providerId?: string | null;
@@ -33,7 +33,7 @@ export interface UserDoc extends mongoose.Document {
     name: string;
     email: string;
     signInType: SignInTypes;
-    userRoles: Array<UserRoles>;
+    userRole: UserRoles;
     providerId: string;
     groups: Array<string>;
     password: string;

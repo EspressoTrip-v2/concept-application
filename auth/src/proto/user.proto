@@ -10,7 +10,7 @@ message ServerStreamUserResponse {
     string signInType = 4;
     string providerId = 5;
     repeated string groups = 6;
-    repeated string userRoles = 7;
+    string userRole = 7;
     string password = 8;
     int32 version = 9;
 }

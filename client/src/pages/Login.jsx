@@ -3,8 +3,10 @@ import Facebook from "../img/facebook.png";
 import Github from "../img/github.png";
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const Login = ({ setUserData }) => {
+const Login = () => {
+    const navigate = useNavigate();
     const [signUp, setSignUp] = useState(false);
     const [input, setInput] = useState({ name: "", email: "", password: "" });
 
@@ -30,8 +32,8 @@ const Login = ({ setUserData }) => {
             password: input.password,
             type: signUp,
         };
-        const result = await axios.post("/api/auth/local", user);
-        if (result.data.user) setUserData(result.data);
+        await axios.post("/api/auth/local", user);
+        navigate("../", { replace: true });
     };
 
     const signUpOnClick = () => {
