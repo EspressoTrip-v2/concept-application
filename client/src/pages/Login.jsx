@@ -33,7 +33,7 @@ const Login = () => {
             type: signUp,
         };
         await axios.post("/api/auth/local", user);
-        navigate("../", { replace: true });
+        navigate("/");
     };
 
     const signUpOnClick = () => {

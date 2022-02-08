@@ -43,6 +43,7 @@ router.post("/api/auth/local", async (req: Request, res: Response) => {
         userRole: user?.userRole,
     };
 
+
     res.send({ user: userSession, cookie: req.get('cookie') });
 });
 
