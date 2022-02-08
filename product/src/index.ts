@@ -21,6 +21,7 @@ async function main(): Promise<void> {
         /** Create RabbitMQ connection */
         await rabbitClient.connect(process.env.RABBIT_URI!);
         console.log(`[product:rabbitmq]: Connected successfully`);
+
         // /** Create Mongoose connection */
         await mongoose.connect(process.env.MONGO_URI!);
         console.log(`[product:mongo]: Connected successfully`);

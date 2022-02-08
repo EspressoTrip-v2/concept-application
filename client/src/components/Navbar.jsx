@@ -13,7 +13,7 @@ const Navbar = ({ userData, setUserData }) => {
                     Microservice Authentication
                 </Link>
             </span>
-            {userData.user && (
+            {userData.cookie && (
                 <button className="link-button" onClick={signOut}>
                     Sign Out
                 </button>

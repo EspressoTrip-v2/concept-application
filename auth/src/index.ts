@@ -46,10 +46,12 @@ async function main(): Promise<void> {
         process.on("SIGINT", () => {
             rabbitClient.connection.close();
             mongoose.connection.close();
+            grpcServer.m_server.forceShutdown();
         });
         process.on("SIGTERM", () => {
             rabbitClient.connection.close();
             mongoose.connection.close();
+            grpcServer.m_server.forceShutdown();
         });
 
         /** Rabbit consumers */

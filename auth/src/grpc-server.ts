@@ -4,16 +4,17 @@ import { ProtoGrpcType } from "./proto/user";
 import { ClientUsersRequest } from "./proto/userPackage/ClientUsersRequest";
 import { ServerStreamUserResponse } from "./proto/userPackage/ServerStreamUserResponse";
 import { User } from "./models";
+import { AbstractGrpcServer } from "@espressotrip-org/concept-common/build/grpc";
 
-export class GrpcServer {
-    private readonly m_protoPath = __dirname + "/proto/user.proto";
-    private readonly m_port = process.env.GRPC_PORT!;
+export class AuthGrpcServer extends AbstractGrpcServer {
+    readonly m_protoPath = __dirname + "/proto/user.proto";
+    readonly m_port = process.env.GRPC_PORT!;
 
-    private readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
-    private readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
-    private readonly m_userPackage = this.m_grpcObject.userPackage;
+    readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
+    readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
+    readonly m_userPackage = this.m_grpcObject.userPackage;
 
-    private m_server = new grpc.Server();
+    readonly m_server = new grpc.Server();
 
     async GetAllUsers(call: grpc.ServerWritableStream<ClientUsersRequest, ServerStreamUserResponse>): Promise<void> {
         User.find({})
@@ -31,12 +32,12 @@ export class GrpcServer {
             GetAllUsers: this.GetAllUsers,
         });
 
-        this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error| null, port: number)=>{
-            if(error) throw new Error(error.message);
+        this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error | null, port: number) => {
+            if (error) throw new Error(error.message);
             console.log(`[auth:gRPC]: Listening port 50051`);
             this.m_server.start();
-        })
+        });
     }
 }
 
-export const grpcServer = new GrpcServer();
+export const grpcServer = new AuthGrpcServer();

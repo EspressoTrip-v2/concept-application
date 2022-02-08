@@ -14,7 +14,7 @@ const App = () => {
     useEffect(() => {
         const getUser = async () => {
             const result = await axios.get("/api/auth/login-success");
-            if (result.data.user) setUserData(result.data);
+            if (result.data.cookie) setUserData(result.data);
         };
         getUser();
     }, []);
@@ -24,8 +24,8 @@ const App = () => {
             <div>
                 <Navbar userData={userData} setUserData={setUserData} />
                 <Routes>
-                    <Route path="/" element={userData.user ? <Home cookie={userData.cookie} /> : <Navigate to="/login" />} />
-                    <Route path="/login" element={userData.user ? <Navigate to="/" /> : <Login  />} />
+                    <Route path="/" element={userData.cookie ? <Home cookie={userData.cookie} /> : <Navigate to="/login" />} />
+                    <Route path="/login" element={userData.cookie ? <Navigate to="/" /> : <Login  />} />
                 </Routes>
             </div>
         </BrowserRouter>

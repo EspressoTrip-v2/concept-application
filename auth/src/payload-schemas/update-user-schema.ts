@@ -1,6 +1,5 @@
 import Joi from "joi";
 import { Types } from "mongoose";
-import { UserRoles } from "@espressotrip-org/concept-common";
 
 function validObjectId(value: string | Types.ObjectId): Types.ObjectId {
     const validId = Types.ObjectId.isValid(value.toString());

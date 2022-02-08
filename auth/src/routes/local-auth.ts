@@ -13,11 +13,11 @@ router.post("/api/auth/local", async (req: Request, res: Response) => {
 
     /** Preliminarily tries to find user and validate password if sign in */
     /* type = true (sign up) / type = false (sign in) */
-    let user: UserDoc | null = await User.findOne({ email });
+    let user: UserDoc | null = await User.findOne({name, email });
     if (user && !type && user.password) if (!(await Password.compare(user.password, password))) throw new NotAuthorizedError();
 
     /** User does not exist and sign in */
-    if (!user && !type) throw new NotFoundError("User not found");
+    if (!user && !type) throw new NotFoundError("Incorrect credentials");
 
     /** User exists but type is different to local */
     if (user  && user.signInType !== SignInTypes.LOCAL) throw new BadRequestError(`User already has a ${user.signInType.toUpperCase()} account.`);
@@ -26,6 +26,8 @@ router.post("/api/auth/local", async (req: Request, res: Response) => {
     if (!user && type) {
         user = User.build(User.buildUserFromLocal({ name, email, password }));
         await user.save();
+
+        /** Publish create user event */
         await new CreateUserPublisher(rabbitClient.connection).publish(user)
     }
 
