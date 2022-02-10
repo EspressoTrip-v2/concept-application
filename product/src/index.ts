@@ -1,7 +1,6 @@
 import { app } from "./app";
 import { rabbitClient } from "./rabbitmq-client";
 import mongoose from "mongoose";
-import { ProductUpdatedConsumer } from "./events";
 
 const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3000;
 
@@ -35,8 +34,8 @@ async function main(): Promise<void> {
             rabbitClient.connection.close();
             mongoose.connection.close();
         });
-        /** Rabbit consumers */
-        await new ProductUpdatedConsumer(rabbitClient.connection).listen();
+
+
     } catch (error) {
         console.error(error);
     }

@@ -12,6 +12,14 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
+        category: {
+            type: String,
+            required: true,
+        },
+        tags: {
+            type: Array,
+            required: true,
+        },
         title: {
             type: String,
             required: true,
@@ -30,7 +38,7 @@ const productSchema = new mongoose.Schema(
         },
         orderId: {
             type: String,
-            default: null,
+            default: "",
         },
         itemCode: {
             type: String,
@@ -62,6 +70,9 @@ productSchema.statics.build = function (attributes: ProductAttrs): ProductDoc {
 productSchema.statics.toPublisherMessage = function (product: ProductDoc): ProductMsg {
     return {
         id: product.id,
+        quantity: product.quantity,
+        category: product.category,
+        tags: product.tags,
         price: product.price,
         itemCode: product.itemCode,
         userId: product.userId,

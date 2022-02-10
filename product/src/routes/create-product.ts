@@ -11,12 +11,13 @@ router.post("/api/product", requireAuth, payloadValidation(createProductSchema),
     /* Create product */
     const product = Product.build({
         title: req.body.title,
+        category: req.body.category,
+        tags: req.body.tags,
         description: req.body.description,
         quantity: req.body.quantity,
         price: req.body.price,
         itemCode: req.body.itemCode,
-        // @ts-ignore
-        userId: req.user.id,
+        userId: req.currentUser!.id,
     });
     await product.save();
 

@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { GitHubAuthProfile, GoogleAuthProfile, LocalAuthProfile, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { Categories, GitHubAuthProfile, GoogleAuthProfile, LocalAuthProfile, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 
 /** User Interface */
 export interface UserAttrs {
@@ -7,7 +7,7 @@ export interface UserAttrs {
     email: string;
     signInType: SignInTypes;
     userRole?: UserRoles;
-    groups?: Array<string>;
+    categories?: Array<Categories>;
     password?: string | null;
     providerId?: string | null;
 }
@@ -15,7 +15,7 @@ export interface UserAttrs {
 export interface UserUpdateAttrs {
     name?: string;
     userRole?: UserRoles;
-    groups?: Array<string>;
+    categories?: Array<Categories>;
     password?: string | null;
     providerId?: string | null;
 }
@@ -35,7 +35,7 @@ export interface UserDoc extends mongoose.Document {
     signInType: SignInTypes;
     userRole: UserRoles;
     providerId: string;
-    groups: Array<string>;
+    categories: Array<Categories>;
     password: string;
     version: number;
 }

@@ -4,7 +4,6 @@
     "description": "Auth service",
     "scripts": {
         "start": "ts-node-dev src/index.ts --poll",
-        "test": "jest --watchAll  --detectOpenHandles  --no-cache",
         "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/proto/ src/proto/*.proto"
     },
     "author": "",

@@ -9,7 +9,7 @@ message ServerStreamUserResponse {
     string email = 3;
     string signInType = 4;
     string providerId = 5;
-    repeated string groups = 6;
+    repeated string categories = 6;
     string userRole = 7;
     string password = 8;
     int32 version = 9;

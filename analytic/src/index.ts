@@ -2,6 +2,7 @@ import { app } from "./app";
 import { rabbitClient } from "./rabbitmq-client";
 import mongoose from "mongoose";
 import { grpcServer } from "./grpc-server";
+import { ProductCreatedConsumer, ProductUpdatedConsumer, UserCreatedConsumer, UserUpdatedConsumer } from "./events";
 
 const PORT = process.env.PORT || 3000;
 
@@ -17,7 +18,6 @@ async function main(): Promise<void> {
     if (!process.env.MONGO_URI) throw new Error("MONGO_URI must be defined");
     if (!process.env.BASE_URI) throw new Error("BASE_URI must be defined");
     if (!process.env.GRPC_PORT) throw new Error("GRPC_PORT must be defined");
-
 
     try {
         /** Create RabbitMQ connection */
@@ -42,6 +42,10 @@ async function main(): Promise<void> {
         });
 
         /** Rabbit consumers */
+        await new UserUpdatedConsumer(rabbitClient.connection).listen();
+        await new UserCreatedConsumer(rabbitClient.connection).listen();
+        await new ProductUpdatedConsumer(rabbitClient.connection).listen();
+        await new ProductCreatedConsumer(rabbitClient.connection).listen();
     } catch (error) {
         console.error(error);
     }

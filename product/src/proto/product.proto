@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package productPackage;
+
+
+message ServerStreamProductsResponse {
+    string id = 1;
+    int32 quantity = 2;
+    repeated string category = 3;
+    repeated string tags = 4;
+    string title = 5;
+    int32 price = 6;
+    string description = 7;
+    string orderId = 8;
+    string userId = 9;
+    string itemCode = 10;
+    int32 version = 11;
+}
+
+
+
+message ClientProductsRequest {
+    string serviceName = 1;
+}
+
+service ProductService {
+    rpc GetAllProducts(ClientProductsRequest) returns (stream ServerStreamProductsResponse) {};
+}

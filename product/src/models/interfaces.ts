@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
-import {  ProductMsg  } from "@espressotrip-org/concept-common";
+import { Categories, ProductMsg } from "@espressotrip-org/concept-common";
 
 /** Product Interface */
 export interface ProductAttrs {
     quantity: number;
+    category: Categories;
+    tags: Array<string>
     title: string;
     price: number;
     description: string;
@@ -22,6 +24,8 @@ export interface ProductModel extends mongoose.Model<ProductDoc> {
 export interface ProductDoc extends mongoose.Document {
     id: string;
     quantity: number;
+    category: Categories;
+    tags: Array<string>
     title: string;
     price: number;
     description: string;

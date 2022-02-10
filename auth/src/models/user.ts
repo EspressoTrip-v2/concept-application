@@ -23,17 +23,17 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: UserRoles.BASIC,
         },
-        groups: {
+        categories: {
             type: Array,
             default: [],
         },
         password: {
             type: String,
-            default: null,
+            default: "",
         },
         providerId: {
             type: String,
-            default: null,
+            default: "",
         },
     },
     {
