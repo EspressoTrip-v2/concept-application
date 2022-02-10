@@ -4,11 +4,9 @@ metadata:
     name: auth-config
 data:
     PORT: "3000"
-    RABBIT_URI: "amqp://rabbit-cluster"
     MONGO_URI: "mongodb://root:8103@auth-mongo-0.auth-mongo-svc.default.svc.cluster.local:27017/auth?ssl=false"
     GOOGLE_CALLBACK_URL: '/api/auth/google/redirect'
     GITHUB_CALLBACK_URL: '/api/auth/github/redirect'
-    GRPC_PORT: "localhost:50051"
 
 ---
 apiVersion: apps/v1

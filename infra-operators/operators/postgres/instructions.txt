@@ -1,0 +1,5 @@
+# Apply in the following order
+Apply configuration (kubectl create -f configmap.yaml)
+Apply permissions (kubectl create -f operator-service-account-rbac.yaml)
+Apply the deployment (kubectl create -f postgres-operator.yaml)
+Apply api for the UI (kubectl create -f api-service.yaml)

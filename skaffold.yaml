@@ -8,18 +8,18 @@ deploy:
 build:
     local:
         push: false
-    #
+
     artifacts:
-        #    # Auth service
+        # Auth service
         - image: espressotrip/concept-auth
           context: auth
           docker:
-            dockerfile: Dockerfile
+              dockerfile: Dockerfile
           sync:
-            manual:
-              - src: "src/**/*.ts"
-                dest: .
-        #    # Product service
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
+          # Product service
         - image: espressotrip/concept-product
           context: product
           docker:
@@ -28,12 +28,23 @@ build:
               manual:
                   - src: "src/**/*.ts"
                     dest: .
-    #    # Client service
+
+        # Analytic service
+        - image: espressotrip/concept-analytic
+          context: product
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
+
+        # Client service
         - image: espressotrip/concept-client
           context: client
           docker:
-            dockerfile: Dockerfile
+              dockerfile: Dockerfile
           sync:
-            manual:
-              - src: "src/**/*.ts"
-                dest: .
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .

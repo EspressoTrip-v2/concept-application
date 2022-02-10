@@ -1,33 +1,33 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-    name: product-config
+    name: analytic-config
 data:
     PORT: "3000"
-    MONGO_URI: "mongodb://root:8103@product-mongo-0.product-mongo-svc.default.svc.cluster.local:27017/product?ssl=false"
+    MONGO_URI: "mongodb://root:8103@analytic-mongo-0.analytic-mongo-svc.default.svc.cluster.local:27017/analytic?ssl=false"
 
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    name: product-depl
+    name: analytic-depl
     labels:
-        app: product
+        app: analytic
 spec:
     replicas: 1
     template:
         metadata:
-            name: product
+            name: analytic
             labels:
-                app: product
+                app: analytic
         spec:
             containers:
-                - name: product
-                  image: espressotrip/concept-product
+                - name: analytic
+                  image: espressotrip/concept-analytic
                   imagePullPolicy: IfNotPresent
                   envFrom:
                       - configMapRef:
-                            name: product-config
+                            name: analytic-config
                       - configMapRef:
                             name: global-config
                       - secretRef:
@@ -35,20 +35,20 @@ spec:
             restartPolicy: Always
     selector:
         matchLabels:
-            app: product
+            app: analytic
 
 ---
 apiVersion: v1
 kind: Service
 metadata:
-    name: product-service
+    name: analytic-service
 spec:
     selector:
-        app: product
+        app: analytic
     ports:
         - port: 3000
           targetPort: 3000
-          name: product
+          name: analytic
         - port: 50051
           targetPort: 50051
           name: grpc

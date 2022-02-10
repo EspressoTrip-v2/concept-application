@@ -4,3 +4,5 @@ metadata:
   name: global-config
 data:
   BASE_URI: "https://concept.dev"
+  GRPC_PORT: "localhost:50051"
+  RABBIT_URI: "amqp://rabbit-cluster"
