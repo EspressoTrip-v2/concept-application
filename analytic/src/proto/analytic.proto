@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package analyticsPackage;
+
+message ServerStreamAnalyticsResponse {
+    string message = 1;
+}
+
+message ClientAnalyticsRequest {
+    string serviceName = 1;
+}
+
+service AnalyticsService{
+    rpc GetAnalytics(ClientAnalyticsRequest) returns (stream ServerStreamAnalyticsResponse);
+}

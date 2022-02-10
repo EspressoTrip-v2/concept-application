@@ -9,10 +9,10 @@ export class GrpcUserClient extends AbstractGrpcClient {
 
     readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
-    readonly m_userPackage = this.m_grpcObject.userPackage;
+    readonly m_package = this.m_grpcObject.userPackage;
 
     getAllUsers(): void {
-        const client = new this.m_userPackage.UserService(this.m_port, grpc.credentials.createInsecure());
+        const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
         const stream = client.GetAllUsers({ serviceName: MicroServiceNames.ANALYTIC_SERVICE });
 
         /** Close the client connection on end stream */

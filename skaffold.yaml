@@ -19,7 +19,7 @@ build:
               manual:
                   - src: "src/**/*.ts"
                     dest: .
-          # Product service
+        # Product service
         - image: espressotrip/concept-product
           context: product
           docker:
@@ -31,7 +31,7 @@ build:
 
         # Analytic service
         - image: espressotrip/concept-analytic
-          context: product
+          context: analytic
           docker:
               dockerfile: Dockerfile
           sync:
