@@ -18,6 +18,7 @@ export class GrpcServer extends AbstractGrpcServer {
     async GetAnalytics(call: grpc.ServerWritableStream<ClientAnalyticsRequest, ServerStreamAnalyticsResponse>): Promise<void> {
         // TODO: NEED TO IMPLEMENT THIS
         call.write({ message: `Call from ${call.request.serviceName} to get analytics` });
+        call.end();
     }
 
     listen(): void {
