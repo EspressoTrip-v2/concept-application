@@ -1,6 +1,7 @@
-FROM node:16.13.2-alpine3.15
+FROM node:lts-buster
 WORKDIR /app
 COPY package.json .
-RUN npm i --only=prod
+ENV NODE_ENV production
+RUN npm install
 COPY . .
 CMD npm start

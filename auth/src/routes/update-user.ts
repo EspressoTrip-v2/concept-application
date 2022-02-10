@@ -17,7 +17,7 @@ router.patch(
         const { id } = req.params;
         const userUpdate: UserUpdateAttrs = req.body;
 
-        const user = await User.findById({ id });
+        const user = await User.findById( id );
         if (!user) throw new NotFoundError("User not found");
         user.set(userUpdate);
         await user.save();
