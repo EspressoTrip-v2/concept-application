@@ -1,7 +1,6 @@
 import { app } from "./app";
 import { rabbitClient } from "./rabbitmq-client";
 import mongoose from "mongoose";
-import { grpcServer } from "./grpc-server";
 
 const PORT = process.env.PORT || 3000;
 
@@ -39,21 +38,18 @@ async function main(): Promise<void> {
         await mongoose.connect(process.env.MONGO_URI!);
         console.log(`[auth:mongo]: Connected successfully`);
 
-        /** Create gRPC server */
-        grpcServer.listen();
 
         /** Process shutdown */
         process.on("SIGINT", () => {
             rabbitClient.connection.close();
             mongoose.connection.close();
-            grpcServer.m_server.forceShutdown();
         });
         process.on("SIGTERM", () => {
             rabbitClient.connection.close();
             mongoose.connection.close();
-            grpcServer.m_server.forceShutdown();
         });
 
+        /** Rabbit consumers */
     } catch (error) {
         console.error(error);
     }

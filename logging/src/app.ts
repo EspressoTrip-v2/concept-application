@@ -19,7 +19,7 @@ app.use(
 
 
 /** Routes */
-app.use(Routers.getAllUserGroupsRouter)
+
 
 /** Not Found */
 app.all("*", async () => {

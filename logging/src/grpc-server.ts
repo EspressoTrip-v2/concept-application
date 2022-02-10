@@ -1,9 +1,6 @@
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
-import { ClientUsersRequest } from "./proto/userPackage/ClientUsersRequest";
-import { ServerStreamUserResponse } from "./proto/userPackage/ServerStreamUserResponse";
-import { User } from "./models";
 import { AbstractGrpcServer } from "@espressotrip-org/concept-common/build/grpc";
 
 export class GrpcServer extends AbstractGrpcServer {
@@ -16,21 +13,21 @@ export class GrpcServer extends AbstractGrpcServer {
 
     readonly m_server = new grpc.Server();
 
-    async GetAllUsers(call: grpc.ServerWritableStream<ClientUsersRequest, ServerStreamUserResponse>): Promise<void> {
-        User.find({})
-            .cursor()
-            .on("data", user => {
-                call.write(user);
-            })
-            .on("end", () => {
-                call.end();
-            });
-    }
+    // async GetAllUsers(call: grpc.ServerWritableStream<ClientUsersRequest, ServerStreamUserResponse>): Promise<void> {
+    //     User.find({})
+    //         .cursor()
+    //         .on("data", user => {
+    //             call.write(user);
+    //         })
+    //         .on("end", () => {
+    //             call.end();
+    //         });
+    // }
 
     listen(): void {
-        this.m_server.addService(this.m_userPackage.UserService.service, {
-            GetAllUsers: this.GetAllUsers,
-        });
+        // this.m_server.addService(this.m_userPackage.UserService.service, {
+        //     GetAllUsers: this.GetAllUsers,
+        // });
 
         this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error | null, port: number) => {
             if (error) throw new Error(error.message);
