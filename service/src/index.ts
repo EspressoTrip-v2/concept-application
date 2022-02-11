@@ -18,7 +18,7 @@ async function main(): Promise<void> {
     if (!process.env.BASE_URI) throw new Error("BASE_URI must be defined");
 
     /** gRPC */
-    if (!process.env.GRPC_PORT) throw new Error("GRPC_PORT must be defined");
+    if (!process.env.GRPC_SERVER_PORT) throw new Error("GRPC_SERVER_PORT must be defined");
 
     /** Google */
     if (!process.env.GOOGLE_CLIENT_ID) throw new Error("GOOGLE_CLIENT_ID must be defined");

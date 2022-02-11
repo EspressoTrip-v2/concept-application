@@ -5,7 +5,7 @@ import { AbstractGrpcServer } from "@espressotrip-org/concept-common/build/grpc"
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/user.proto";
-    readonly m_port = process.env.GRPC_PORT!;
+    readonly m_port = process.env.GRPC_SERVER_PORT!;
 
     readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;

@@ -16,7 +16,7 @@ async function main(): Promise<void> {
     if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
     if (!process.env.MONGO_URI) throw new Error("MONGO_URI must be defined");
     if (!process.env.BASE_URI) throw new Error("BASE_URI must be defined");
-    if (!process.env.GRPC_PORT) throw new Error("GRPC_PORT must be defined");
+    if (!process.env.GRPC_SERVER_PORT) throw new Error("GRPC_SERVER_PORT must be defined");
 
     /** Google */
     if (!process.env.GOOGLE_CLIENT_ID) throw new Error("GOOGLE_CLIENT_ID must be defined");

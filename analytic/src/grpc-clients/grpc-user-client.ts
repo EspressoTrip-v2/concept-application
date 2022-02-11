@@ -1,11 +1,11 @@
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "../proto/user";
-import { MicroServiceNames, AbstractGrpcClient } from "@espressotrip-org/concept-common";
+import { MicroServiceNames, AbstractGrpcClient, GrpcServicePorts } from "@espressotrip-org/concept-common";
 
 export class GrpcUserClient extends AbstractGrpcClient {
     readonly m_protoPath = __dirname + "/proto/user.proto";
-    readonly m_port = process.env.GRPC_PORT!;
+    readonly m_port = GrpcServicePorts.AUTH;
 
     readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
