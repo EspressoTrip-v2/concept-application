@@ -12,6 +12,7 @@ router.post("/api/product", requireAuth, payloadValidation(createProductSchema),
     const product = Product.build({
         title: req.body.title,
         category: req.body.category,
+        reserved: req.body.reserved,
         tags: req.body.tags,
         description: req.body.description,
         quantity: req.body.quantity,
