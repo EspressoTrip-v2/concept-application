@@ -12,8 +12,7 @@ export class ProductCreatedConsumer extends AbstractConsumer<CreateProductEvent>
 
     onMessage(data: CreateProductEvent["data"], message: amqp.ConsumeMessage): void {
         console.log(`[analytic:message]: Product updated`);
-        console.log(typeof data);
-        console.log(data);
+        console.log(JSON.parse(data.toString()));
         this.acknowledge(message)
     }
 }

@@ -12,8 +12,7 @@ export class UserCreatedConsumer extends AbstractConsumer<CreateUserEvent>{
 
     onMessage(data: CreateUserEvent["data"], message: amqp.ConsumeMessage): void {
         console.log(`[analytic:message]: User Created`);
-        console.log(typeof data);
-        console.log(data);
+        console.log(JSON.parse(data.toString()));
         this.acknowledge(message);
     }
 
