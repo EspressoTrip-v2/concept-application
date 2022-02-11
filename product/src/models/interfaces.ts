@@ -4,6 +4,7 @@ import { Categories, ProductMsg } from "@espressotrip-org/concept-common";
 /** Product Interface */
 export interface ProductAttrs {
     quantity: number;
+    reserved: number;
     category: Categories;
     tags: Array<string>
     title: string;
@@ -25,6 +26,7 @@ export interface ProductDoc extends mongoose.Document {
     id: string;
     quantity: number;
     category: Categories;
+    reserved: number;
     tags: Array<string>
     title: string;
     price: number;

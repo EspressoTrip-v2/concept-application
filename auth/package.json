@@ -9,7 +9,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@espressotrip-org/concept-common": "^1.0.101",
+        "@espressotrip-org/concept-common": "^1.1.3",
         "@grpc/grpc-js": "^1.5.4",
         "@grpc/proto-loader": "^0.6.9",
         "@types/amqplib": "^0.8.2",

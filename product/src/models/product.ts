@@ -12,6 +12,10 @@ const productSchema = new mongoose.Schema(
             type: Number,
             required: true,
         },
+        reserved: {
+          type: Number,
+          default: 0,
+        },
         category: {
             type: String,
             required: true,
@@ -71,6 +75,7 @@ productSchema.statics.toPublisherMessage = function (product: ProductDoc): Produ
     return {
         id: product.id,
         quantity: product.quantity,
+        reserved: product.reserved,
         category: product.category,
         tags: product.tags,
         price: product.price,

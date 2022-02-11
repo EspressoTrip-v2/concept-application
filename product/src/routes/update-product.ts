@@ -1,5 +1,5 @@
 import express, { Response, Request } from "express";
-import { createProductSchema } from "../payload-schemas";
+import { createProductSchema, updateProductSchema } from "../payload-schemas";
 import { NotFoundError, payloadValidation, requireAuth } from "@espressotrip-org/concept-common";
 import { rabbitClient } from "../rabbitmq-client";
 import { Product } from "../models";
@@ -7,7 +7,7 @@ import { UpdateProductPublisher } from "../events/publishers/update-product-publ
 
 const router = express.Router();
 
-router.post("/api/product", requireAuth, payloadValidation(createProductSchema), async (req: Request, res: Response) => {
+router.post("/api/product", requireAuth, payloadValidation(updateProductSchema), async (req: Request, res: Response) => {
     const updatedProduct = req.body;
 
     /** Update product */

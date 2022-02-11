@@ -46,6 +46,7 @@ async function main(): Promise<void> {
         await new UserCreatedConsumer(rabbitClient.connection).listen();
         await new ProductUpdatedConsumer(rabbitClient.connection).listen();
         await new ProductCreatedConsumer(rabbitClient.connection).listen();
+
     } catch (error) {
         console.error(error);
     }
