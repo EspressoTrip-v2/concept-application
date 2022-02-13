@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package analyticsPackage;
+
+message Empty {}
+
+message CategoryMap {
+	map<string, string> category = 1;
+}
+
+message grpcProductBreakDown {
+	int32 avgPrice = 1;
+	int32 totalSold = 2;
+	int32 totalInStock = 3;
+	CategoryMap category = 4;
+}
+
+message grpcProductAnalysis {
+	map<string, grpcProductBreakDown> products = 1;
+}
+
+message grpcProduct {
+	int32 quantity = 1;
+	int32 reserved = 2;
+	string category = 3;
+	repeated string tags = 4;
+	string title = 5;
+	int32 price = 6;
+	string description = 7;
+	string userId = 8;
+	string orderId = 9;
+	string itemCode = 10;
+}
+
+
+message grpcOrder {}
+
+
+message grpcService {}
+
+service AnalyticService {
+	rpc GetProductAnalysis (Empty) returns (grpcProductAnalysis) {}
+}

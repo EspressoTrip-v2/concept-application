@@ -2,12 +2,13 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { AbstractGrpcClient, GrpcServicePorts } from "@espressotrip-org/concept-common";
-import { GoogleUser } from "./proto/userPackage/GoogleUser";
-import { CreateUserInfo } from "./proto/userPackage/CreateUserInfo";
-import { GitHubUser } from "./proto/userPackage/GitHubUser";
-import { LocalUser } from "./proto/userPackage/LocalUser";
-import { UserModel } from "./proto/userPackage/UserModel";
-import { UserUpdate } from "./proto/userPackage/UserUpdate";
+import { grpcUserUpdate } from "./proto/userPackage/grpcUserUpdate";
+import { grpcUser } from "./proto/userPackage/grpcUser";
+import { CreateGrpcUserInfo } from "./proto/userPackage/CreateGrpcUserInfo";
+import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
+import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
+import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
+
 
 export class GrpcUserClient extends AbstractGrpcClient {
     readonly m_protoPath = __dirname + "/proto/user.proto";
@@ -20,10 +21,10 @@ export class GrpcUserClient extends AbstractGrpcClient {
      * Update a user
      * @param user {UpdateUser}
      */
-    updateUser(user: UserUpdate): Promise<grpc.ServiceError | UserModel> {
+    updateUser(user: grpcUserUpdate): Promise<grpc.ServiceError | grpcUser> {
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
         return new Promise((resolve, reject) => {
-            client.UpdateUser(user, (error: grpc.ServiceError | null, updatedUser?: UserModel) => {
+            client.UpdateUser(user, (error: grpc.ServiceError | null, updatedUser?: grpcUser) => {
                 if (error) return reject(error);
                 return resolve(updatedUser!);
             });
@@ -34,10 +35,10 @@ export class GrpcUserClient extends AbstractGrpcClient {
      * Save a Google user
      * @param user {GoogleUser}
      */
-    saveGoogleUser(user: GoogleUser): Promise<grpc.ServiceError | CreateUserInfo>{
+    saveGoogleUser(user: GoogleGrpcUser): Promise<grpc.ServiceError | CreateGrpcUserInfo>{
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
         return new Promise(async (resolve, reject) => {
-            client.SaveGoogleUser(user, (error: grpc.ServiceError | null, createUserInfo?: CreateUserInfo) => {
+            client.SaveGoogleUser(user, (error: grpc.ServiceError | null, createUserInfo?: CreateGrpcUserInfo) => {
                 if (error) return reject(error);
                 return resolve(createUserInfo!);
             });
@@ -48,10 +49,10 @@ export class GrpcUserClient extends AbstractGrpcClient {
      * Save a GitHub user
      * @param user {GitHubUser}
      */
-    saveGitHubUser(user: GitHubUser): Promise<grpc.ServiceError | CreateUserInfo> {
+    saveGitHubUser(user: GitHubGrpcUser): Promise<grpc.ServiceError | CreateGrpcUserInfo> {
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
         return new Promise((resolve, reject) => {
-            client.SaveGitHubUser(user, (error: grpc.ServiceError | null, createUserInfo?: CreateUserInfo) => {
+            client.SaveGitHubUser(user, (error: grpc.ServiceError | null, createUserInfo?: CreateGrpcUserInfo) => {
                 if (error) return reject(error);
                 return resolve(createUserInfo!);
             });
@@ -62,10 +63,10 @@ export class GrpcUserClient extends AbstractGrpcClient {
      * Save a local user
      * @param user {LocalUser}
      */
-    saveLocalUser(user: LocalUser): Promise<grpc.ServiceError | CreateUserInfo> {
+    saveLocalUser(user: LocalGrpcUser): Promise<grpc.ServiceError | CreateGrpcUserInfo> {
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
         return new Promise((resolve, reject) => {
-            client.SaveLocalUser(user, (error: grpc.ServiceError | null, createUserInfo?: CreateUserInfo) => {
+            client.SaveLocalUser(user, (error: grpc.ServiceError | null, createUserInfo?: CreateGrpcUserInfo) => {
                 if (error) return reject(error);
                 return resolve(createUserInfo!);
             });

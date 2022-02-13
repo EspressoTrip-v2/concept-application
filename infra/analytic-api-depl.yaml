@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: analytic-api-config
+data:
+    PORT: "3000"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: analytic-api-depl
+    labels:
+        app: analytic-api
+spec:
+    replicas: 1
+    template:
+        metadata:
+            name: analytic-api
+            labels:
+                app: analytic-api
+        spec:
+            containers:
+                - name: analytic-api
+                  image: espressotrip/concept-analytic-api
+                  imagePullPolicy: IfNotPresent
+                  envFrom:
+                      - configMapRef:
+                            name: analytic-api-config
+                      - configMapRef:
+                            name: global-config
+                      - secretRef:
+                            name: global-secret
+            restartPolicy: Always
+    selector:
+        matchLabels:
+            app: analytic-api
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: analytic-api-srv
+spec:
+    selector:
+        app: analytic-api
+    ports:
+        - port: 3000
+          targetPort: 3000
+          name: analytic-api

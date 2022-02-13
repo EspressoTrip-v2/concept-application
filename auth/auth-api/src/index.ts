@@ -1,6 +1,6 @@
 import { app } from "./app";
 import { ServiceStartupErrorPublisher } from "./events";
-import { rabbitClient } from "./clients/rabbitmq-client";
+import { rabbitClient } from "./clients";
 const PORT = process.env.PORT || 3000;
 
 async function main(): Promise<void> {

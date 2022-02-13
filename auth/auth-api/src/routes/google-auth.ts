@@ -1,13 +1,14 @@
 import express, { Request, Response } from "express";
 import { grpcErrorTranslator, isGRPCStatus, NotFoundError } from "@espressotrip-org/concept-common";
-import { GoogleUser } from "../clients/proto/userPackage/GoogleUser";
-import { userGrpcClient } from "../clients/grpc-user-client";
+import { userGrpcClient } from "../clients";
+import { GoogleGrpcUser } from "../clients/proto/userPackage/GoogleGrpcUser";
 
 const router = express.Router();
 
 router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
-    const googleUser: GoogleUser = req.session?.grant.response.profile;
+    const googleUser: GoogleGrpcUser = req.session?.grant.response.profile;
     if (!googleUser) throw new NotFoundError("Google user not found");
+
     /** Make the request to the gRPC auth-service server */
     const rpcResponse = await userGrpcClient.saveGoogleUser(googleUser);
     if (isGRPCStatus(rpcResponse)) throw grpcErrorTranslator(rpcResponse);

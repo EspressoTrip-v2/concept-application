@@ -3,9 +3,9 @@ import { UserAttrs, UserDoc, UserModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { MicroServiceNames, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Password } from "../services";
-import { GitHubUser } from "../clients/proto/userPackage/GitHubUser";
-import { GoogleUser } from "../clients/proto/userPackage/GoogleUser";
-import { LocalUser } from "../clients/proto/userPackage/LocalUser";
+import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
+import { GoogleGrpcUser } from "../clients/proto/userPackage/GoogleGrpcUser";
+import { LocalGrpcUser } from "../clients/proto/userPackage/LocalGrpcUser";
 
 /**
  * User model that uses update-if-current version incrementation
@@ -87,7 +87,7 @@ userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
  * @param profile {GitHubUser}
  * @return {UserAttrs}
  */
-userSchema.statics.buildUserFromGitHub = function (profile: GitHubUser): UserAttrs {
+userSchema.statics.buildUserFromGitHub = function (profile: GitHubGrpcUser): UserAttrs {
     return {
         name: profile.name!,
         providerId: profile.id!.toString()!,
@@ -100,7 +100,7 @@ userSchema.statics.buildUserFromGitHub = function (profile: GitHubUser): UserAtt
  * Creates a user attributes object from Google profile
  * @param profile {GoogleUser}
  */
-userSchema.statics.buildUserFromGoogle = function (profile: GoogleUser): UserAttrs {
+userSchema.statics.buildUserFromGoogle = function (profile: GoogleGrpcUser): UserAttrs {
     return {
         name: profile.name!,
         providerId: profile.sub,
@@ -113,7 +113,7 @@ userSchema.statics.buildUserFromGoogle = function (profile: GoogleUser): UserAtt
  * Creates a user attributes object from Local profile
  * @param profile {LocalUser}
  */
-userSchema.statics.buildUserFromLocal = function (profile: LocalUser): UserAttrs {
+userSchema.statics.buildUserFromLocal = function (profile: LocalGrpcUser): UserAttrs {
     return {
         name: profile.name!,
         email: profile.email!,

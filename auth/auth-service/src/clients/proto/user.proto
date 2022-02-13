@@ -14,7 +14,7 @@ message ServerStreamUserResponse {
     int32 version = 9;
 }
 
-message UserModel {
+message grpcUser {
     string id = 1;
     string name = 2;
     string email = 3;
@@ -25,11 +25,11 @@ message UserModel {
     int32 version = 8;
 }
 
-message AllUsers {
+message AllGrpcUsers {
     string serviceName = 1;
 }
 
-message GoogleUser {
+message GoogleGrpcUser {
     string sub = 1;
     string name = 2;
     string given_name = 3;
@@ -40,7 +40,7 @@ message GoogleUser {
     string locale = 8;
 }
 
-message GitHubUser{
+message GitHubGrpcUser{
     string login = 1;
     int32 id = 2;
     string node_id = 3;
@@ -75,20 +75,20 @@ message GitHubUser{
     string updated_at= 32;
 }
 
-message LocalUser{
+message LocalGrpcUser{
     string name = 1;
     string email = 2;
     string password = 3;
     bool type = 4;
 }
 
-message CreateUserInfo{
+message CreateGrpcUserInfo{
     int32 status = 1;
     string jwt = 2;
-    UserModel user = 3;
+    grpcUser user = 3;
 }
 
-message UserUpdate{
+message grpcUserUpdate{
     string id = 1;
     string name = 2;
     string userRole = 3;
@@ -98,9 +98,9 @@ message UserUpdate{
 }
 
 service UserService {
-    rpc GetAllUsers(AllUsers) returns (stream ServerStreamUserResponse) {};
-    rpc SaveGoogleUser(GoogleUser) returns (CreateUserInfo) {};
-    rpc SaveGitHubUser(GitHubUser) returns (CreateUserInfo) {};
-    rpc SaveLocalUser(LocalUser) returns (CreateUserInfo) {};
-    rpc UpdateUser(UserUpdate) returns (UserModel) {};
+    rpc GetAllUsers(AllGrpcUsers) returns (stream ServerStreamUserResponse) {};
+    rpc SaveGoogleUser(GoogleGrpcUser) returns (CreateGrpcUserInfo) {};
+    rpc SaveGitHubUser(GitHubGrpcUser) returns (CreateGrpcUserInfo) {};
+    rpc SaveLocalUser(LocalGrpcUser) returns (CreateGrpcUserInfo) {};
+    rpc UpdateUser(grpcUserUpdate) returns (grpcUser) {};
 }

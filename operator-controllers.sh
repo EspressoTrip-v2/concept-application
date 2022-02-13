@@ -24,5 +24,5 @@ kubectl apply -f infra-operators/operators/mongo/operator.yaml
 # product-service
 # kubectl get secret product-mongo-product-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
 # analytics-service
-# kubectl get secret analytic-mongo-analytic-root -o json | jq -r '.d
+# kubectl get secret analytic-mongo-analytic-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
 

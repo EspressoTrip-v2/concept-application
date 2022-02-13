@@ -30,19 +30,29 @@ build:
                   - src: "src/**/*.ts"
                     dest: .
 
+      # Analytic-API service
+        - image: espressotrip/concept-analytic-api
+          context: analytic/analytic-api
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*.ts"
+                dest: .
+
+      # Analytic-Service service
+        - image: espressotrip/concept-analytic-service
+          context: analytic/analytic-service
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*.ts"
+                dest: .
+
         # Product service
         - image: espressotrip/concept-product
           context: product
-          docker:
-              dockerfile: Dockerfile
-          sync:
-              manual:
-                  - src: "src/**/*.ts"
-                    dest: .
-
-        # Analytic service
-        - image: espressotrip/concept-analytic
-          context: analytic
           docker:
               dockerfile: Dockerfile
           sync:

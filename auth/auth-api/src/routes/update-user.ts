@@ -9,8 +9,8 @@ import {
     validateCurrentUser,
 } from "@espressotrip-org/concept-common";
 import { updateUserSchema } from "../payload-schemas";
-import { UserModel } from "../clients/proto/userPackage/UserModel";
-import { userGrpcClient } from "../clients/grpc-user-client";
+import { userGrpcClient } from "../clients";
+import { grpcUser } from "../clients/proto/userPackage/grpcUser";
 
 const router = express.Router();
 
@@ -24,7 +24,7 @@ router.patch(
         const { id } = req.params;
 
         /** Create the gRPC user object */
-        const updateUser: UserModel = {
+        const updateUser: grpcUser = {
             ...req.body,
             id,
         };

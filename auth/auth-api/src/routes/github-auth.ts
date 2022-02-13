@@ -1,12 +1,12 @@
 import express, { Request, Response } from "express";
 import { grpcErrorTranslator, isGRPCStatus, NotFoundError } from "@espressotrip-org/concept-common";
-import { GitHubUser } from "../clients/proto/userPackage/GitHubUser";
-import { userGrpcClient } from "../clients/grpc-user-client";
+import { userGrpcClient } from "../clients";
+import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
 
 const router = express.Router();
 
 router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
-    const gitHubUser: GitHubUser = req.session?.grant.response.profile;
+    const gitHubUser: GitHubGrpcUser = req.session?.grant.response.profile;
     if (!gitHubUser) throw new NotFoundError("Github user not found");
 
     /** Make the request to the gRPC auth-service server */

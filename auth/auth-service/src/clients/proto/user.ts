@@ -9,15 +9,15 @@ type SubtypeConstructor<Constructor extends new (...args: any) => any, Subtype> 
 
 export interface ProtoGrpcType {
   userPackage: {
-    AllUsers: MessageTypeDefinition
-    CreateUserInfo: MessageTypeDefinition
-    GitHubUser: MessageTypeDefinition
-    GoogleUser: MessageTypeDefinition
-    LocalUser: MessageTypeDefinition
+    AllGrpcUsers: MessageTypeDefinition
+    CreateGrpcUserInfo: MessageTypeDefinition
+    GitHubGrpcUser: MessageTypeDefinition
+    GoogleGrpcUser: MessageTypeDefinition
+    LocalGrpcUser: MessageTypeDefinition
     ServerStreamUserResponse: MessageTypeDefinition
-    UserModel: MessageTypeDefinition
     UserService: SubtypeConstructor<typeof grpc.Client, _userPackage_UserServiceClient> & { service: _userPackage_UserServiceDefinition }
-    UserUpdate: MessageTypeDefinition
+    grpcUser: MessageTypeDefinition
+    grpcUserUpdate: MessageTypeDefinition
   }
 }
 

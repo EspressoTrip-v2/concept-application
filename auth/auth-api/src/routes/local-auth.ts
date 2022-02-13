@@ -1,12 +1,12 @@
 import express, { Request, Response } from "express";
 import { grpcErrorTranslator, isGRPCStatus } from "@espressotrip-org/concept-common";
-import { LocalUser } from "../clients/proto/userPackage/LocalUser";
-import { userGrpcClient } from "../clients/grpc-user-client";
+import { userGrpcClient } from "../clients";
+import { LocalGrpcUser } from "../clients/proto/userPackage/LocalGrpcUser";
 
 const router = express.Router();
 
 router.post("/api/auth/local", async (req: Request, res: Response) => {
-    const localUser: LocalUser = req.body;
+    const localUser: LocalGrpcUser = req.body;
 
     /** Make the request to the gRPC auth-service server */
     const rpcResponse = await userGrpcClient.saveLocalUser(localUser);

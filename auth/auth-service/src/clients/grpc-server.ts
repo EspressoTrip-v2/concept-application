@@ -3,19 +3,18 @@ import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { ServerStreamUserResponse } from "./proto/userPackage/ServerStreamUserResponse";
 import { User, UserDoc } from "../models";
-import { AbstractGrpcServer, CreateUserPublisherMsg, UpdateUserPublisherMsg } from "@espressotrip-org/concept-common";
-import { GoogleUser } from "./proto/userPackage/GoogleUser";
-import { GitHubUser } from "./proto/userPackage/GitHubUser";
-import { LocalUser } from "./proto/userPackage/LocalUser";
-import { CreateUserInfo } from "./proto/userPackage/CreateUserInfo";
+import { AbstractGrpcServer} from "@espressotrip-org/concept-common";
 import { SignInTypes } from "@espressotrip-org/concept-common";
 import { CreateUserPublisher, UpdateUserPublisher } from "../events/publishers";
 import { rabbitClient } from "./rabbitmq-client";
-import { generateJwt } from "../services/generate-jwt";
-import { UserModel } from "./proto/userPackage/UserModel";
-import { AllUsers } from "./proto/userPackage/AllUsers";
-import { UserUpdate } from "./proto/userPackage/UserUpdate";
+import { generateJwt } from "../services";
 import { Password } from "../services";
+import { grpcUser } from "./proto/userPackage/grpcUser";
+import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
+import { CreateGrpcUserInfo } from "./proto/userPackage/CreateGrpcUserInfo";
+import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
+import { grpcUserUpdate } from "./proto/userPackage/grpcUserUpdate";
+import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/user.proto";
@@ -31,7 +30,7 @@ export class GrpcServer extends AbstractGrpcServer {
      * Stream all users from database (Used for service initialization)
      * @param call {grpc.ServerWritableStream<ClientUsersRequest, ServerStreamUserResponse>}
      */
-    async GetAllUsers(call: grpc.ServerWritableStream<AllUsers, ServerStreamUserResponse>): Promise<void> {
+    async GetAllUsers(call: grpc.ServerWritableStream<grpcUser, ServerStreamUserResponse>): Promise<void> {
         User.find({})
             .cursor()
             .on("data", user => {
@@ -44,10 +43,10 @@ export class GrpcServer extends AbstractGrpcServer {
 
     /**
      * gRPC method Google user sign in or sign up
-     * @param call {GoogleUser}
-     * @param callback {grpc.sendUnaryData<CreateUserInfo>}
+     * @param call {GoogleGrpcUser}
+     * @param callback {grpc.sendUnaryData<CreateGrpcUserInfo>}
      */
-    async SaveGoogleUser(call: grpc.ServerUnaryCall<GoogleUser, CreateUserInfo>, callback: grpc.sendUnaryData<CreateUserInfo>): Promise<void> {
+    async SaveGoogleUser(call: grpc.ServerUnaryCall<GoogleGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
         let googleUser: UserDoc | null;
 
         /** See if user exists */
@@ -63,7 +62,7 @@ export class GrpcServer extends AbstractGrpcServer {
         }
 
         /** Create the info object */
-        const createUserInfo: CreateUserInfo = {
+        const createUserInfo: CreateGrpcUserInfo = {
             user: googleUser,
             jwt: generateJwt(googleUser),
             status: 201,
@@ -73,10 +72,10 @@ export class GrpcServer extends AbstractGrpcServer {
 
     /**
      * gRPC method GitHub user sign in or sign up
-     * @param call {GitHubUser}
-     * @param callback {grpc.sendUnaryData<CreateUserInfo>}
+     * @param call {GitHubGrpcUser}
+     * @param callback {grpc.sendUnaryData<CreateGrpcUserInfo>}
      */
-    async SaveGitHubUser(call: grpc.ServerUnaryCall<GitHubUser, CreateUserInfo>, callback: grpc.sendUnaryData<CreateUserInfo>): Promise<void> {
+    async SaveGitHubUser(call: grpc.ServerUnaryCall<GitHubGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
         let gitHubUser: UserDoc | null;
 
         /** See if user exists */
@@ -92,7 +91,7 @@ export class GrpcServer extends AbstractGrpcServer {
         }
 
         /** Create the info object */
-        const createUserInfo: CreateUserInfo = {
+        const createUserInfo: CreateGrpcUserInfo = {
             user: gitHubUser,
             jwt: generateJwt(gitHubUser),
             status: 201,
@@ -106,7 +105,7 @@ export class GrpcServer extends AbstractGrpcServer {
      * @param callback
      * @constructor
      */
-    async SaveLocalUser(call: grpc.ServerUnaryCall<LocalUser, CreateUserInfo>, callback: grpc.sendUnaryData<CreateUserInfo>): Promise<void> {
+    async SaveLocalUser(call: grpc.ServerUnaryCall<LocalGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
         let localUser: UserDoc | null;
 
         /** See if user exists */
@@ -127,7 +126,7 @@ export class GrpcServer extends AbstractGrpcServer {
             await new CreateUserPublisher(rabbitClient.connection).publish(localUser);
 
             /** Create the info object */
-            const createUserInfo: CreateUserInfo = {
+            const createUserInfo: CreateGrpcUserInfo = {
                 user: localUser,
                 jwt: generateJwt(localUser),
                 status: 201,
@@ -138,7 +137,7 @@ export class GrpcServer extends AbstractGrpcServer {
 
         if (localUser && !call.request.type) {
             /** Create the info object */
-            const createUserInfo: CreateUserInfo = {
+            const createUserInfo: CreateGrpcUserInfo = {
                 user: localUser,
                 jwt: generateJwt(localUser),
                 status: 201,
@@ -151,11 +150,11 @@ export class GrpcServer extends AbstractGrpcServer {
 
     /**
      * Update existing user
-     * @param call {grpc.ServerUnaryCall<UserUpdate, UserModel>}
+     * @param call {grpc.ServerUnaryCall<grpcUserUpdate, grpcUser>}
      * @param callback {grpc.sendUnaryData<UpdateUser>}
      */
-    async UpdateUser(call: grpc.ServerUnaryCall<UserUpdate, UserModel>, callback: grpc.sendUnaryData<UserUpdate>): Promise<void> {
-        const userUpdate: UserUpdate = call.request;
+    async UpdateUser(call: grpc.ServerUnaryCall<grpcUserUpdate, grpcUser>, callback: grpc.sendUnaryData<grpcUserUpdate>): Promise<void> {
+        const userUpdate: grpcUserUpdate = call.request;
         const user = await User.findById(call.request.id);
         if (!user)
             return callback({

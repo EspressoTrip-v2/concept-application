@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { Categories, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { GitHubUser } from "../clients/proto/userPackage/GitHubUser";
-import { GoogleUser } from "../clients/proto/userPackage/GoogleUser";
-import { LocalUser } from "../clients/proto/userPackage/LocalUser";
+import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
+import { GoogleGrpcUser } from "../clients/proto/userPackage/GoogleGrpcUser";
+import { LocalGrpcUser } from "../clients/proto/userPackage/LocalGrpcUser";
 
 /** User Interface */
 export interface UserAttrs {
@@ -15,19 +15,12 @@ export interface UserAttrs {
     providerId?: string | null;
 }
 
-export interface UserUpdateAttrs {
-    name?: string;
-    userRole?: UserRoles;
-    categories?: Array<Categories>;
-    password?: string | null;
-    providerId?: string | null;
-}
 /** Static build method to model */
 export interface UserModel extends mongoose.Model<UserDoc> {
     build(attributes: UserAttrs): UserDoc;
-    buildUserFromGitHub(profile: GitHubUser): UserAttrs;
-    buildUserFromGoogle(profile: GoogleUser): UserAttrs;
-    buildUserFromLocal(profile: LocalUser): UserAttrs;
+    buildUserFromGitHub(profile: GitHubGrpcUser): UserAttrs;
+    buildUserFromGoogle(profile: GoogleGrpcUser): UserAttrs;
+    buildUserFromLocal(profile: LocalGrpcUser): UserAttrs;
 }
 
 /** Extend mongoose document with product document values */

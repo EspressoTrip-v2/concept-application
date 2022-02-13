@@ -1,6 +1,6 @@
 # Micro-service Concept Application
 
-Event driven micro-service application using RabbitMQ, gRPC and Nodejs. Ability to add service mesh if requred. UI to be built with micro-frontens.
+Event driven micro-service application using RabbitMQ, gRPC and Nodejs. Ability to add service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
 
 #### Prerequisite installations:
 
@@ -57,9 +57,9 @@ Application uses Skaffold for the management of the Kubernetes cluster during de
 ```bash
 ~$ skaffold dev
 ```
-Once everything is up and running open your browser and go to http://concept.dev.
+Once everything is up and running open your browser and go to http://concept.dev. If you have included the message bus domain in your hosts file http://rabit.info will display the message bus UI.
 
-If you are on Chrome and you get a warning about certificates, without the ability to ignore. Click anywher on the webpage and type "thisisunsafe" and enter.
+If you are on Chrome and you get a warning about certificates, without the ability to ignore. Click anywhere on the webpage and type "thisisunsafe" and enter.
 ### Connection issues:
 If you have any issues with failure to connect to the MongoDB pods, run the below commands in the terminal. More services will be added in the future, these are only initial MongoDB databases.
 ```bash
