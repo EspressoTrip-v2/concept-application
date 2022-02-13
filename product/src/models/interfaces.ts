@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { Categories, ProductMsg } from "@espressotrip-org/concept-common";
+import { Categories, MicroServiceNames, ProductMsg } from "@espressotrip-org/concept-common";
 
 /** Product Interface */
 export interface ProductAttrs {

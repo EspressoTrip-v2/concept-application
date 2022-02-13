@@ -1,6 +1,6 @@
 import express, { Response, Request } from "express";
 import { createProductSchema, updateProductSchema } from "../payload-schemas";
-import { NotFoundError, payloadValidation, requireAuth } from "@espressotrip-org/concept-common";
+import { NotFoundError, payloadValidation, ProductMsg, requireAuth } from "@espressotrip-org/concept-common";
 import { rabbitClient } from "../rabbitmq-client";
 import { Product } from "../models";
 import { UpdateProductPublisher } from "../events/publishers/update-product-publisher";
@@ -17,7 +17,7 @@ router.post("/api/product", requireAuth, payloadValidation(updateProductSchema),
     await product.save();
 
     /** Publish event */
-    await new UpdateProductPublisher(rabbitClient.connection).publish(Product.toPublisherMessage(product));
+    await new UpdateProductPublisher(rabbitClient.connection).publish(product);
 
     res.send(product);
 });

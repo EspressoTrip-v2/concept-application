@@ -4,13 +4,13 @@
     "description": "Auth service",
     "scripts": {
         "start": "ts-node-dev src/index.ts --poll",
-        "test": "jest --watchAll  --detectOpenHandles  --no-cache",
-        "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/proto/ src/proto/*.proto"
+        "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/clients/proto/ src/clients/proto/*.proto",
+        "common": "npm update @espressotrip-org/concept-common"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@espressotrip-org/concept-common": "^1.1.3",
+        "@espressotrip-org/concept-common": "^1.1.32",
         "@grpc/grpc-js": "^1.5.4",
         "@grpc/proto-loader": "^0.6.9",
         "@types/amqplib": "^0.8.2",

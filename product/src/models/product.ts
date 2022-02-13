@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { ProductAttrs, ProductDoc, ProductModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { ProductMsg } from "@espressotrip-org/concept-common";
+import { MicroServiceNames, ProductMsg } from "@espressotrip-org/concept-common";
 
 /**
  * Product model that uses update-if-current version incrementation
@@ -13,8 +13,8 @@ const productSchema = new mongoose.Schema(
             required: true,
         },
         reserved: {
-          type: Number,
-          default: 0,
+            type: Number,
+            default: 0,
         },
         category: {
             type: String,
@@ -51,6 +51,7 @@ const productSchema = new mongoose.Schema(
     },
     {
         toJSON: {
+            virtuals: true,
             transform(doc, ret) {
                 ret.id = ret._id;
                 delete ret._id;
@@ -62,6 +63,16 @@ const productSchema = new mongoose.Schema(
 productSchema.set("versionKey", "version");
 productSchema.plugin(updateIfCurrentPlugin);
 
+/** Set temporary analytics object on creation */
+productSchema.post("save", async function () {
+    productSchema.virtual("analytics").get(function () {
+        return {
+            serviceName: MicroServiceNames.PRODUCT_SERVICE,
+            dateSent: new Date().toISOString(),
+        };
+    });
+});
+
 /** Static schema functions */
 /**
  * Static function to build product
@@ -69,23 +80,6 @@ productSchema.plugin(updateIfCurrentPlugin);
  */
 productSchema.statics.build = function (attributes: ProductAttrs): ProductDoc {
     return new Product(attributes);
-};
-
-productSchema.statics.toPublisherMessage = function (product: ProductDoc): ProductMsg {
-    return {
-        id: product.id,
-        quantity: product.quantity,
-        reserved: product.reserved,
-        category: product.category,
-        tags: product.tags,
-        price: product.price,
-        itemCode: product.itemCode,
-        userId: product.userId,
-        title: product.title,
-        description: product.description,
-        orderId: product.orderId,
-        version: product.version,
-    };
 };
 
 /** Create model from schema */

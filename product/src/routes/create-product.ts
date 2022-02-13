@@ -23,7 +23,7 @@ router.post("/api/product", requireAuth, payloadValidation(createProductSchema),
     await product.save();
 
     /** Publish event */
-    await new CreateProductPublisher(rabbitClient.connection).publish(Product.toPublisherMessage(product));
+    await new CreateProductPublisher(rabbitClient.connection).publish(product);
 
     res.send(product);
 });

@@ -1,5 +1,5 @@
 import amqp from "amqplib";
-import { AbstractConsumer, CreateUserEvent, ExchangeNames, ExchangeTypes, QueueInfo, UpdateUserEvent } from "@espressotrip-org/concept-common";
+import { AbstractConsumer, CreateUserEvent, ExchangeNames, ExchangeTypes, QueueInfo } from "@espressotrip-org/concept-common";
 
 export class UserCreatedConsumer extends AbstractConsumer<CreateUserEvent>{
     m_exchangeName: ExchangeNames.USERS = ExchangeNames.USERS;

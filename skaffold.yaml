@@ -10,15 +10,26 @@ build:
         push: false
 
     artifacts:
-        # Auth service
-        - image: espressotrip/concept-auth
-          context: auth
+        # Auth-API service
+        - image: espressotrip/concept-auth-api
+          context: auth/auth-api
           docker:
               dockerfile: Dockerfile
           sync:
               manual:
                   - src: "src/**/*.ts"
                     dest: .
+
+        # Auth-Service service
+        - image: espressotrip/concept-auth-service
+          context: auth/auth-service
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
+
         # Product service
         - image: espressotrip/concept-product
           context: product
@@ -40,8 +51,8 @@ build:
                     dest: .
 
         # Client service
-        - image: espressotrip/concept-client
-          context: client
+        - image: espressotrip/concept-auth-web
+          context: auth/auth-web
           docker:
               dockerfile: Dockerfile
           sync:

@@ -23,7 +23,7 @@ spec:
                     pathType: Prefix
                     backend:
                         service:
-                            name: auth-service
+                            name: auth-api-srv
                             port:
                                 number: 3000
                 # Analytics API
@@ -39,6 +39,6 @@ spec:
                     pathType: Prefix
                     backend:
                         service:
-                            name: client-service
+                            name: auth-web-srv
                             port:
                                 number: 3000

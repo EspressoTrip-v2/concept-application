@@ -28,7 +28,7 @@ export class GrpcServer extends AbstractGrpcServer {
 
         this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error | null, port: number) => {
             if (error) throw new Error(error.message);
-            console.log(`[analytic:gRPC]: Listening port 50051`);
+            console.log(`[analytic:gRPC]: Listening port ${port}`);
             this.m_server.start();
         });
     }
