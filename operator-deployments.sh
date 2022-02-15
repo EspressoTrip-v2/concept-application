@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # This script deploys all the clusters that the operators will manage
 
 # MongoDB cluster deployments

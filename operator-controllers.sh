@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # RabbitMQ Operators
 kubectl apply -f infra-operators/operators/rabbitmq/operator.yaml
