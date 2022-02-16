@@ -63,8 +63,8 @@ auth-mongo-volume                          1Gi        RWO            Retain     
 NAME                              STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
 auth-pv-claim                     Bound    auth-mongo-volume                          1Gi        RWO            manual         119s
 ```
-Make sure to comment out the cluster connection string (Long version)  and uncomment the deployment connection string (Short version) in the infra/infra-dev deployment files that are using the MongoDB databases.
-Once everything is up and running skip the below operators section and go to **Skaffold**.
+Make sure to comment out the cluster connection string (Long version) and uncomment the deployment connection string (Short version) in the infra/infra-dev deployment files
+ConfigMaps for those that are using the MongoDB databases, once everything is up and running skip the below operators section and go to **Skaffold**.
 ### Operators:
 Once **Minikube** is running, begin deploying the operators and operator deployments.
 
