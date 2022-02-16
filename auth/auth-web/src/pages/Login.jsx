@@ -11,11 +11,11 @@ const Login = () => {
     const [input, setInput] = useState({ name: "", email: "", password: "" });
 
     const google = () => {
-        window.open("https://concept.dev/api/auth/connect/google", "_self");
+        window.open("https://acmefast.dev/api/auth/connect/google", "_self");
     };
 
     const github = () => {
-        window.open("https://concept.dev/api/auth/connect/github", "_self");
+        window.open("https://acmefast.dev/api/auth/connect/github", "_self");
     };
 
     const handleOnChange = e => {

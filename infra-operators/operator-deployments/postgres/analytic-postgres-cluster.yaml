@@ -1,0 +1,20 @@
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+    name: acid-analytic-postgres
+    namespace: default
+spec:
+    teamId: "acid"
+    volume:
+        size: 1Gi
+    numberOfInstances: 1
+    users:
+        root: # database owner
+            - superuser
+            - createdb
+    databases:
+        analytic: root # dbname: owner
+    preparedDatabases:
+        bar: {}
+    postgresql:
+        version: "14"

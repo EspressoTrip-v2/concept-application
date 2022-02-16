@@ -7,17 +7,9 @@ metadata:
         nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
     rules:
-        - host: concept.dev
+        - host: acmefast.dev
           http:
               paths:
-                  # Product API
-                  - path: /api/product/?(.*)
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: product-service
-                            port:
-                                number: 3000
                 # Auth API
                   - path: /api/auth/?(.*)
                     pathType: Prefix

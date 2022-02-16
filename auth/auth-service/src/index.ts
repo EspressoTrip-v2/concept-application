@@ -1,6 +1,7 @@
-import { grpcServer, rabbitClient } from "./clients";
+import { grpcServer } from "./clients";
 import mongoose from "mongoose";
 import { ServiceStartupErrorPublisher } from "./events/publishers";
+import { rabbitClient } from "@espressotrip-org/concept-common";
 
 async function main(): Promise<void> {
     try {
@@ -10,15 +11,14 @@ async function main(): Promise<void> {
         if (!process.env.GRPC_SERVER_PORT) throw new Error("GRPC_SERVER_PORT must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!);
-        console.log(`[auth-service:rabbitmq]: Connected successfully`);
+        await rabbitClient.connect(process.env.RABBIT_URI!,`[auth-service:rabbitmq]: Connected successfully`);
 
         // /** Create Mongoose connection */
         await mongoose.connect(process.env.MONGO_URI!);
         console.log(`[auth-service:mongo]: Connected successfully`);
 
         /** Create gRPC server */
-        grpcServer.listen();
+        grpcServer.listen(`[auth-service:gRPC-server]: Listening on ${process.env.GRPC_SERVER_PORT}`);
     } catch (error) {
         const message = (error as Error).message;
 
@@ -30,14 +30,14 @@ async function main(): Promise<void> {
         });
 
         /** Shut down process */
-        process.on("SIGINT", () => {
-            rabbitClient.connection.close();
-            mongoose.connection.close();
+        process.on("SIGINT", async () => {
+            await rabbitClient.connection.close();
+            await mongoose.connection.close();
             grpcServer.m_server.forceShutdown();
         });
-        process.on("SIGTERM", () => {
-            rabbitClient.connection.close();
-            mongoose.connection.close();
+        process.on("SIGTERM", async () => {
+            await rabbitClient.connection.close();
+            await mongoose.connection.close();
             grpcServer.m_server.forceShutdown();
         });
         process.exit(1);

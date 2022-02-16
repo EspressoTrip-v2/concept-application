@@ -3,10 +3,9 @@ import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { ServerStreamUserResponse } from "./proto/userPackage/ServerStreamUserResponse";
 import { User, UserDoc } from "../models";
-import { AbstractGrpcServer} from "@espressotrip-org/concept-common";
+import { AbstractGrpcServer, rabbitClient } from "@espressotrip-org/concept-common";
 import { SignInTypes } from "@espressotrip-org/concept-common";
 import { CreateUserPublisher, UpdateUserPublisher } from "../events/publishers";
-import { rabbitClient } from "./rabbitmq-client";
 import { generateJwt } from "../services";
 import { Password } from "../services";
 import { grpcUser } from "./proto/userPackage/grpcUser";
@@ -28,7 +27,7 @@ export class GrpcServer extends AbstractGrpcServer {
 
     /**
      * Stream all users from database (Used for service initialization)
-     * @param call {grpc.ServerWritableStream<ClientUsersRequest, ServerStreamUserResponse>}
+     * @param call {grpc.ServerWritableStream<grpcUser, ServerStreamUserResponse>}
      */
     async GetAllUsers(call: grpc.ServerWritableStream<grpcUser, ServerStreamUserResponse>): Promise<void> {
         User.find({})
@@ -172,7 +171,7 @@ export class GrpcServer extends AbstractGrpcServer {
     /**
      * Start the server
      */
-    listen(): void {
+    listen(logMessage:string): void {
         this.m_server.addService(this.m_package.UserService.service, {
             GetAllUsers: this.GetAllUsers,
             SaveGoogleUser: this.SaveGoogleUser,
@@ -183,7 +182,7 @@ export class GrpcServer extends AbstractGrpcServer {
 
         this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error | null, port: number) => {
             if (error) throw new Error(error.message);
-            console.log(`[auth-service:gRPC-server]: Listening on ${port}`);
+            console.log(logMessage);
             this.m_server.start();
         });
     }

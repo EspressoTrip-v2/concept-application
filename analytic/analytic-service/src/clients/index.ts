@@ -1,2 +1,2 @@
-export * from "./rabbitmq-client";
 export * from "./grpc-server";
+export * from "./postgres-client";

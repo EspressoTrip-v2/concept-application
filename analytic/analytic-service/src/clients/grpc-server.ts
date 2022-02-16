@@ -14,12 +14,12 @@ export class GrpcServer extends AbstractGrpcServer {
     readonly m_server = new grpc.Server();
 
 
-    listen(): void {
+    listen(logMessage: string): void {
         this.m_server.addService(this.m_package.AnalyticService.service, {});
 
         this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error | null, port: number) => {
             if (error) throw new Error(error.message);
-            console.log(`[analytic-service:gRPC-server]: Listening port ${port}`);
+            console.log(logMessage);
             this.m_server.start();
         });
     }

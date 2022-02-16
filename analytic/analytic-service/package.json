@@ -10,7 +10,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@espressotrip-org/concept-common": "^1.1.32",
+        "@espressotrip-org/concept-common": "^1.1.38",
         "@grpc/grpc-js": "^1.5.4",
         "@grpc/proto-loader": "^0.6.9",
         "@types/amqplib": "^0.8.2",
@@ -21,8 +21,9 @@
         "express": "^4.17.2",
         "express-async-errors": "^3.1.1",
         "jsonwebtoken": "^8.5.1",
-        "mongoose": "^6.1.10",
-        "mongoose-update-if-current": "^1.4.0",
+        "pg": "^8.7.3",
+        "pg-hstore": "^2.3.4",
+        "sequelize": "^6.16.1",
         "ts-node-dev": "^1.1.8",
         "tslib": "^2.3.1"
     },

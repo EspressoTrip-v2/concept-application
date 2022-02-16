@@ -50,16 +50,6 @@ build:
               - src: "src/**/*.ts"
                 dest: .
 
-        # Product service
-        - image: espressotrip/concept-product
-          context: product
-          docker:
-              dockerfile: Dockerfile
-          sync:
-              manual:
-                  - src: "src/**/*.ts"
-                    dest: .
-
         # Client service
         - image: espressotrip/concept-auth-web
           context: auth/auth-web

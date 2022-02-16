@@ -4,7 +4,8 @@ metadata:
     name: analytic-service-config
 data:
     PORT: "3000"
-    MONGO_URI: "mongodb://root:8103@analytic-mongo-0.analytic-mongo-svc.default.svc.cluster.local:27017/analytic?ssl=false"
+    POSTGRES_SERVICE_NAME: "acid-analytic-postgres"
+    POSTGRES_USERNAME: root
 
 ---
 apiVersion: apps/v1

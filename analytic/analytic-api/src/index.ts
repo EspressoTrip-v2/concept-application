@@ -1,6 +1,6 @@
 import { app } from "./app";
-import { rabbitClient } from "./clients";
 import { ServiceStartupErrorPublisher } from "./events/publishers";
+import { rabbitClient } from "@espressotrip-org/concept-common";
 
 const PORT = process.env.PORT || 3000;
 
@@ -11,8 +11,7 @@ async function main(): Promise<void> {
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!);
-        console.log(`[auth-api:rabbitmq]: Connected successfully`);
+        await rabbitClient.connect(process.env.RABBIT_URI!,`[auth-api:rabbitmq]: Connected successfully`);
 
     } catch (error) {
         const message = (error as Error).message;
@@ -25,11 +24,11 @@ async function main(): Promise<void> {
         });
 
         /** Shut down process */
-        process.on("SIGTERM", () => {
-            rabbitClient.connection.close();
+        process.on("SIGTERM", async () => {
+            await rabbitClient.connection.close();
         });
-        process.on("SIGINT", () => {
-            rabbitClient.connection.close();
+        process.on("SIGINT", async () => {
+            await rabbitClient.connection.close();
         });
         process.exit(1);
     }
