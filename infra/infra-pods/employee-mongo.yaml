@@ -13,7 +13,7 @@ spec:
                 app: employee-mongo
         spec:
             volumes:
-                - name: employee-mongo-volume
+                - name: employee-mongo-storage
                   persistentVolumeClaim:
                       claimName: employee-pv-claim
             containers:
@@ -45,7 +45,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-    name: employee-mongo-volume
+    name: volume-storage-3
     labels:
         type: local
 spec:

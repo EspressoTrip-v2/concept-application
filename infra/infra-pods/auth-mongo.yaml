@@ -13,7 +13,7 @@ spec:
                 app: auth-mongo
         spec:
             volumes:
-                - name: auth-mongo-volume
+                - name: auth-mongo-storage
                   persistentVolumeClaim:
                       claimName: auth-pv-claim
             containers:
@@ -45,7 +45,7 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: auth-mongo-volume
+  name: volume-storage-1
   labels:
     type: local
 spec:

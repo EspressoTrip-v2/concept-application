@@ -54,14 +54,16 @@ Check PV and PVC
 ```bash
 # Check the persistent volume 
 ~$ kubectl get pv
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                     STORAGECLASS   REASON   AGE
-auth-mongo-volume                          1Gi        RWO            Retain           Bound    default/auth-pv-claim                     manual                  88s
+NAME                              STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+auth-pv-claim                     Bound    volume-storage-1                           1Gi        RWO            manual         15s
+division-pv-claim                 Bound    volume-storage-2                           1Gi        RWO            manual         15s
 ```
 ```bash
 # Check the persistent claim
 ~$ kubectl get pvc
-NAME                              STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
-auth-pv-claim                     Bound    auth-mongo-volume                          1Gi        RWO            manual         119s
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                     STORAGECLASS   REASON   AGE
+pvc-333d7126-f834-43d1-8250-dd37943b8c95   1Gi        RWO            Delete           Bound    default/pgdata-acid-analytic-postgres-0   standard                19s
+volume-storage-1                           1Gi        RWO            Retain           Bound    default/auth-pv-claim                     manual                  20s
 ```
 Make sure to comment out the cluster connection string (Long version) and uncomment the deployment connection string (Short version) in the infra/infra-dev deployment files
 ConfigMaps for those that are using the MongoDB databases, once everything is up and running skip the below operators section and go to **Skaffold**.
