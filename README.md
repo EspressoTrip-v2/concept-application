@@ -98,6 +98,8 @@ If you have any issues with failure to connect to the MongoDB pods, run the belo
 ```
 Copy the infra/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
 ### Side Note
-If you really can't get things running give me a shout and please don't **skrew up** my back-end code **Ruben Verster**. If you are building the front end, you don't need to make a PR, but please do so on any back-end changes. 
+If you really can't get things running give me a shout. If you are building the front end, you don't need to make a PR, but please do so on any back-end changes. 
+Folder structure changes will have to go with skaffold.yaml changes to update the development environment.
 
-The services use ts-node-dev to run, so changes need to be made if we want to run a production version of the application.
+The services use ts-node-dev to run, so changes need to be made if we want to run a production version of the application. 
+Also the Dockerfile.prod is not complete for production build, there needs to be a nginx.conf file created for the usage of react-router-dom in the container.
