@@ -13,7 +13,7 @@ export function grantConfig(): GrantConfig {
             secret: process.env.GOOGLE_SECRET,
             callback: process.env.GOOGLE_CALLBACK_URL,
             response: ["tokens", "profile"],
-            redirect_uri: "https://concept.dev/api/auth/connect/google/callback"
+            redirect_uri: `${process.env.BASE_URI}/api/auth/connect/google/callback`
         },
         github: {
             scope: ["email", "profile"],
@@ -21,7 +21,7 @@ export function grantConfig(): GrantConfig {
             secret: process.env.GITHUB_SECRET,
             callback: process.env.GITHUB_CALLBACK_URL,
             response: ["tokens", "profile"],
-            redirect_uri: "https://concept.dev/api/auth/connect/github/callback"
+            redirect_uri: `${process.env.BASE_URI}/api/auth/connect/github/callback`
         },
     };
 }
