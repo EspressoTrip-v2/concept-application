@@ -1,4 +1,4 @@
-// Original file: src/clients/proto/analytic.proto
+// Original file: ../../analytic/proto/analytic.proto
 
 import type { CategoryMap as _analyticsPackage_CategoryMap, CategoryMap__Output as _analyticsPackage_CategoryMap__Output } from '../analyticsPackage/CategoryMap';
 

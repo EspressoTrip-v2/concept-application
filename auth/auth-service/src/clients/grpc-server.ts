@@ -3,17 +3,19 @@ import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { ServerStreamUserResponse } from "./proto/userPackage/ServerStreamUserResponse";
 import { User, UserDoc } from "../models";
-import { AbstractGrpcServer, rabbitClient } from "@espressotrip-org/concept-common";
-import { SignInTypes } from "@espressotrip-org/concept-common";
-import { CreateUserPublisher, UpdateUserPublisher } from "../events/publishers";
-import { generateJwt } from "../services";
-import { Password } from "../services";
+import { AbstractGrpcServer, rabbitClient, SignInTypes } from "@espressotrip-org/concept-common";
+import { UpdateUserPublisher } from "../events/publishers";
+import { generateJwt, Password } from "../services";
 import { grpcUser } from "./proto/userPackage/grpcUser";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
 import { CreateGrpcUserInfo } from "./proto/userPackage/CreateGrpcUserInfo";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
 import { grpcUserUpdate } from "./proto/userPackage/grpcUserUpdate";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
+
+// ------------------------------------------------------------------------------------------
+/* The below validations are not 100% secure, but they are only intended for functionality */
+// ------------------------------------------------------------------------------------------
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/user.proto";
@@ -41,24 +43,26 @@ export class GrpcServer extends AbstractGrpcServer {
     }
 
     /**
-     * gRPC method Google user sign in or sign up
+     * gRPC method Google user sign in
      * @param call {GoogleGrpcUser}
      * @param callback {grpc.sendUnaryData<CreateGrpcUserInfo>}
      */
-    async SaveGoogleUser(call: grpc.ServerUnaryCall<GoogleGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
+    async LoginGoogleUser(call: grpc.ServerUnaryCall<GoogleGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
         let googleUser: UserDoc | null;
 
         /** See if user exists */
         googleUser = await User.findOne({ email: call.request.email });
         if (googleUser && googleUser.signInType !== SignInTypes.GOOGLE)
-            return callback({ code: grpc.status.ALREADY_EXISTS, details: "User already exists with different sign in type" });
+            return callback({ code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType}` });
 
-        if (!googleUser) {
-            googleUser = await User.build(User.buildUserFromGoogle(call.request));
-            await googleUser.save();
-            /** Publish a create user event */
-            await new CreateUserPublisher(rabbitClient.connection).publish(googleUser);
-        }
+        if (!googleUser)
+            return callback({
+                code: grpc.status.NOT_FOUND,
+                details: "User does not exists.",
+            });
+
+        /** Add the Google id if the is none, newly created user */
+        if (googleUser && !googleUser.providerId && !googleUser.password) googleUser.providerId = call.request.sub!;
 
         /** Create the info object */
         const createUserInfo: CreateGrpcUserInfo = {
@@ -70,30 +74,32 @@ export class GrpcServer extends AbstractGrpcServer {
     }
 
     /**
-     * gRPC method GitHub user sign in or sign up
+     * gRPC method GitHub user sign in
      * @param call {GitHubGrpcUser}
      * @param callback {grpc.sendUnaryData<CreateGrpcUserInfo>}
      */
-    async SaveGitHubUser(call: grpc.ServerUnaryCall<GitHubGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
+    async LoginGitHubUser(call: grpc.ServerUnaryCall<GitHubGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
         let gitHubUser: UserDoc | null;
 
         /** See if user exists */
         gitHubUser = await User.findOne({ email: call.request.email });
         if (gitHubUser && gitHubUser.signInType !== SignInTypes.GITHUB)
-            return callback({ code: grpc.status.ALREADY_EXISTS, details: "User already exists with different sign in type" });
+            return callback({ code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType}` });
 
-        if (!gitHubUser) {
-            gitHubUser = await User.build(User.buildUserFromGitHub(call.request));
-            await gitHubUser.save();
-            /** Publish a create user event */
-            await new CreateUserPublisher(rabbitClient.connection).publish(gitHubUser);
-        }
+        if (!gitHubUser)
+            return callback({
+                code: grpc.status.NOT_FOUND,
+                details: "User does not exists.",
+            });
+
+        /** Add the GitHub id if the is none, newly created user */
+        if (gitHubUser && !gitHubUser.providerId && !gitHubUser.password) gitHubUser.providerId = call.request.id!.toString();
 
         /** Create the info object */
         const createUserInfo: CreateGrpcUserInfo = {
             user: gitHubUser,
             jwt: generateJwt(gitHubUser),
-            status: 201,
+            status: 200,
         };
         return callback(null, createUserInfo);
     }
@@ -104,13 +110,20 @@ export class GrpcServer extends AbstractGrpcServer {
      * @param callback
      * @constructor
      */
-    async SaveLocalUser(call: grpc.ServerUnaryCall<LocalGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
+    async LoginLocalUser(call: grpc.ServerUnaryCall<LocalGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
         let localUser: UserDoc | null;
 
         /** See if user exists */
         localUser = await User.findOne({ email: call.request.email });
+
+        if (!localUser)
+            return callback({
+                code: grpc.status.NOT_FOUND,
+                details: "User does not exists.",
+            });
+
         if (localUser && localUser.signInType !== SignInTypes.LOCAL)
-            return callback({ code: grpc.status.ALREADY_EXISTS, details: "User already exists with different sign in type" });
+            return callback({ code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType}` });
 
         if (localUser && !(await Password.compare(localUser.password, call.request.password!)))
             return callback({
@@ -118,33 +131,13 @@ export class GrpcServer extends AbstractGrpcServer {
                 details: "Invalid credentials",
             });
 
-        if (!localUser && call.request.type) {
-            localUser = await User.build(User.buildUserFromLocal(call.request));
-            await localUser.save();
-            /** Publish a create user event */
-            await new CreateUserPublisher(rabbitClient.connection).publish(localUser);
-
-            /** Create the info object */
-            const createUserInfo: CreateGrpcUserInfo = {
-                user: localUser,
-                jwt: generateJwt(localUser),
-                status: 201,
-            };
-
-            return callback(null, createUserInfo);
-        }
-
-        if (localUser && !call.request.type) {
-            /** Create the info object */
-            const createUserInfo: CreateGrpcUserInfo = {
-                user: localUser,
-                jwt: generateJwt(localUser),
-                status: 201,
-            };
-            return callback(null, createUserInfo);
-        }
-
-        return callback({ code: grpc.status.UNKNOWN, details: "Unknown local user type" });
+        /** Create the info object */
+        const createUserInfo: CreateGrpcUserInfo = {
+            user: localUser,
+            jwt: generateJwt(localUser),
+            status: 200,
+        };
+        return callback(null, createUserInfo);
     }
 
     /**
@@ -171,12 +164,12 @@ export class GrpcServer extends AbstractGrpcServer {
     /**
      * Start the server
      */
-    listen(logMessage:string): void {
+    listen(logMessage: string): void {
         this.m_server.addService(this.m_package.UserService.service, {
             GetAllUsers: this.GetAllUsers,
-            SaveGoogleUser: this.SaveGoogleUser,
-            SaveGitHubUser: this.SaveGitHubUser,
-            SaveLocalUser: this.SaveLocalUser,
+            LoginGoogleUser: this.LoginGoogleUser,
+            LoginGitHubUser: this.LoginGitHubUser,
+            LoginLocalUser: this.LoginLocalUser,
             UpdateUser: this.UpdateUser,
         });
 

@@ -1,4 +1,4 @@
-import { ProductCreatedConsumer, ProductUpdatedConsumer, ServiceStartupErrorPublisher, UserCreatedConsumer, UserUpdatedConsumer } from "./events";
+import { ServiceStartupErrorPublisher } from "./events";
 import { grpcServer, postgresClient } from "./clients";
 import { rabbitClient } from "@espressotrip-org/concept-common";
 
@@ -21,10 +21,6 @@ async function main(): Promise<void> {
         grpcServer.listen(`[analytic-service:gRPC-server]: Listening port ${process.env.GRPC_SERVER_PORT}`);
 
         /** Add RabbitMQ Listeners */
-        await new ProductCreatedConsumer(rabbitClient.connection).listen();
-        await new ProductUpdatedConsumer(rabbitClient.connection).listen();
-        await new UserCreatedConsumer(rabbitClient.connection).listen();
-        await new UserUpdatedConsumer(rabbitClient.connection).listen();
     } catch (error) {
         const message = (error as Error).message;
 

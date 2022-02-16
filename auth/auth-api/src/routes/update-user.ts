@@ -18,7 +18,7 @@ router.patch(
     "/api/auth/user/:id",
     validateCurrentUser,
     requireAuth,
-    requiredRoles(UserRoles.SUPER),
+    requiredRoles(UserRoles.ADMIN),
     payloadValidation(updateUserSchema),
     async (req: Request, res: Response) => {
         const { id } = req.params;

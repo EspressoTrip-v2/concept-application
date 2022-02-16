@@ -67,7 +67,21 @@ Once everything is up and running open your browser and go to http://acmefast.de
 If you have included the message bus domain in your hosts file http://rabbit.acmefast.dev will display the message bus UI. Rabit dashboard username and password is "guest".
 
 If you are on Chrome and you get a warning about certificates, without the ability to ignore. Click anywhere on the webpage and type "thisisunsafe" and enter.
-### Postgres Database Connections
+
+### Skaffold Image Handling:
+Every time you make shut Skaffold down it removes the created deployments, there is a small issue that sometimes it leaves dangling images that take up space. You might get a low
+memory warning from minikube. To clean any dangling images you need to ssh into minikube to clear then out.
+```bash
+~$  minikube ssh -- docker system prune
+```
+This should stop the warnings. 
+```bash
+# Appending -a will clear everything
+~$  minikube ssh -- docker system prune -a
+```
+Using the -a flag will wipe all images and Skaffold will have to rebuild them all at start.
+
+### Postgres Database Connections:
 Some services use Postgres for databases (e.g. analytic-service), on startup of a Postgres operator deployment you will have to get the generated password so the application can connect to it.
 To get the passwords for the existing databases:
 ```bash
@@ -97,7 +111,18 @@ If you have any issues with failure to connect to the MongoDB pods, run the belo
 ~$ kubectl get secret task-mongo-task-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
 ```
 Copy the infra/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
-### Side Note
+
+### Connecting to a Kubernetes Mongo Database:
+```bash
+# First find the service that connects the database you want
+~$ kubectl get service
+# Forward the port to the host machine
+~$ kubectl port-forward service/<SERVICE_NAME> 27017:27017
+```
+Open Compass or Studio3T and connect to the database on localhost:27017. If you already have a local database running you can map the service port to a different
+local port (e.g. 27018:27017 Then adjust your connection string) 
+
+### Side Note:
 If you really can't get things running give me a shout. If you are building the front end, you don't need to make a PR, but please do so on any back-end changes. 
 Folder structure changes will have to go with skaffold.yaml changes to update the development environment.
 

@@ -10,12 +10,11 @@ router.post("/api/auth/local", payloadValidation(localUserSchema), async (req: R
     const localUser: LocalGrpcUser = req.body;
 
     /** Make the request to the gRPC auth-service server */
-    const rpcResponse = await userGrpcClient.saveLocalUser(localUser);
+    const rpcResponse = await userGrpcClient.loginLocalUser(localUser);
     if (isGRPCStatus(rpcResponse)) throw grpcErrorTranslator(rpcResponse);
 
     /** Add to the session */
     req.session = {
-        userRole: rpcResponse.user?.userRole,
         payload: rpcResponse.jwt,
     };
 

@@ -1,4 +1,4 @@
-// Original file: src/clients/proto/analytic.proto
+// Original file: ../../analytic/proto/analytic.proto
 
 import type { grpcProductBreakDown as _analyticsPackage_grpcProductBreakDown, grpcProductBreakDown__Output as _analyticsPackage_grpcProductBreakDown__Output } from '../analyticsPackage/grpcProductBreakDown';
 

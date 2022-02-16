@@ -10,13 +10,12 @@ router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
     if (!googleUser) throw new NotFoundError("Google user not found");
 
     /** Make the request to the gRPC auth-service server */
-    const rpcResponse = await userGrpcClient.saveGoogleUser(googleUser);
+    const rpcResponse = await userGrpcClient.loginGoogleUser(googleUser);
     if (isGRPCStatus(rpcResponse)) throw grpcErrorTranslator(rpcResponse);
 
 
     /** Add to the session */
     req.session = {
-        userRole: rpcResponse.user?.userRole,
         payload: rpcResponse.jwt,
     };
 

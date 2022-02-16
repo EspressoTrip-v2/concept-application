@@ -4,25 +4,43 @@ package userPackage;
 
 message ServerStreamUserResponse {
     string id = 1;
-    string name = 2;
-    string email = 3;
-    string signInType = 4;
-    string providerId = 5;
-    repeated string categories = 6;
-    string userRole = 7;
-    string password = 8;
-    int32 version = 9;
+    string firstNAme = 2;
+    string lastName = 3;
+    string gender = 4;
+    string ethnicity = 5;
+    string position = 6;
+    string startDate = 7;
+    string shiftPreference = 8;
+    string branchName = 9;
+    string region = 10;
+    string country = 11;
+    string phoneNUmber = 12;
+    string email = 13;
+    int32 version = 14;
+    string signInType = 15;
+    string providerId = 16;
+    string userRole = 17;
 }
 
 message grpcUser {
     string id = 1;
-    string name = 2;
-    string email = 3;
-    string signInType = 4;
-    string userRole = 5;
-    string providerId = 6;
-    repeated string categories = 7;
-    int32 version = 8;
+    string firstNAme = 2;
+    string lastName = 3;
+    string gender = 4;
+    string ethnicity = 5;
+    string position = 6;
+    string startDate = 7;
+    string shiftPreference = 8;
+    string branchName = 9;
+    string region = 10;
+    string country = 11;
+    string phoneNumber = 12;
+    string email = 13;
+    int32 version = 14;
+    string signInType = 15;
+    string providerId = 16;
+    string password = 17;
+    string userRole = 18;
 }
 
 message AllGrpcUsers {
@@ -76,10 +94,10 @@ message GitHubGrpcUser{
 }
 
 message LocalGrpcUser{
-    string name = 1;
-    string email = 2;
-    string password = 3;
-    bool type = 4;
+    string firstName = 1;
+    string lastName = 2;
+    string email = 3;
+    string password = 4;
 }
 
 message CreateGrpcUserInfo{
@@ -99,8 +117,8 @@ message grpcUserUpdate{
 
 service UserService {
     rpc GetAllUsers(AllGrpcUsers) returns (stream ServerStreamUserResponse) {};
-    rpc SaveGoogleUser(GoogleGrpcUser) returns (CreateGrpcUserInfo) {};
-    rpc SaveGitHubUser(GitHubGrpcUser) returns (CreateGrpcUserInfo) {};
-    rpc SaveLocalUser(LocalGrpcUser) returns (CreateGrpcUserInfo) {};
+    rpc LoginGoogleUser(GoogleGrpcUser) returns (CreateGrpcUserInfo) {};
+    rpc LoginGitHubUser(GitHubGrpcUser) returns (CreateGrpcUserInfo) {};
+    rpc LoginLocalUser(LocalGrpcUser) returns (CreateGrpcUserInfo) {};
     rpc UpdateUser(grpcUserUpdate) returns (grpcUser) {};
 }

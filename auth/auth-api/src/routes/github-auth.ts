@@ -10,13 +10,12 @@ router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
     if (!gitHubUser) throw new NotFoundError("Github user not found");
 
     /** Make the request to the gRPC auth-service server */
-    const rpcResponse = await userGrpcClient.saveGitHubUser(gitHubUser);
+    const rpcResponse = await userGrpcClient.loginGitHubUser(gitHubUser);
     if (isGRPCStatus(rpcResponse)) throw grpcErrorTranslator(rpcResponse);
 
 
     /** Add to the session */
     req.session = {
-        userRole: rpcResponse.user?.userRole,
         payload: rpcResponse.jwt,
     };
 

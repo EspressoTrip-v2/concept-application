@@ -14,6 +14,9 @@ export class GrpcServer extends AbstractGrpcServer {
     readonly m_server = new grpc.Server();
 
 
+    // TODO: NEED TO CREATE SERVICE RPC CALLS HERE
+
+
     listen(logMessage: string): void {
         this.m_server.addService(this.m_package.AnalyticService.service, {});
 

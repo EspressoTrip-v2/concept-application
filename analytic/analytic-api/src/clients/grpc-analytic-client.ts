@@ -12,6 +12,7 @@ export class GrpcAnalyticClient extends AbstractGrpcClient {
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
     readonly m_package = this.m_grpcObject.analyticsPackage;
 
+    // TODO: NEED TO IMPLEMENT SERVICE RPC CALLS HERE
 }
 
 export const userGrpcClient = new GrpcAnalyticClient();

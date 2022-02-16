@@ -1,26 +1,42 @@
-// Original file: src/clients/proto/user.proto
+// Original file: ../../auth/proto/user.proto
 
 
 export interface ServerStreamUserResponse {
   'id'?: (string);
-  'name'?: (string);
+  'firstNAme'?: (string);
+  'lastName'?: (string);
+  'gender'?: (string);
+  'ethnicity'?: (string);
+  'position'?: (string);
+  'startDate'?: (string);
+  'shiftPreference'?: (string);
+  'branchName'?: (string);
+  'region'?: (string);
+  'country'?: (string);
+  'phoneNUmber'?: (string);
   'email'?: (string);
+  'version'?: (number);
   'signInType'?: (string);
   'providerId'?: (string);
-  'categories'?: (string)[];
   'userRole'?: (string);
-  'password'?: (string);
-  'version'?: (number);
 }
 
 export interface ServerStreamUserResponse__Output {
   'id': (string);
-  'name': (string);
+  'firstNAme': (string);
+  'lastName': (string);
+  'gender': (string);
+  'ethnicity': (string);
+  'position': (string);
+  'startDate': (string);
+  'shiftPreference': (string);
+  'branchName': (string);
+  'region': (string);
+  'country': (string);
+  'phoneNUmber': (string);
   'email': (string);
+  'version': (number);
   'signInType': (string);
   'providerId': (string);
-  'categories': (string)[];
   'userRole': (string);
-  'password': (string);
-  'version': (number);
 }

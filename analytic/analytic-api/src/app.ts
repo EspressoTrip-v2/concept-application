@@ -14,17 +14,22 @@ app.use(
     cookieSession({
         signed: false,
         secure: process.env.NODE_ENV === "production",
-    }),
+    })
 );
 
 /** User Validation */
 app.use(validateCurrentUser);
 
 /** Routes */
-app.use(Routers.getAllUserGroupsRouter);
-app.use(Routers.getUserProductsRouter);
-app.use(Routers.getProductsByCatRouter);
-app.use(Routers.getOrdersByDateRouter);
+app.use(Routers.getAbsenteesRouter);
+app.use(Routers.getShiftScheduleRouter);
+app.use(Routers.getShiftProductivityRouter);
+app.use(Routers.getActiveWorkingRouter);
+app.use(Routers.getJobsCompletedRouter);
+app.use(Routers.getJobCompletionTimeRouter);
+app.use(Routers.getJobsIncompleteRouter);
+app.use(Routers.getJobsInProgressRouter);
+app.use(Routers.getShiftCountDownRouter);
 
 /** Not Found */
 app.all("*", async () => {

@@ -1,4 +1,4 @@
-// Original file: src/clients/proto/analytic.proto
+// Original file: ../../analytic/proto/analytic.proto
 
 
 export interface grpcProduct {

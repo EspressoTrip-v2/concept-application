@@ -1,16 +1,25 @@
 import mongoose from "mongoose";
-import { Categories, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
 import { GoogleGrpcUser } from "../clients/proto/userPackage/GoogleGrpcUser";
 import { LocalGrpcUser } from "../clients/proto/userPackage/LocalGrpcUser";
 
 /** User Interface */
 export interface UserAttrs {
-    name: string;
+    firstName: string;
+    lastName: string;
+    gender: string;
+    ethnicity: string;
+    position: string;
+    startDate: string;
+    shiftPreference: string;
+    branchName: string;
+    region: string;
+    country: string;
+    phoneNUmber: string;
     email: string;
     signInType: SignInTypes;
     userRole?: UserRoles;
-    categories?: Array<Categories>;
     password?: string | null;
     providerId?: string | null;
 }
@@ -26,12 +35,21 @@ export interface UserModel extends mongoose.Model<UserDoc> {
 /** Extend mongoose document with product document values */
 export interface UserDoc extends mongoose.Document {
     id: string;
-    name: string;
+    firstName: string;
+    lastName: string;
+    gender: string;
+    ethnicity: string;
+    position: string;
+    startDate: string;
+    shiftPreference: string;
+    branchName: string;
+    region: string;
+    country: string;
+    phoneNUmber: string;
     email: string;
     signInType: SignInTypes;
-    userRole: UserRoles;
-    providerId: string;
-    categories: Array<Categories>;
+    userRole?: UserRoles;
     password: string;
+    providerId: string;
     version: number;
 }

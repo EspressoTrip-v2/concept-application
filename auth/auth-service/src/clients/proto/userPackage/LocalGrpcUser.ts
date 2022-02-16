@@ -1,16 +1,16 @@
-// Original file: src/clients/proto/user.proto
+// Original file: ../../auth/proto/user.proto
 
 
 export interface LocalGrpcUser {
-  'name'?: (string);
+  'firstName'?: (string);
+  'lastName'?: (string);
   'email'?: (string);
   'password'?: (string);
-  'type'?: (boolean);
 }
 
 export interface LocalGrpcUser__Output {
-  'name': (string);
+  'firstName': (string);
+  'lastName': (string);
   'email': (string);
   'password': (string);
-  'type': (boolean);
 }

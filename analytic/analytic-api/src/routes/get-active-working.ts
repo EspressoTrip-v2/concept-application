@@ -3,8 +3,7 @@ import { requireAuth, requiredRoles, UserRoles } from "@espressotrip-org/concept
 
 const router = express.Router();
 
-router.get("/api/analytic/products/:category", requireAuth, requiredRoles(UserRoles.ADMIN), async (req: Request, res: Response) => {
+router.get("/api/analytic/working", requireAuth, requiredRoles(UserRoles.ADMIN), async (req: Request, res: Response) => {
     res.send(req.currentUser);
 });
-
-export { router as getProductsByCatRouter };
+export { router as getActiveWorkingRouter };

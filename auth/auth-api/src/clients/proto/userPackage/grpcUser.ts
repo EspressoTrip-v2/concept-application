@@ -1,24 +1,44 @@
-// Original file: src/clients/proto/user.proto
+// Original file: ../../auth/proto/user.proto
 
 
 export interface grpcUser {
   'id'?: (string);
-  'name'?: (string);
+  'firstNAme'?: (string);
+  'lastName'?: (string);
+  'gender'?: (string);
+  'ethnicity'?: (string);
+  'position'?: (string);
+  'startDate'?: (string);
+  'shiftPreference'?: (string);
+  'branchName'?: (string);
+  'region'?: (string);
+  'country'?: (string);
+  'phoneNumber'?: (string);
   'email'?: (string);
-  'signInType'?: (string);
-  'userRole'?: (string);
-  'providerId'?: (string);
-  'categories'?: (string)[];
   'version'?: (number);
+  'signInType'?: (string);
+  'providerId'?: (string);
+  'password'?: (string);
+  'userRole'?: (string);
 }
 
 export interface grpcUser__Output {
   'id': (string);
-  'name': (string);
+  'firstNAme': (string);
+  'lastName': (string);
+  'gender': (string);
+  'ethnicity': (string);
+  'position': (string);
+  'startDate': (string);
+  'shiftPreference': (string);
+  'branchName': (string);
+  'region': (string);
+  'country': (string);
+  'phoneNumber': (string);
   'email': (string);
-  'signInType': (string);
-  'userRole': (string);
-  'providerId': (string);
-  'categories': (string)[];
   'version': (number);
+  'signInType': (string);
+  'providerId': (string);
+  'password': (string);
+  'userRole': (string);
 }
