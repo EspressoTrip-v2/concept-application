@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: auth-mongo-dpl
+    labels:
+        app: auth-mongo
+spec:
+    replicas: 1
+    template:
+        metadata:
+            name: auth-mongo
+            labels:
+                app: auth-mongo
+        spec:
+            volumes:
+                - name: auth-mongo-volume
+                  persistentVolumeClaim:
+                      claimName: auth-pv-claim
+            containers:
+                - name: auth-mongo
+                  image: bitnami/mongodb
+                  imagePullPolicy: IfNotPresent
+                  envFrom:
+                      - configMapRef:
+                            name: auth-config
+            restartPolicy: Always
+    selector:
+        matchLabels:
+            app: auth-mongo
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: auth-mongo-srv
+spec:
+    selector:
+        app: auth-mongo
+    ports:
+        - port: 27017
+          targetPort: 27017
+          name: auth-db
+---
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: auth-mongo-volume
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/volumes/auth"
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: auth-pv-claim
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: auth-config
+data:
+    MONGODB_ROOT_PASSWORD: "8103"

@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: task-mongo-dpl
+    labels:
+        app: task-mongo
+spec:
+    replicas: 1
+    template:
+        metadata:
+            name: task-mongo
+            labels:
+                app: task-mongo
+        spec:
+            volumes:
+                - name: task-mongo-volume
+                  persistentVolumeClaim:
+                      claimName: task-pv-claim
+            containers:
+                - name: task-mongo
+                  image: bitnami/mongodb
+                  imagePullPolicy: IfNotPresent
+                  envFrom:
+                      - configMapRef:
+                            name: task-config
+            restartPolicy: Always
+    selector:
+        matchLabels:
+            app: task-mongo
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: task-mongo-srv
+spec:
+    selector:
+        app: task-mongo
+    ports:
+        - port: 27017
+          targetPort: 27017
+          name: task-db
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+    name: task-mongo-volume
+    labels:
+        type: local
+spec:
+    storageClassName: manual
+    capacity:
+        storage: 1Gi
+    accessModes:
+        - ReadWriteOnce
+    hostPath:
+        path: "/volumes/task"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: task-pv-claim
+spec:
+    storageClassName: manual
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 1Gi
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: task-config
+data:
+    MONGODB_ROOT_PASSWORD: "8103"

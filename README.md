@@ -37,6 +37,34 @@ the rabbit.info is to access the message bus from your browser.
 192.168.49.2 rabbit.acmefast.dev
 ```
 
+### IMPORTANT BEFORE MOVING ON:
+You can choose to not run the operators for Mongo and RabbitMQ. The operators deploy a host of custom resources to manage the container. There is another script
+and yaml files that allow for stand-alone deployments of all the Mongo and RabbitMQ containers. You will have to make one or two small adjustments in the deployment
+ConfigMaps that are using the MongoDB pods. Postgres will still run with the operator, simply because the adjustments required can not be done without changing the source code.
+
+```bash
+# Deploys all PV, PVC and pods
+~$ ./pod-deploys.sh
+```
+Ensure that the pods are all running and that the persistent volumes have been claimed
+```bash
+~$ kubectl get pods
+```
+Check PV and PVC
+```bash
+# Check the persistent volume 
+~$ kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                                     STORAGECLASS   REASON   AGE
+auth-mongo-volume                          1Gi        RWO            Retain           Bound    default/auth-pv-claim                     manual                  88s
+```
+```bash
+# Check the persistent claim
+~$ kubectl get pvc
+NAME                              STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+auth-pv-claim                     Bound    auth-mongo-volume                          1Gi        RWO            manual         119s
+```
+Make sure to comment out the cluster connection string (Long version)  and uncomment the deployment connection string (Short version) in the infra/infra-dev deployment files that are using the MongoDB databases.
+Once everything is up and running skip the below operators section and go to **Skaffold**.
 ### Operators:
 Once **Minikube** is running, begin deploying the operators and operator deployments.
 
@@ -56,6 +84,7 @@ All operators need to have status **Running**. Then deploy the operator deployme
 ~$ kubectl get pods
 ```
 These also need to have status **Running** before any other deployment can be run.
+
 ### Skaffold:
 
 Application uses Skaffold for the management of the Kubernetes cluster during development. Node can be buggy sometimes, so you might have to stop and restart Skaffold after making changes.
@@ -98,8 +127,20 @@ This will give you the base64 encrypted password and user, ignore the user as it
 ```
 In the infra/secrets.yaml paste the password into the relevant services Postgres password key. 
 
-### Mongo Database Connections:
-If you have any issues with failure to connect to the MongoDB pods, run the below commands in the terminal.
+### Connecting to a Kubernetes Mongo Database:
+```bash
+# First find the service that connects the database you want
+~$ kubectl get service
+# Forward the port to the host machine
+~$ kubectl port-forward service/<SERVICE_NAME> 27017:27017
+```
+Open Compass or Studio3T and connect to the database on localhost:27017. If you already have a local database running you can map the service port to a different
+local port (e.g. 27018:27017 Then adjust your connection string)
+
+
+### Mongo Database Connections for operator clusters: 
+If you have any issues with failure to connect to the MongoDB operator cluster pods, run the below commands in the terminal.
+!!!NB. This is not for the pod-deploy.sh MongoDB instances !!!
 ```bash
 # auth-service Mongo database
 ~$ kubectl get secret auth-mongo-auth-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
@@ -111,16 +152,6 @@ If you have any issues with failure to connect to the MongoDB pods, run the belo
 ~$ kubectl get secret task-mongo-task-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
 ```
 Copy the infra/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
-
-### Connecting to a Kubernetes Mongo Database:
-```bash
-# First find the service that connects the database you want
-~$ kubectl get service
-# Forward the port to the host machine
-~$ kubectl port-forward service/<SERVICE_NAME> 27017:27017
-```
-Open Compass or Studio3T and connect to the database on localhost:27017. If you already have a local database running you can map the service port to a different
-local port (e.g. 27018:27017 Then adjust your connection string) 
 
 ### Side Note:
 If you really can't get things running give me a shout. If you are building the front end, you don't need to make a PR, but please do so on any back-end changes. 

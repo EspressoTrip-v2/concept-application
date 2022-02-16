@@ -3,7 +3,8 @@ kind: ConfigMap
 metadata:
     name: auth-service-config
 data:
-    MONGO_URI: "mongodb://root:8103@auth-mongo-0.auth-mongo-svc.default.svc.cluster.local:27017/auth?ssl=false"
+#    MONGO_URI: "mongodb://root:8103@auth-mongo-0.auth-mongo-svc.default.svc.cluster.local:27017/auth?ssl=false"
+    MONGO_URI: "mongodb://root:8103@auth-mongo-srv:27017"
 
 ---
 apiVersion: apps/v1
@@ -32,7 +33,7 @@ spec:
                       - secretRef:
                             name: global-secret
                   ports:
-                    - containerPort: 8080
+                      - containerPort: 8080
 
             restartPolicy: Always
     selector:

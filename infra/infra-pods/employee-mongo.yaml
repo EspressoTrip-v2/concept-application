@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: employee-mongo-dpl
+    labels:
+        app: employee-mongo
+spec:
+    replicas: 1
+    template:
+        metadata:
+            name: employee-mongo
+            labels:
+                app: employee-mongo
+        spec:
+            volumes:
+                - name: employee-mongo-volume
+                  persistentVolumeClaim:
+                      claimName: employee-pv-claim
+            containers:
+                - name: employee-mongo
+                  image: bitnami/mongodb
+                  imagePullPolicy: IfNotPresent
+                  envFrom:
+                      - configMapRef:
+                            name: employee-config
+            restartPolicy: Always
+    selector:
+        matchLabels:
+            app: employee-mongo
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: employee-mongo-srv
+spec:
+    selector:
+        app: employee-mongo
+    ports:
+        - port: 27017
+          targetPort: 27017
+          name: employee-db
+
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+    name: employee-mongo-volume
+    labels:
+        type: local
+spec:
+    storageClassName: manual
+    capacity:
+        storage: 1Gi
+    accessModes:
+        - ReadWriteOnce
+    hostPath:
+        path: "/volumes/employee"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: employee-pv-claim
+spec:
+    storageClassName: manual
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 1Gi
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: employee-config
+data:
+    MONGODB_ROOT_PASSWORD: "8103"

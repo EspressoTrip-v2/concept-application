@@ -4,14 +4,14 @@
 kubectl apply -f infra-operators/operators/rabbitmq/operator.yaml
 
 # Postgres Operators
-kubectl apply -f infra-operators/operators/postgres/configmap.yaml
-kubectl apply -f infra-operators/operators/postgres/operator-service-account-rbac.yaml
-kubectl apply -f infra-operators/operators/postgres/postgres-operator.yaml
+kubectl apply -f infra/infra-operators/operators/postgres/configmap.yaml
+kubectl apply -f infra/infra-operators/operators/postgres/operator-service-account-rbac.yaml
+kubectl apply -f infra/infra-operators/operators/postgres/postgres-operator.yaml
 
 # MongoDB Operators
-kubectl apply -f infra-operators/operators/mongo/crd.yaml
-kubectl apply -k infra-operators/operators/mongo/roles-bindings/
-kubectl apply -f infra-operators/operators/mongo/operator.yaml
+kubectl apply -f infra/infra-operators/operators/mongo/crd.yaml
+kubectl apply -k infra/infra-operators/operators/mongo/roles-bindings/
+kubectl apply -f infra/infra-operators/operators/mongo/operator.yaml
 
 
 # Connection string commands for the Mongo deployments, clusters use connection strings built up from their names

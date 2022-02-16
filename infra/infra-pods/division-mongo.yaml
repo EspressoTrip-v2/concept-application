@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: division-mongo-dpl
+    labels:
+        app: division-mongo
+spec:
+    replicas: 1
+    template:
+        metadata:
+            name: division-mongo
+            labels:
+                app: division-mongo
+        spec:
+            volumes:
+                - name: division-mongo-volume
+                  persistentVolumeClaim:
+                      claimName: division-pv-claim
+            containers:
+                - name: division-mongo
+                  image: bitnami/mongodb
+                  imagePullPolicy: IfNotPresent
+                  envFrom:
+                      - configMapRef:
+                            name: division-config
+            restartPolicy: Always
+    selector:
+        matchLabels:
+            app: division-mongo
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: division-mongo-srv
+spec:
+    selector:
+        app: division-mongo
+    ports:
+        - port: 27017
+          targetPort: 27017
+          name: division-db
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+    name: division-mongo-volume
+    labels:
+        type: local
+spec:
+    storageClassName: manual
+    capacity:
+        storage: 1Gi
+    accessModes:
+        - ReadWriteOnce
+    hostPath:
+        path: "/volumes/division"
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+    name: division-pv-claim
+spec:
+    storageClassName: manual
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 1Gi
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: division-config
+data:
+    MONGODB_ROOT_PASSWORD: "8103"

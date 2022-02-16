@@ -4,7 +4,7 @@ kind: Config
 deploy:
     kubectl:
         manifests:
-            - ./infra/*
+            - ./infra/infra-dev/*
 build:
     local:
         push: false
