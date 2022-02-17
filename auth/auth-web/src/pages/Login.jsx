@@ -28,7 +28,6 @@ const Login = () => {
     const user = {
       email: input.email,
       password: input.password,
-      type: signUp,
     };
     await axios.post('/api/auth/local', user);
     navigate('/');
