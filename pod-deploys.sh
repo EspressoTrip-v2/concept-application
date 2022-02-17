@@ -18,7 +18,7 @@ kubectl apply -f infra/infra-operators/operators/postgres/operator-service-accou
 kubectl apply -f infra/infra-operators/operators/postgres/postgres-operator.yaml
 
 # Wait for deployments to be ready
-kubectl wait --for=condition=Ready --all deployments
+kubectl wait --for=condition=Ready --timeout=600s --all deployments
 
 # Postgres cluster deployments
 kubectl apply -f infra/infra-operators/operator-deployments/postgres/analytic-postgres-cluster.yaml
