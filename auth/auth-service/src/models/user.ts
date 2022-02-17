@@ -84,7 +84,7 @@ userSchema.statics.buildUserFromGitHub = function(profile: GitHubGrpcUser): User
     const nameArray = profile.name?.split(" ") || [];
     const firstName = nameArray[0] || "No GitHub first name supplied";
     const lastName = nameArray.length > 1 ? nameArray[nameArray.length - 1] : "No GitHub last name supplied";
-    return {
+    return { // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
         firstName,
         lastName,
         branchName: "",
@@ -109,7 +109,7 @@ userSchema.statics.buildUserFromGitHub = function(profile: GitHubGrpcUser): User
  * @param profile {GoogleGrpcUser}
  */
 userSchema.statics.buildUserFromGoogle = function(profile: GoogleGrpcUser): UserAttrs {
-    return {
+    return { // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
         firstName: profile.name!,
         lastName: profile.given_name!,
         branchName: "",
@@ -134,9 +134,9 @@ userSchema.statics.buildUserFromGoogle = function(profile: GoogleGrpcUser): User
  * @param profile {LocalGrpcUser}
  */
 userSchema.statics.buildUserFromLocal = function(profile: LocalGrpcUser): UserAttrs {
-    return {
-        firstName: profile.firstName!,
-        lastName: profile.lastName!,
+    return { // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
+        firstName: "",
+        lastName: "",
         branchName: "",
         country:  "",
         gender: "",
