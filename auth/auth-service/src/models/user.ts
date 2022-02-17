@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: UserRoles.EMPLOYEE,
         },
-        password: { ype: String, default: "", },
+        password: { type: String, default: "", },
         providerId: { type: String, default: "", },
     },
     {

@@ -142,6 +142,32 @@ In the infra/secrets.yaml paste the password into the relevant services Postgres
 Open Compass or Studio3T and connect to the database on localhost:27017. If you already have a local database running you can map the service port to a different
 local port (e.g. 27018:27017 Then adjust your connection string)
 
+### Add Dummy User
+User will not be created from a UI, they will have to be added manually. Only employees will be created from the UI. Insert the below document into the auth-service mongo
+database in the users collection. 
+
+```json
+{
+  "firstName" : "<USER FIRSTNAME>",
+  "lastName" : "<USER LASTNAME>",
+  "gender" : "male",
+  "ethnicity" : "white",
+  "position" : "developer",
+  "startDate" : "2022-02-17T07:45:08.422Z",
+  "shiftPreference" : "night",
+  "branchName" : "wyzetalk",
+  "region" : "WC",
+  "country" : "ZA",
+  "phoneNUmber" : "<USER PHONE>",
+  "email" : "<USER EMAIL>",
+  "signInType" : "LOCAL",
+  "userRole" : "ADMIN",
+  "password" : "1eece7cc0609c2cd5aba2334504e390726739bbaa2cac6bbb7b74a9e017b65b061b0fe053b0087b7904ee2207af08c0dd535fee9d2b411498977e171258ee5b5.4a679166ad8f5774",
+  "providerId" : "",
+  "version" : 0
+}
+```
+Emails need to be unique as well as phone numbers: Password is ***12345***
 
 ### Mongo Database Connections for operator clusters: 
 If you have any issues with failure to connect to the MongoDB operator cluster pods, run the below commands in the terminal.

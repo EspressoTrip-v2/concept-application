@@ -3,7 +3,7 @@ import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { ServerStreamUserResponse } from "./proto/userPackage/ServerStreamUserResponse";
 import { User, UserDoc } from "../models";
-import { AbstractGrpcServer, rabbitClient, SignInTypes } from "@espressotrip-org/concept-common";
+import { AbstractGrpcServer, rabbitClient, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { UpdateUserPublisher } from "../events/publishers";
 import { generateJwt, Password } from "../services";
 import { grpcUser } from "./proto/userPackage/grpcUser";
