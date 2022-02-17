@@ -143,7 +143,7 @@ Open Compass or Studio3T and connect to the database on localhost:27017. If you 
 local port (e.g. 27018:27017 Then adjust your connection string)
 
 ### Add Dummy User
-User will not be created from a UI, they will have to be added manually. Only employees will be created from the UI. Insert the below document into the auth-service mongo
+Users will not be created from a UI, they will have to be added manually. Only employees will be created from the UI. Insert the below document into the auth-service mongo
 database in the users collection. 
 
 ```json
@@ -158,11 +158,11 @@ database in the users collection.
   "branchName" : "wyzetalk",
   "region" : "WC",
   "country" : "ZA",
-  "phoneNUmber" : "<USER PHONE>",
+  "phoneNUmber" : "0823333333",
   "email" : "<USER EMAIL>",
   "signInType" : "LOCAL",
   "userRole" : "ADMIN",
-  "password" : "1eece7cc0609c2cd5aba2334504e390726739bbaa2cac6bbb7b74a9e017b65b061b0fe053b0087b7904ee2207af08c0dd535fee9d2b411498977e171258ee5b5.4a679166ad8f5774",
+  "password" : "e959c9c75eab764731150b174506ce54197eb854522e5120eb467a4961fd1f4f0b2a37dbc9061a951767afba93e5a168faef79cdc9f29ec9997e150701cc5c21.590049f253fc43f0",
   "providerId" : "",
   "version" : 0
 }

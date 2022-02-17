@@ -115,7 +115,6 @@ export class GrpcServer extends AbstractGrpcServer {
 
         /** See if user exists */
         localUser = await User.findOne({ email: call.request.email });
-
         if (!localUser)
             return callback({
                 code: grpc.status.NOT_FOUND,
