@@ -22,15 +22,15 @@ const userSchema = new mongoose.Schema(
         branchName: { type: String, required: true },
         region: { type: String, required: true },
         country: { type: String, required: true },
-        phoneNUmber: { type: String, required: true, unique: true },
+        phoneNUmber: { type: String, required: true },
         email: { type: String, required: true, unique: true },
-        signInType: { type: String, required: true, },
+        signInType: { type: String, required: true },
         userRole: {
             type: String,
             default: UserRoles.EMPLOYEE,
         },
-        password: { type: String, default: "", },
-        providerId: { type: String, default: "", },
+        password: { type: String, default: "" },
+        providerId: { type: String, default: "" },
     },
     {
         toJSON: {
@@ -40,7 +40,7 @@ const userSchema = new mongoose.Schema(
                 delete ret._id;
             },
         },
-    },
+    }
 );
 
 /** Replace the __v with version  && use the update-if-current plugin*/
@@ -48,8 +48,8 @@ userSchema.set("versionKey", "version");
 userSchema.plugin(updateIfCurrentPlugin);
 
 /** Set temporary analytics object on creation */
-userSchema.post("save", async function() {
-    userSchema.virtual("analytics").get(function() {
+userSchema.post("save", async function () {
+    userSchema.virtual("analytics").get(function () {
         return {
             serviceName: MicroServiceNames.AUTH_SERVICE,
             dateSent: new Date().toISOString(),
@@ -58,7 +58,7 @@ userSchema.post("save", async function() {
 });
 
 /** Encrypt the password on save */
-userSchema.pre("save", async function(done) {
+userSchema.pre("save", async function (done) {
     const password = this.get("password");
     if (password && this.isModified("password")) {
         const hashed = await Password.toHash(this.get("password"));
@@ -71,7 +71,7 @@ userSchema.pre("save", async function(done) {
  * Static function to build product
  * @param attributes
  */
-userSchema.statics.build = function(attributes: UserAttrs): UserDoc {
+userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
     return new User(attributes);
 };
 
@@ -80,15 +80,16 @@ userSchema.statics.build = function(attributes: UserAttrs): UserDoc {
  * @param profile {GoogleGrpcUser}
  * @return {UserAttrs}
  */
-userSchema.statics.buildUserFromGitHub = function(profile: GitHubGrpcUser): UserAttrs {
+userSchema.statics.buildUserFromGitHub = function (profile: GitHubGrpcUser): UserAttrs {
     const nameArray = profile.name?.split(" ") || [];
     const firstName = nameArray[0] || "No GitHub first name supplied";
     const lastName = nameArray.length > 1 ? nameArray[nameArray.length - 1] : "No GitHub last name supplied";
-    return { // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
+    return {
+        // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
         firstName,
         lastName,
         branchName: "",
-        country:  "",
+        country: "",
         gender: "",
         ethnicity: "",
         phoneNUmber: "",
@@ -108,12 +109,13 @@ userSchema.statics.buildUserFromGitHub = function(profile: GitHubGrpcUser): User
  * Creates a user attributes object from Google profile
  * @param profile {GoogleGrpcUser}
  */
-userSchema.statics.buildUserFromGoogle = function(profile: GoogleGrpcUser): UserAttrs {
-    return { // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
+userSchema.statics.buildUserFromGoogle = function (profile: GoogleGrpcUser): UserAttrs {
+    return {
+        // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
         firstName: profile.name!,
         lastName: profile.given_name!,
         branchName: "",
-        country:  "",
+        country: "",
         gender: "",
         ethnicity: "",
         phoneNUmber: "",
@@ -133,12 +135,13 @@ userSchema.statics.buildUserFromGoogle = function(profile: GoogleGrpcUser): User
  * Creates a user attributes object from Local profile
  * @param profile {LocalGrpcUser}
  */
-userSchema.statics.buildUserFromLocal = function(profile: LocalGrpcUser): UserAttrs {
-    return { // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
+userSchema.statics.buildUserFromLocal = function (profile: LocalGrpcUser): UserAttrs {
+    return {
+        // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
         firstName: "",
         lastName: "",
         branchName: "",
-        country:  "",
+        country: "",
         gender: "",
         ethnicity: "",
         phoneNUmber: "",
