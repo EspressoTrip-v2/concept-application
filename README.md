@@ -3,6 +3,8 @@
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. Ability to add a service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
 
+#### The below setup only needs to be done once. To start the application you will only need to run ***skaffold dev*** , please ensure minikube is running (It does not start by default). 
+
 #### Prerequisite installations:
 
 [Skaffold](https://skaffold.dev)  
@@ -10,6 +12,7 @@ Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. A
 [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
 #### Developer Notice:
+
 If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
 Also running "npm i" in all the services will be a good idea due to the continuous changes.
 

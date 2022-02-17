@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # RabbitMQ Operators
-kubectl apply -f infra-operators/operators/rabbitmq/operator.yaml
+kubectl apply -f infra/infra-operators/operators/rabbitmq/operator.yaml
 
 # Postgres Operators
 kubectl apply -f infra/infra-operators/operators/postgres/configmap.yaml
