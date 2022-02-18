@@ -8,9 +8,6 @@ Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. A
 If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
 Also running "npm i" in all the services will be a good idea due to the continuous changes.
 
-***Volume persistence***:
-The setup below needs to be done on start up of minikube, unfortunately minikube stops all deployments on shutdown. The PV for the stand alone deployments will only remain as long as minikube is running. 
-The operator PV's persist on restart, when I have some time I will sort out the persistence... It is not priority on a test environment at the moment.
 
 
 

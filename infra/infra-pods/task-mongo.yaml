@@ -54,7 +54,7 @@ spec:
     accessModes:
         - ReadWriteOnce
     hostPath:
-        path: "/volumes/task"
+        path: "/data/task"
 
 ---
 apiVersion: v1
