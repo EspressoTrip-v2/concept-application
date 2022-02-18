@@ -1,22 +1,22 @@
 import mongoose from "mongoose";
 import { SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
-import { GoogleGrpcUser } from "../clients/proto/userPackage/GoogleGrpcUser";
-import { LocalGrpcUser } from "../clients/proto/userPackage/LocalGrpcUser";
+import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
+import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
+import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
 
 /** User Interface */
 export interface UserAttrs {
     firstName: string;
     lastName: string;
     gender: string;
-    ethnicity: string;
+    race: string;
     position: string;
     startDate: string;
     shiftPreference: string;
     branchName: string;
     region: string;
     country: string;
-    phoneNUmber: string;
+    phoneNumber: string;
     email: string;
     signInType: SignInTypes;
     userRole?: UserRoles;
@@ -38,14 +38,14 @@ export interface UserDoc extends mongoose.Document {
     firstName: string;
     lastName: string;
     gender: string;
-    ethnicity: string;
+    race: string;
     position: string;
     startDate: string;
     shiftPreference: string;
     branchName: string;
     region: string;
     country: string;
-    phoneNUmber: string;
+    phoneNumber: string;
     email: string;
     signInType: SignInTypes;
     userRole?: UserRoles;

@@ -28,7 +28,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-api:error]: Service start up error -> ${msg}`);
-        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
+        new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
             error: {
                 name: msg.name,
                 stack: msg.stack,

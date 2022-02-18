@@ -1,6 +1,6 @@
-import { grpcServer } from "./clients";
+import { grpcServer } from "./services";
 import mongoose from "mongoose";
-import { ServiceStartupErrorPublisher } from "./events/publishers";
+import { CreateEmployeeSigninConsumer, ServiceStartupErrorPublisher, UpdateEmployeeSigninConsumer } from "./events";
 import { rabbitClient } from "@espressotrip-org/concept-common";
 
 async function main(): Promise<void> {
@@ -20,6 +20,10 @@ async function main(): Promise<void> {
         /** Create gRPC server */
         grpcServer.listen(`[auth-service:gRPC-server]: Listening on ${process.env.GRPC_SERVER_PORT}`);
 
+        /** Create RabbitMQ consumers */
+        await new UpdateEmployeeSigninConsumer(rabbitClient.connection).listen();
+        await new CreateEmployeeSigninConsumer(rabbitClient.connection).listen();
+
         /** Shut down process */
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
@@ -34,7 +38,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
+        new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
             error: {
                 name: msg.name,
                 stack: msg.stack,

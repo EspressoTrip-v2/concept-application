@@ -1,5 +1,5 @@
 import { ServiceStartupErrorPublisher } from "./events";
-import { grpcServer, postgresClient } from "./clients";
+import { grpcServer, postgresClient } from "./services";
 import { rabbitClient } from "@espressotrip-org/concept-common";
 
 async function main(): Promise<void> {

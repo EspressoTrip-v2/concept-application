@@ -7,14 +7,14 @@ message ServerStreamUserResponse {
     string firstNAme = 2;
     string lastName = 3;
     string gender = 4;
-    string ethnicity = 5;
+    string race = 5;
     string position = 6;
     string startDate = 7;
     string shiftPreference = 8;
     string branchName = 9;
     string region = 10;
     string country = 11;
-    string phoneNUmber = 12;
+    string phoneNumber = 12;
     string email = 13;
     int32 version = 14;
     string signInType = 15;
@@ -27,7 +27,7 @@ message grpcUser {
     string firstNAme = 2;
     string lastName = 3;
     string gender = 4;
-    string ethnicity = 5;
+    string race = 5;
     string position = 6;
     string startDate = 7;
     string shiftPreference = 8;

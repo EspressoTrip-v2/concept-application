@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 import { UserAttrs, UserDoc, UserModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { MicroServiceNames, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { Password } from "../services";
-import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
-import { GoogleGrpcUser } from "../clients/proto/userPackage/GoogleGrpcUser";
-import { LocalGrpcUser } from "../clients/proto/userPackage/LocalGrpcUser";
+import { Password } from "../utils";
+import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
+import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
+import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
 
 /**
  * User model that uses update-if-current version incrementation
@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema(
         firstName: { type: String, required: true },
         lastName: { type: String, required: true },
         gender: { type: String, required: true },
-        ethnicity: { type: String, required: true },
+        race: { type: String, required: true },
         position: { type: String, required: true },
         startDate: { type: String, required: true },
         shiftPreference: { type: String, required: true },
@@ -91,7 +91,7 @@ userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
 //         branchName: "",
 //         country: "",
 //         gender: "",
-//         ethnicity: "",
+//         race: "",
 //         phoneNUmber: "",
 //         position: "",
 //         region: "",
@@ -117,7 +117,7 @@ userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
 //         branchName: "",
 //         country: "",
 //         gender: "",
-//         ethnicity: "",
+//         race: "",
 //         phoneNUmber: "",
 //         position: "",
 //         region: "",
@@ -143,7 +143,7 @@ userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
 //         branchName: "",
 //         country: "",
 //         gender: "",
-//         ethnicity: "",
+//         race: "",
 //         phoneNUmber: "",
 //         position: "",
 //         region: "",

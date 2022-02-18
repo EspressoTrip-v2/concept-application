@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { grpcErrorTranslator, isGRPCStatus, payloadValidation } from "@espressotrip-org/concept-common";
-import { userGrpcClient } from "../clients";
-import { LocalGrpcUser } from "../clients/proto/userPackage/LocalGrpcUser";
+import { userGrpcClient } from "../services";
+import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
 import { localUserSchema } from "../payload-schemas";
 
 const router = express.Router();

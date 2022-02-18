@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { grpcErrorTranslator, isGRPCStatus, NotFoundError } from "@espressotrip-org/concept-common";
-import { userGrpcClient } from "../clients";
-import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
+import { userGrpcClient } from "../services";
+import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
 
 const router = express.Router();
 

@@ -1,12 +1,12 @@
-// Original file: src/clients/proto/user.proto
+// Original file: src/services/proto/user.proto
 
 
-export interface grpcUser {
+export interface ServerStreamUserResponse {
   'id'?: (string);
   'firstNAme'?: (string);
   'lastName'?: (string);
   'gender'?: (string);
-  'ethnicity'?: (string);
+  'race'?: (string);
   'position'?: (string);
   'startDate'?: (string);
   'shiftPreference'?: (string);
@@ -18,16 +18,15 @@ export interface grpcUser {
   'version'?: (number);
   'signInType'?: (string);
   'providerId'?: (string);
-  'password'?: (string);
   'userRole'?: (string);
 }
 
-export interface grpcUser__Output {
+export interface ServerStreamUserResponse__Output {
   'id': (string);
   'firstNAme': (string);
   'lastName': (string);
   'gender': (string);
-  'ethnicity': (string);
+  'race': (string);
   'position': (string);
   'startDate': (string);
   'shiftPreference': (string);
@@ -39,6 +38,5 @@ export interface grpcUser__Output {
   'version': (number);
   'signInType': (string);
   'providerId': (string);
-  'password': (string);
   'userRole': (string);
 }

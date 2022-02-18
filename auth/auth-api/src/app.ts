@@ -4,7 +4,7 @@ import { errorHandler, NotFoundError } from "@espressotrip-org/concept-common";
 import * as Routers from "./routes";
 import cookieSession from "cookie-session";
 import grant from "grant";
-import { grantConfig } from "./services";
+import { grantConfig } from "./utils";
 
 const app = express();
 app.set("trust proxy", true);
