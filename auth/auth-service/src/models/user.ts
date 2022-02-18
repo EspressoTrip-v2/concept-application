@@ -2,10 +2,10 @@ import mongoose from "mongoose";
 import { UserAttrs, UserDoc, UserModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { MicroServiceNames, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { Password } from "../services";
-import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
-import { GoogleGrpcUser } from "../clients/proto/userPackage/GoogleGrpcUser";
-import { LocalGrpcUser } from "../clients/proto/userPackage/LocalGrpcUser";
+import { Password } from "../utils";
+import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
+import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
+import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
 
 /**
  * User model that uses update-if-current version incrementation

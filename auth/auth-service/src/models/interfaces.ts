@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
 import { SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
-import { GoogleGrpcUser } from "../clients/proto/userPackage/GoogleGrpcUser";
-import { LocalGrpcUser } from "../clients/proto/userPackage/LocalGrpcUser";
+import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
+import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
+import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
 
 /** User Interface */
 export interface UserAttrs {

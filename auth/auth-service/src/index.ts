@@ -1,4 +1,4 @@
-import { grpcServer } from "./clients";
+import { grpcServer } from "./services";
 import mongoose from "mongoose";
 import { ServiceStartupErrorPublisher } from "./events/publishers";
 import { rabbitClient } from "@espressotrip-org/concept-common";

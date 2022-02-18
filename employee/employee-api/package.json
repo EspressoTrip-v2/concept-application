@@ -4,7 +4,7 @@
     "description": "",
     "scripts": {
         "start": "ts-node-dev src/index.ts --poll",
-        "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/clients/proto/ src/clients/proto/*.proto"
+        "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/clients/proto/ src/services/proto/*.proto"
     },
     "author": "",
     "license": "ISC",

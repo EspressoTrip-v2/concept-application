@@ -9,8 +9,8 @@ import {
     validateCurrentUser,
 } from "@espressotrip-org/concept-common";
 import { updateUserSchema } from "../payload-schemas";
-import { userGrpcClient } from "../clients";
-import { grpcUser } from "../clients/proto/userPackage/grpcUser";
+import { userGrpcClient } from "../services";
+import { grpcUser } from "../services/proto/userPackage/grpcUser";
 
 const router = express.Router();
 

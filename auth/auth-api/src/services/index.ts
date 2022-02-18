@@ -1,1 +1,1 @@
-export * from './grant-oauth'
+export * from "./grpc-user-client";

@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { grpcErrorTranslator, isGRPCStatus, NotFoundError } from "@espressotrip-org/concept-common";
-import { userGrpcClient } from "../clients";
-import { GoogleGrpcUser } from "../clients/proto/userPackage/GoogleGrpcUser";
+import { userGrpcClient } from "../services";
+import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
 const BASE_URI = process.env.DEV_UI_REDIRECT || process.env.BASE_URI!
 const router = express.Router();
 
