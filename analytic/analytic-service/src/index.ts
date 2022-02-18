@@ -20,17 +20,6 @@ async function main(): Promise<void> {
         /** Create gRPC server */
         grpcServer.listen(`[analytic-service:gRPC-server]: Listening port ${process.env.GRPC_SERVER_PORT}`);
 
-        /** Add RabbitMQ Listeners */
-    } catch (error) {
-        const message = (error as Error).message;
-
-        console.log(`[auth-service:error]: Service start up error -> ${message}`);
-        console.log(`[auth-service:error]: Shutting down`);
-
-        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
-            errorMessage: message,
-        });
-
         /** Shut down process */
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
@@ -42,7 +31,19 @@ async function main(): Promise<void> {
             grpcServer.m_server.forceShutdown();
             await postgresClient.close();
         });
-        process.exit(1);
+
+        /** Add RabbitMQ Listeners */
+    } catch (error) {
+        const msg = (error as Error);
+        console.log(`[auth-service:error]: Service start up error -> ${msg}`);
+        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
+            error: {
+                name: msg.name,
+                stack: msg.stack,
+                message: msg.message,
+            },
+        });
+
     }
 }
 

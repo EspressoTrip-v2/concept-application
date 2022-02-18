@@ -118,5 +118,4 @@ service UserService {
     rpc LoginGoogleUser(GoogleGrpcUser) returns (CreateGrpcUserInfo) {};
     rpc LoginGitHubUser(GitHubGrpcUser) returns (CreateGrpcUserInfo) {};
     rpc LoginLocalUser(LocalGrpcUser) returns (CreateGrpcUserInfo) {};
-    rpc UpdateUser(grpcUserUpdate) returns (grpcUser) {};
 }

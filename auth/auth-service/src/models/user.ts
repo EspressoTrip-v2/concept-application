@@ -80,81 +80,81 @@ userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
  * @param profile {GoogleGrpcUser}
  * @return {UserAttrs}
  */
-userSchema.statics.buildUserFromGitHub = function (profile: GitHubGrpcUser): UserAttrs {
-    const nameArray = profile.name?.split(" ") || [];
-    const firstName = nameArray[0] || "No GitHub first name supplied";
-    const lastName = nameArray.length > 1 ? nameArray[nameArray.length - 1] : "No GitHub last name supplied";
-    return {
-        // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
-        firstName,
-        lastName,
-        branchName: "",
-        country: "",
-        gender: "",
-        ethnicity: "",
-        phoneNUmber: "",
-        position: "",
-        region: "",
-        shiftPreference: "",
-        startDate: new Date().toISOString(),
-        userRole: UserRoles.ADMIN,
-        password: "",
-        providerId: profile.id!.toString()!,
-        signInType: SignInTypes.GITHUB,
-        email: profile.email!,
-    };
-};
+// userSchema.statics.buildUserFromGitHub = function (profile: GitHubGrpcUser): UserAttrs {
+//     const nameArray = profile.name?.split(" ") || [];
+//     const firstName = nameArray[0] || "No GitHub first name supplied";
+//     const lastName = nameArray.length > 1 ? nameArray[nameArray.length - 1] : "No GitHub last name supplied";
+//     return {
+//         // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
+//         firstName,
+//         lastName,
+//         branchName: "",
+//         country: "",
+//         gender: "",
+//         ethnicity: "",
+//         phoneNUmber: "",
+//         position: "",
+//         region: "",
+//         shiftPreference: "",
+//         startDate: new Date().toISOString(),
+//         userRole: UserRoles.ADMIN,
+//         password: "",
+//         providerId: profile.id!.toString()!,
+//         signInType: SignInTypes.GITHUB,
+//         email: profile.email!,
+//     };
+// };
 
 /**
  * Creates a user attributes object from Google profile
  * @param profile {GoogleGrpcUser}
  */
-userSchema.statics.buildUserFromGoogle = function (profile: GoogleGrpcUser): UserAttrs {
-    return {
-        // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
-        firstName: profile.name!,
-        lastName: profile.given_name!,
-        branchName: "",
-        country: "",
-        gender: "",
-        ethnicity: "",
-        phoneNUmber: "",
-        position: "",
-        region: "",
-        shiftPreference: "",
-        startDate: new Date().toISOString(),
-        userRole: UserRoles.ADMIN,
-        password: "",
-        providerId: profile.sub,
-        signInType: SignInTypes.GOOGLE,
-        email: profile.email!,
-    };
-};
+// userSchema.statics.buildUserFromGoogle = function (profile: GoogleGrpcUser): UserAttrs {
+//     return {
+//         // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
+//         firstName: profile.name!,
+//         lastName: profile.given_name!,
+//         branchName: "",
+//         country: "",
+//         gender: "",
+//         ethnicity: "",
+//         phoneNUmber: "",
+//         position: "",
+//         region: "",
+//         shiftPreference: "",
+//         startDate: new Date().toISOString(),
+//         userRole: UserRoles.ADMIN,
+//         password: "",
+//         providerId: profile.sub,
+//         signInType: SignInTypes.GOOGLE,
+//         email: profile.email!,
+//     };
+// };
 
 /**
  * Creates a user attributes object from Local profile
  * @param profile {LocalGrpcUser}
  */
-userSchema.statics.buildUserFromLocal = function (profile: LocalGrpcUser): UserAttrs {
-    return {
-        // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
-        firstName: "",
-        lastName: "",
-        branchName: "",
-        country: "",
-        gender: "",
-        ethnicity: "",
-        phoneNUmber: "",
-        position: "",
-        region: "",
-        shiftPreference: "",
-        startDate: new Date().toISOString(),
-        userRole: UserRoles.ADMIN,
-        email: profile.email!,
-        password: profile.password,
-        signInType: SignInTypes.LOCAL,
-    };
-};
+// userSchema.statics.buildUserFromLocal = function (profile: LocalGrpcUser): UserAttrs {
+//     return {
+//         // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
+//         firstName: "",
+//         lastName: "",
+//         branchName: "",
+//         country: "",
+//         gender: "",
+//         ethnicity: "",
+//         phoneNUmber: "",
+//         position: "",
+//         region: "",
+//         shiftPreference: "",
+//         startDate: new Date().toISOString(),
+//         userRole: UserRoles.ADMIN,
+//         email: profile.email!,
+//         password: profile.password,
+//         signInType: SignInTypes.LOCAL,
+//     };
+// };
 
 /** Create model from schema */
 const User = mongoose.model<UserDoc, UserModel>("User", userSchema);

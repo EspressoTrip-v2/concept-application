@@ -13,7 +13,7 @@ const App = () => {
 
     useEffect(() => {
         const getUser = async () => {
-            const result = await axios.get("/api/auth/login-success");
+            const result = await axios.get("https://acmefast.dev/api/auth/login-success");
             console.log(result);
             if (result.data.session) setUserData(result.data);
         };

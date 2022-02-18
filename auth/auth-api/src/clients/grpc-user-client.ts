@@ -16,23 +16,10 @@ export class GrpcUserClient extends AbstractGrpcClient {
     readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
     readonly m_package = this.m_grpcObject.userPackage;
-    /**
-     * Update a user
-     * @param user {UpdateUser}
-     */
-    updateUser(user: grpcUserUpdate): Promise<grpc.ServiceError | grpcUser> {
-        const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
-        return new Promise((resolve, reject) => {
-            client.UpdateUser(user, (error: grpc.ServiceError | null, updatedUser?: grpcUser) => {
-                if (error) return reject(error);
-                return resolve(updatedUser!);
-            });
-        });
-    }
 
     /**
      * Save a Google user
-     * @param user {GoogleUser}
+     * @param user {GoogleGrpcUser}
      */
     loginGoogleUser(user: GoogleGrpcUser): Promise<grpc.ServiceError | CreateGrpcUserInfo>{
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
@@ -46,7 +33,7 @@ export class GrpcUserClient extends AbstractGrpcClient {
 
     /**
      * Save a GitHub user
-     * @param user {GitHubUser}
+     * @param user {GitHubGrpcUser}
      */
     loginGitHubUser(user: GitHubGrpcUser): Promise<grpc.ServiceError | CreateGrpcUserInfo> {
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
@@ -60,7 +47,7 @@ export class GrpcUserClient extends AbstractGrpcClient {
 
     /**
      * Save a local user
-     * @param user {LocalUser}
+     * @param user {LocalGrpcUser}
      */
     loginLocalUser(user: LocalGrpcUser): Promise<grpc.ServiceError | CreateGrpcUserInfo> {
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());

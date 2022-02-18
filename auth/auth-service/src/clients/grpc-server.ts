@@ -3,14 +3,12 @@ import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { ServerStreamUserResponse } from "./proto/userPackage/ServerStreamUserResponse";
 import { User, UserDoc } from "../models";
-import { AbstractGrpcServer, rabbitClient, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { UpdateUserPublisher } from "../events/publishers";
+import { AbstractGrpcServer,  SignInTypes } from "@espressotrip-org/concept-common";
 import { generateJwt, Password } from "../services";
 import { grpcUser } from "./proto/userPackage/grpcUser";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
 import { CreateGrpcUserInfo } from "./proto/userPackage/CreateGrpcUserInfo";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
-import { grpcUserUpdate } from "./proto/userPackage/grpcUserUpdate";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
 
 // ------------------------------------------------------------------------------------------
@@ -140,27 +138,6 @@ export class GrpcServer extends AbstractGrpcServer {
     }
 
     /**
-     * Update existing user
-     * @param call {grpc.ServerUnaryCall<grpcUserUpdate, grpcUser>}
-     * @param callback {grpc.sendUnaryData<UpdateUser>}
-     */
-    async UpdateUser(call: grpc.ServerUnaryCall<grpcUserUpdate, grpcUser>, callback: grpc.sendUnaryData<grpcUserUpdate>): Promise<void> {
-        const userUpdate: grpcUserUpdate = call.request;
-        const user = await User.findById(call.request.id);
-        if (!user)
-            return callback({
-                code: grpc.status.NOT_FOUND,
-                details: "User not found",
-            });
-        user.set(userUpdate);
-        await user.save();
-        /** Publish an update user event */
-        await new UpdateUserPublisher(rabbitClient.connection).publish(user);
-
-        return callback(null, user);
-    }
-
-    /**
      * Start the server
      */
     listen(logMessage: string): void {
@@ -169,7 +146,6 @@ export class GrpcServer extends AbstractGrpcServer {
             LoginGoogleUser: this.LoginGoogleUser,
             LoginGitHubUser: this.LoginGitHubUser,
             LoginLocalUser: this.LoginLocalUser,
-            UpdateUser: this.UpdateUser,
         });
 
         this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error | null, port: number) => {

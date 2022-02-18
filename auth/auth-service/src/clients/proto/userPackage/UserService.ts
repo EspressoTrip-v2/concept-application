@@ -8,8 +8,6 @@ import type { GitHubGrpcUser as _userPackage_GitHubGrpcUser, GitHubGrpcUser__Out
 import type { GoogleGrpcUser as _userPackage_GoogleGrpcUser, GoogleGrpcUser__Output as _userPackage_GoogleGrpcUser__Output } from '../userPackage/GoogleGrpcUser';
 import type { LocalGrpcUser as _userPackage_LocalGrpcUser, LocalGrpcUser__Output as _userPackage_LocalGrpcUser__Output } from '../userPackage/LocalGrpcUser';
 import type { ServerStreamUserResponse as _userPackage_ServerStreamUserResponse, ServerStreamUserResponse__Output as _userPackage_ServerStreamUserResponse__Output } from '../userPackage/ServerStreamUserResponse';
-import type { grpcUser as _userPackage_grpcUser, grpcUser__Output as _userPackage_grpcUser__Output } from '../userPackage/grpcUser';
-import type { grpcUserUpdate as _userPackage_grpcUserUpdate, grpcUserUpdate__Output as _userPackage_grpcUserUpdate__Output } from '../userPackage/grpcUserUpdate';
 
 export interface UserServiceClient extends grpc.Client {
   GetAllUsers(argument: _userPackage_AllGrpcUsers, metadata: grpc.Metadata, options?: grpc.CallOptions): grpc.ClientReadableStream<_userPackage_ServerStreamUserResponse__Output>;
@@ -44,15 +42,6 @@ export interface UserServiceClient extends grpc.Client {
   loginLocalUser(argument: _userPackage_LocalGrpcUser, options: grpc.CallOptions, callback: grpc.requestCallback<_userPackage_CreateGrpcUserInfo__Output>): grpc.ClientUnaryCall;
   loginLocalUser(argument: _userPackage_LocalGrpcUser, callback: grpc.requestCallback<_userPackage_CreateGrpcUserInfo__Output>): grpc.ClientUnaryCall;
   
-  UpdateUser(argument: _userPackage_grpcUserUpdate, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_userPackage_grpcUser__Output>): grpc.ClientUnaryCall;
-  UpdateUser(argument: _userPackage_grpcUserUpdate, metadata: grpc.Metadata, callback: grpc.requestCallback<_userPackage_grpcUser__Output>): grpc.ClientUnaryCall;
-  UpdateUser(argument: _userPackage_grpcUserUpdate, options: grpc.CallOptions, callback: grpc.requestCallback<_userPackage_grpcUser__Output>): grpc.ClientUnaryCall;
-  UpdateUser(argument: _userPackage_grpcUserUpdate, callback: grpc.requestCallback<_userPackage_grpcUser__Output>): grpc.ClientUnaryCall;
-  updateUser(argument: _userPackage_grpcUserUpdate, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_userPackage_grpcUser__Output>): grpc.ClientUnaryCall;
-  updateUser(argument: _userPackage_grpcUserUpdate, metadata: grpc.Metadata, callback: grpc.requestCallback<_userPackage_grpcUser__Output>): grpc.ClientUnaryCall;
-  updateUser(argument: _userPackage_grpcUserUpdate, options: grpc.CallOptions, callback: grpc.requestCallback<_userPackage_grpcUser__Output>): grpc.ClientUnaryCall;
-  updateUser(argument: _userPackage_grpcUserUpdate, callback: grpc.requestCallback<_userPackage_grpcUser__Output>): grpc.ClientUnaryCall;
-  
 }
 
 export interface UserServiceHandlers extends grpc.UntypedServiceImplementation {
@@ -64,8 +53,6 @@ export interface UserServiceHandlers extends grpc.UntypedServiceImplementation {
   
   LoginLocalUser: grpc.handleUnaryCall<_userPackage_LocalGrpcUser__Output, _userPackage_CreateGrpcUserInfo>;
   
-  UpdateUser: grpc.handleUnaryCall<_userPackage_grpcUserUpdate__Output, _userPackage_grpcUser>;
-  
 }
 
 export interface UserServiceDefinition extends grpc.ServiceDefinition {
@@ -73,5 +60,4 @@ export interface UserServiceDefinition extends grpc.ServiceDefinition {
   LoginGitHubUser: MethodDefinition<_userPackage_GitHubGrpcUser, _userPackage_CreateGrpcUserInfo, _userPackage_GitHubGrpcUser__Output, _userPackage_CreateGrpcUserInfo__Output>
   LoginGoogleUser: MethodDefinition<_userPackage_GoogleGrpcUser, _userPackage_CreateGrpcUserInfo, _userPackage_GoogleGrpcUser__Output, _userPackage_CreateGrpcUserInfo__Output>
   LoginLocalUser: MethodDefinition<_userPackage_LocalGrpcUser, _userPackage_CreateGrpcUserInfo, _userPackage_LocalGrpcUser__Output, _userPackage_CreateGrpcUserInfo__Output>
-  UpdateUser: MethodDefinition<_userPackage_grpcUserUpdate, _userPackage_grpcUser, _userPackage_grpcUserUpdate__Output, _userPackage_grpcUser__Output>
 }

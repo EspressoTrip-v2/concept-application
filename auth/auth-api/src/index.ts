@@ -16,17 +16,7 @@ async function main(): Promise<void> {
         if (!process.env.GITHUB_CALLBACK_URL) throw new Error("GITHUB_CALLBACK must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!,`[auth-api:rabbitmq]: Connected successfully`);
-
-    } catch (error) {
-        const message = (error as Error).message;
-
-        console.log(`[auth-api:error]: Service start up error -> ${message}`);
-        console.log(`[auth-api:error]: Shutting down`);
-
-        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
-            errorMessage: message,
-        });
+        await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
 
         /** Shut down process */
         process.on("SIGTERM", async () => {
@@ -35,7 +25,16 @@ async function main(): Promise<void> {
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
         });
-        process.exit(1);
+    } catch (error) {
+        const msg = error as Error;
+        console.log(`[auth-api:error]: Service start up error -> ${msg}`);
+        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
+            error: {
+                name: msg.name,
+                stack: msg.stack,
+                message: msg.message,
+            },
+        });
     }
 }
 

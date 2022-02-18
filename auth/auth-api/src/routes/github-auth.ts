@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { grpcErrorTranslator, isGRPCStatus, NotFoundError } from "@espressotrip-org/concept-common";
 import { userGrpcClient } from "../clients";
 import { GitHubGrpcUser } from "../clients/proto/userPackage/GitHubGrpcUser";
-
+const BASE_URI = process.env.DEV_UI_REDIRECT || process.env.BASE_URI!
 const router = express.Router();
 
 router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
@@ -20,7 +20,7 @@ router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
     };
 
     /** Redirect to home page */
-    res.redirect(301, process.env.BASE_URI!);
+    res.redirect(301, BASE_URI);
 });
 
 export { router as gitHubAuthRouter };
