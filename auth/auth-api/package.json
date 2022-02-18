@@ -4,12 +4,12 @@
     "description": "",
     "scripts": {
         "start": "ts-node-dev src/index.ts --poll",
-        "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/clients/proto/ src/services/proto/*.proto"
+        "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/services/proto/ src/services/proto/*.proto"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@espressotrip-org/concept-common": "^1.1.51",
+        "@espressotrip-org/concept-common": "^1.1.56",
         "@grpc/grpc-js": "^1.5.4",
         "@grpc/proto-loader": "^0.6.9",
         "@types/amqplib": "^0.8.2",
@@ -22,6 +22,7 @@
         "grant": "^5.4.20",
         "jsonwebtoken": "^8.5.1",
         "ts-node-dev": "^1.1.8",
-        "tslib": "^2.3.1"
+        "tslib": "^2.3.1",
+        "typescript": "^4.5.5"
     }
 }

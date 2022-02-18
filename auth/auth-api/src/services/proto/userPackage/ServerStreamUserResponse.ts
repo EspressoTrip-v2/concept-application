@@ -1,4 +1,4 @@
-// Original file: src/clients/proto/user.proto
+// Original file: src/services/proto/user.proto
 
 
 export interface ServerStreamUserResponse {
@@ -6,14 +6,14 @@ export interface ServerStreamUserResponse {
   'firstNAme'?: (string);
   'lastName'?: (string);
   'gender'?: (string);
-  'ethnicity'?: (string);
+  'race'?: (string);
   'position'?: (string);
   'startDate'?: (string);
   'shiftPreference'?: (string);
   'branchName'?: (string);
   'region'?: (string);
   'country'?: (string);
-  'phoneNUmber'?: (string);
+  'phoneNumber'?: (string);
   'email'?: (string);
   'version'?: (number);
   'signInType'?: (string);
@@ -26,14 +26,14 @@ export interface ServerStreamUserResponse__Output {
   'firstNAme': (string);
   'lastName': (string);
   'gender': (string);
-  'ethnicity': (string);
+  'race': (string);
   'position': (string);
   'startDate': (string);
   'shiftPreference': (string);
   'branchName': (string);
   'region': (string);
   'country': (string);
-  'phoneNUmber': (string);
+  'phoneNumber': (string);
   'email': (string);
   'version': (number);
   'signInType': (string);

@@ -3,16 +3,25 @@
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. Ability to add a service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
 
+### Developer Note:
+***Repo changes***: Run the npm-install.sh script once you make a pull to update all the services packages. I will update this list as the application grows.
+If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
+Also running "npm i" in all the services will be a good idea due to the continuous changes.
+
+***Volume persistence***:
+The setup below needs to be done on start up of minikube, unfortunately minikube stops all deployments on shutdown. The PV for the stand alone deployments will only remain as long as minikube is running. 
+The operator PV's persist on restart, when I have some time I will sort out the persistence... It is not priority on a test environment at the moment.
+
+
+
+
+
 #### Prerequisite installations:
 
 [Skaffold](https://skaffold.dev)  
 [Minikube](https://minikube.sigs.k8s.io/docs/start/) -> Not tested with other local k8's, it's your gamble don't ask me to help  
 [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
-#### Developer Notice:
-
-If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
-Also running "npm i" in all the services will be a good idea due to the continuous changes.
 
 ### Minikube:
 ```bash
@@ -149,7 +158,7 @@ database in the users collection.
   "firstName" : "<USER FIRSTNAME>",
   "lastName" : "<USER LASTNAME>",
   "gender" : "male",
-  "ethnicity" : "white",
+  "race" : "white",
   "position" : "developer",
   "startDate" : "2022-02-17T07:45:08.422Z",
   "shiftPreference" : "night",

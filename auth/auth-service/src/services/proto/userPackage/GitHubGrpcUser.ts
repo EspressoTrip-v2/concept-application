@@ -1,4 +1,4 @@
-// Original file: src/clients/proto/user.proto
+// Original file: src/services/proto/user.proto
 
 
 export interface GitHubGrpcUser {

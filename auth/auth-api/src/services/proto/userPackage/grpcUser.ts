@@ -1,4 +1,4 @@
-// Original file: src/clients/proto/user.proto
+// Original file: src/services/proto/user.proto
 
 
 export interface grpcUser {
@@ -6,7 +6,7 @@ export interface grpcUser {
   'firstNAme'?: (string);
   'lastName'?: (string);
   'gender'?: (string);
-  'ethnicity'?: (string);
+  'race'?: (string);
   'position'?: (string);
   'startDate'?: (string);
   'shiftPreference'?: (string);
@@ -27,7 +27,7 @@ export interface grpcUser__Output {
   'firstNAme': (string);
   'lastName': (string);
   'gender': (string);
-  'ethnicity': (string);
+  'race': (string);
   'position': (string);
   'startDate': (string);
   'shiftPreference': (string);

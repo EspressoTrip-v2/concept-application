@@ -1,4 +1,4 @@
-// Original file: src/clients/proto/user.proto
+// Original file: src/services/proto/user.proto
 
 import type { grpcUser as _userPackage_grpcUser, grpcUser__Output as _userPackage_grpcUser__Output } from '../userPackage/grpcUser';
 
