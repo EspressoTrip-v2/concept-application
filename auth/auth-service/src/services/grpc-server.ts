@@ -3,7 +3,7 @@ import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { ServerStreamUserResponse } from "./proto/userPackage/ServerStreamUserResponse";
 import { User, UserDoc } from "../models";
-import { AbstractGrpcServer, SignInTypes } from "@espressotrip-org/concept-common";
+import { AbstractGrpcServer, LogMsg, MicroServiceNames, rabbitClient, SignInTypes } from "@espressotrip-org/concept-common";
 import { generateJwt, Password } from "../utils";
 import { grpcUser } from "./proto/userPackage/grpcUser";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
@@ -43,18 +43,23 @@ export class GrpcServer extends AbstractGrpcServer {
      */
     async LoginGoogleUser(call: grpc.ServerUnaryCall<GoogleGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
         let googleUser: UserDoc | null;
+        let serverError: Partial<grpc.StatusObject> | LogMsg;
         googleUser = await User.findOne({ email: call.request.email });
 
-        if (!googleUser)
-            return callback({
+        if (!googleUser) {
+            serverError = {
                 code: grpc.status.NOT_FOUND,
                 details: "User not found.",
-            });
+            };
+            return callback(serverError);
+        }
 
         switch (googleUser.signInType) {
             case SignInTypes.GITHUB:
             case SignInTypes.LOCAL:
-                return callback({ code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType}` });
+                serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType}` };
+                this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, serverError as LogMsg);
+                return callback(serverError);
             case SignInTypes.UNKNOWN:
                 googleUser.set({ signInType: SignInTypes.GOOGLE, providerId: call.request.sub });
                 await googleUser.save();
@@ -70,11 +75,14 @@ export class GrpcServer extends AbstractGrpcServer {
                         jwt: generateJwt(googleUser),
                         status: 200,
                     });
-                else
-                    return callback({
+                else {
+                    serverError = {
                         code: grpc.status.PERMISSION_DENIED,
                         details: "Invalid credentials",
-                    });
+                    };
+                    this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, serverError as LogMsg);
+                    return callback(serverError);
+                }
             default:
                 callback({
                     code: grpc.status.NOT_FOUND,
@@ -90,6 +98,7 @@ export class GrpcServer extends AbstractGrpcServer {
      */
     async LoginGitHubUser(call: grpc.ServerUnaryCall<GitHubGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
         let gitHubUser: UserDoc | null;
+        let serverError: Partial<grpc.StatusObject> | LogMsg;
         gitHubUser = await User.findOne({ email: call.request.email });
 
         if (!gitHubUser)
@@ -101,7 +110,9 @@ export class GrpcServer extends AbstractGrpcServer {
         switch (gitHubUser.signInType) {
             case SignInTypes.GOOGLE:
             case SignInTypes.LOCAL:
-                return callback({ code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType}` });
+                serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType}` };
+                this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, serverError as LogMsg);
+                return callback(serverError);
             case SignInTypes.UNKNOWN:
                 gitHubUser.set({ signInType: SignInTypes.GITHUB, providerId: call.request.id!.toString() });
                 await gitHubUser.save();
@@ -117,16 +128,21 @@ export class GrpcServer extends AbstractGrpcServer {
                         jwt: generateJwt(gitHubUser),
                         status: 200,
                     });
-                else
-                    return callback({
+                else {
+                    serverError = {
                         code: grpc.status.PERMISSION_DENIED,
                         details: "Invalid credentials",
-                    });
+                    };
+                    this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, serverError as LogMsg);
+                    return callback(serverError);
+                }
             default:
-                callback({
+                serverError = {
                     code: grpc.status.NOT_FOUND,
                     details: "User not found",
-                });
+                };
+                this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, serverError as LogMsg);
+                callback(serverError);
         }
     }
 
@@ -137,6 +153,7 @@ export class GrpcServer extends AbstractGrpcServer {
      */
     async LoginLocalUser(call: grpc.ServerUnaryCall<LocalGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>): Promise<void> {
         let localUser: UserDoc | null;
+        let serverError: Partial<grpc.StatusObject> | LogMsg;
 
         /** See if user exists */
         localUser = await User.findOne({ email: call.request.email });
@@ -149,7 +166,9 @@ export class GrpcServer extends AbstractGrpcServer {
         switch (localUser.signInType) {
             case SignInTypes.GOOGLE:
             case SignInTypes.GITHUB:
-                return callback({ code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType}` });
+                serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType}` };
+                this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, serverError as LogMsg);
+                return callback(serverError);
             case SignInTypes.UNKNOWN:
                 localUser.set({ signInType: SignInTypes.LOCAL });
                 await localUser.save();
@@ -165,16 +184,21 @@ export class GrpcServer extends AbstractGrpcServer {
                         jwt: generateJwt(localUser),
                         status: 200,
                     });
-                else
-                    return callback({
+                else {
+                    serverError = {
                         code: grpc.status.PERMISSION_DENIED,
                         details: "Invalid credentials",
-                    });
+                    };
+                    this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, serverError as LogMsg);
+                    return callback(serverError);
+                }
             default:
-                callback({
+                serverError = {
                     code: grpc.status.NOT_FOUND,
                     details: "User not found",
-                });
+                };
+                this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, serverError as LogMsg);
+                callback(serverError);
         }
     }
 

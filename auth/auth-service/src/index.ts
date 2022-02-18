@@ -1,6 +1,6 @@
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
-import { ServiceStartupErrorPublisher } from "./events/publishers";
+import { ServiceStartupErrorPublisher } from "./events";
 import { rabbitClient } from "@espressotrip-org/concept-common";
 
 async function main(): Promise<void> {
@@ -34,7 +34,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
+        new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
             error: {
                 name: msg.name,
                 stack: msg.stack,

@@ -4,37 +4,33 @@
 
 # Auth
 cd auth/auth-api
-echo "[auth-api]: install and update"
-npm i
-npm update
+echo "[auth-api]---------------------------------------------------"
+npm i --silent && npm update
 cd ../auth-service
-echo "[auth-service]: install and update"
-npm i && npm update
+echo "[auth-service]---------------------------------------------------"
+npm i --silent && npm update
 
 # Root
 cd ../../
 
 # Analytic
 cd analytic/analytic-api
-echo  "[analytic-api]: install and update"
-npm i
-npm update @espressotrip-org/concept-common
-
-cd ../analytic-api
-echo "[analytic-service]: install and update"
-npm i && npm update
+echo  "[analytic-api]---------------------------------------------------"
+npm i --silent && npm update
+cd ../analytic-service
+echo "[analytic-service]---------------------------------------------------"
+npm i --silent && npm update
 
 # Root
 cd ../../
 
 # Employee
 cd employee/employee-api
-echo "[employee-api]: install and update"
-npm i
-npm update @espressotrip-org/concept-common
+echo "[employee-api]---------------------------------------------------"
+npm i --silent && npm update
 cd ../employee-service
-echo "[employee-service]: install and update"
-npm i && npm update
+echo "[employee-service]---------------------------------------------------"
+npm i --silent && npm update
 
 cd ../../
 
