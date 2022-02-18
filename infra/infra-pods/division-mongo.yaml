@@ -12,10 +12,6 @@ spec:
             labels:
                 app: division-mongo
         spec:
-            volumes:
-                - name: division-mongo-storage
-                  persistentVolumeClaim:
-                      claimName: division-pv-claim
             containers:
                 - name: division-mongo
                   image: bitnami/mongodb
@@ -23,6 +19,13 @@ spec:
                   envFrom:
                       - configMapRef:
                             name: division-config
+                  volumeMounts:
+                      - mountPath: /tmp/hostpath-provisioner/division/
+                        name: division-mongo-storage
+            volumes:
+                - name: division-mongo-storage
+                  persistentVolumeClaim:
+                      claimName: division-pv-claim
             restartPolicy: Always
     selector:
         matchLabels:
@@ -44,17 +47,18 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-    name: volume-storage-2
+    name: division
     labels:
         type: local
 spec:
-    storageClassName: manual
+    storageClassName: standard
+    volumeMode: Filesystem
     capacity:
         storage: 1Gi
     accessModes:
         - ReadWriteOnce
     hostPath:
-        path: "/data/division"
+        path: /tmp/hostpath-provisioner/division/
 
 ---
 apiVersion: v1
@@ -62,12 +66,14 @@ kind: PersistentVolumeClaim
 metadata:
     name: division-pv-claim
 spec:
-    storageClassName: manual
+    storageClassName: standard
+    volumeMode: Filesystem
     accessModes:
         - ReadWriteOnce
     resources:
         requests:
             storage: 1Gi
+    volumeName: division
 
 ---
 apiVersion: v1

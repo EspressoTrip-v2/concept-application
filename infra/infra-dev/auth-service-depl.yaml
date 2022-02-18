@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
     name: auth-service-config
 data:
+    MONGO_DBNAME: 'auth'
 #    MONGO_URI: "mongodb://root:8103@auth-mongo-0.auth-mongo-svc.default.svc.cluster.local:27017/auth?ssl=false"
 #    Uncomment the below if you are using the stand-alone deployments
     MONGO_URI: "mongodb://root:8103@auth-mongo-srv:27017"

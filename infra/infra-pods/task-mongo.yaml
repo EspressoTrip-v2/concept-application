@@ -12,10 +12,6 @@ spec:
             labels:
                 app: task-mongo
         spec:
-            volumes:
-                - name: task-mongo-storage
-                  persistentVolumeClaim:
-                      claimName: task-pv-claim
             containers:
                 - name: task-mongo
                   image: bitnami/mongodb
@@ -23,6 +19,13 @@ spec:
                   envFrom:
                       - configMapRef:
                             name: task-config
+                  volumeMounts:
+                      - mountPath: /tmp/hostpath-provisioner/task/
+                        name: task-mongo-storage
+            volumes:
+                - name: task-mongo-storage
+                  persistentVolumeClaim:
+                      claimName: task-pv-claim
             restartPolicy: Always
     selector:
         matchLabels:
@@ -44,17 +47,18 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-    name: volume-storage-4
+    name: task
     labels:
         type: local
 spec:
-    storageClassName: manual
+    storageClassName: standard
+    volumeMode: Filesystem
     capacity:
         storage: 1Gi
     accessModes:
         - ReadWriteOnce
     hostPath:
-        path: "/data/task"
+        path: /tmp/hostpath-provisioner/task/
 
 ---
 apiVersion: v1
@@ -62,12 +66,14 @@ kind: PersistentVolumeClaim
 metadata:
     name: task-pv-claim
 spec:
-    storageClassName: manual
+    storageClassName: standard
+    volumeMode: Filesystem
     accessModes:
         - ReadWriteOnce
     resources:
         requests:
             storage: 1Gi
+    volumeName: task
 
 ---
 apiVersion: v1

@@ -12,10 +12,6 @@ spec:
             labels:
                 app: employee-mongo
         spec:
-            volumes:
-                - name: employee-mongo-storage
-                  persistentVolumeClaim:
-                      claimName: employee-pv-claim
             containers:
                 - name: employee-mongo
                   image: bitnami/mongodb
@@ -23,6 +19,13 @@ spec:
                   envFrom:
                       - configMapRef:
                             name: employee-config
+                  volumeMounts:
+                      - mountPath: /tmp/hostpath-provisioner/employee/
+                        name: employee-mongo-storage
+            volumes:
+                - name: employee-mongo-storage
+                  persistentVolumeClaim:
+                      claimName: employee-pv-claim
             restartPolicy: Always
     selector:
         matchLabels:
@@ -45,17 +48,18 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-    name: volume-storage-3
+    name: employee
     labels:
         type: local
 spec:
-    storageClassName: manual
+    storageClassName: standard
+    volumeMode: Filesystem
     capacity:
         storage: 1Gi
     accessModes:
         - ReadWriteOnce
     hostPath:
-        path: "/data/employee"
+        path: /tmp/hostpath-provisioner/employee/
 
 ---
 apiVersion: v1
@@ -63,12 +67,14 @@ kind: PersistentVolumeClaim
 metadata:
     name: employee-pv-claim
 spec:
-    storageClassName: manual
+    storageClassName: standard
+    volumeMode: Filesystem
     accessModes:
         - ReadWriteOnce
     resources:
         requests:
             storage: 1Gi
+    volumeName: employee
 
 ---
 apiVersion: v1
