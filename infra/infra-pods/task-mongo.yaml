@@ -46,6 +46,7 @@ kind: PersistentVolume
 metadata:
     name: task-storage
 spec:
+    persistentVolumeReclaimPolicy: Delete
     claimRef:
         name: task-pv-claim
         namespace: default

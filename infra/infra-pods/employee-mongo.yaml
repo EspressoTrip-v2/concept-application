@@ -47,6 +47,7 @@ kind: PersistentVolume
 metadata:
     name: employee-storage
 spec:
+    persistentVolumeReclaimPolicy: Delete
     claimRef:
         name: employee-pv-claim
         namespace: default

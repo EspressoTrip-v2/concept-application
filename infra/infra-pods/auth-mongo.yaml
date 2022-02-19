@@ -17,8 +17,8 @@ spec:
                   image: mongo:4.2.18
                   imagePullPolicy: IfNotPresent
                   volumeMounts:
-                    - mountPath: /data/db
-                      name: auth-mongo-storage
+                      - mountPath: /data/db
+                        name: auth-mongo-storage
             volumes:
                 - name: auth-mongo-storage
                   persistentVolumeClaim:
@@ -46,6 +46,7 @@ kind: PersistentVolume
 metadata:
     name: auth-storage
 spec:
+    persistentVolumeReclaimPolicy: Delete
     claimRef:
         name: auth-pv-claim
         namespace: default
@@ -69,4 +70,3 @@ spec:
         requests:
             storage: 1Gi
     volumeName: auth-storage
-

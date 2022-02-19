@@ -46,6 +46,7 @@ kind: PersistentVolume
 metadata:
     name: division-storage
 spec:
+    persistentVolumeReclaimPolicy: Delete
     claimRef:
         name: division-pv-claim
         namespace: default

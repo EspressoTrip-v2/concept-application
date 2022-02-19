@@ -6,7 +6,6 @@ Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. A
 ### Developer Note:
 ***Repo changes***: Run the npm-install.sh script once you make a pull to update all the services packages. I will update this list as the application grows.
 If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
-Also running "npm i" in all the services will be a good idea due to the continuous changes.
 
 ***Volume persistence***:
 The setup below needs to be done on start up of minikube... minikube shuts down all deployment, whether operators or not. The data created in Mongo will persist between restarts.
@@ -173,7 +172,7 @@ database in the users collection.
   "version" : 0
 }
 ```
-Emails need to be unique as well as phone numbers: Password is ***12345***
+Emails need to be unique: Password is ***12345***
 
 ### Mongo Database Connections for operator clusters: 
 If you have any issues with failure to connect to the MongoDB operator cluster pods, run the below commands in the terminal.
