@@ -16,9 +16,6 @@ spec:
                 - name: task-mongo
                   image: mongo:4.2.18
                   imagePullPolicy: IfNotPresent
-                  envFrom:
-                      - configMapRef:
-                            name: task-config
                   volumeMounts:
                       - mountPath: /data/db
                         name: task-mongo-storage
@@ -72,11 +69,3 @@ spec:
         requests:
             storage: 1Gi
     volumeName: task-storage
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-    name: task-config
-data:
-    MONGODB_ROOT_PASSWORD: "8103"

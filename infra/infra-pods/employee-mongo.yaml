@@ -16,9 +16,6 @@ spec:
                 - name: employee-mongo
                   image: mongo:4.2.18
                   imagePullPolicy: IfNotPresent
-                  envFrom:
-                      - configMapRef:
-                            name: employee-config
                   volumeMounts:
                       - mountPath: /data/db
                         name: employee-mongo-storage
@@ -73,11 +70,3 @@ spec:
         requests:
             storage: 1Gi
     volumeName: employee-storage
-
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-    name: employee-config
-data:
-    MONGODB_ROOT_PASSWORD: "8103"
