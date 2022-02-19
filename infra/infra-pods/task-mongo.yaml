@@ -14,13 +14,13 @@ spec:
         spec:
             containers:
                 - name: task-mongo
-                  image: bitnami/mongodb
+                  image: mongo:4.2.18
                   imagePullPolicy: IfNotPresent
                   envFrom:
                       - configMapRef:
                             name: task-config
                   volumeMounts:
-                      - mountPath: /tmp/hostpath-provisioner/task/
+                      - mountPath: /data/db
                         name: task-mongo-storage
             volumes:
                 - name: task-mongo-storage
@@ -47,18 +47,18 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-    name: task
-    labels:
-        type: local
+    name: task-storage
 spec:
-    storageClassName: standard
-    volumeMode: Filesystem
+    claimRef:
+        name: task-pv-claim
+        namespace: default
     capacity:
         storage: 1Gi
     accessModes:
         - ReadWriteOnce
     hostPath:
-        path: /tmp/hostpath-provisioner/task/
+        type: DirectoryOrCreate
+        path: /data/task
 
 ---
 apiVersion: v1
@@ -66,14 +66,12 @@ kind: PersistentVolumeClaim
 metadata:
     name: task-pv-claim
 spec:
-    storageClassName: standard
-    volumeMode: Filesystem
     accessModes:
         - ReadWriteOnce
     resources:
         requests:
             storage: 1Gi
-    volumeName: task
+    volumeName: task-storage
 
 ---
 apiVersion: v1

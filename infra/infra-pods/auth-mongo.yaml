@@ -14,13 +14,10 @@ spec:
         spec:
             containers:
                 - name: auth-mongo
-                  image: bitnami/mongodb
+                  image: mongo:4.2.18
                   imagePullPolicy: IfNotPresent
-                  envFrom:
-                      - configMapRef:
-                            name: auth-config
                   volumeMounts:
-                    - mountPath: /tmp/hostpath-provisioner/auth/
+                    - mountPath: /data/db
                       name: auth-mongo-storage
             volumes:
                 - name: auth-mongo-storage
@@ -44,43 +41,32 @@ spec:
           targetPort: 27017
           name: auth-db
 ---
-
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: auth
-  labels:
-    type: local
+    name: auth-storage
 spec:
-  storageClassName: standard
-  volumeMode: Filesystem
-  capacity:
-    storage: 1Gi
-  accessModes:
-    - ReadWriteOnce
-  hostPath:
-    path: /tmp/hostpath-provisioner/auth/
+    claimRef:
+        name: auth-pv-claim
+        namespace: default
+    capacity:
+        storage: 1Gi
+    accessModes:
+        - ReadWriteOnce
+    hostPath:
+        type: DirectoryOrCreate
+        path: /data/auth
 
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: auth-pv-claim
+    name: auth-pv-claim
 spec:
-  storageClassName: standard
-  volumeMode: Filesystem
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  volumeName: auth
----
+    accessModes:
+        - ReadWriteOnce
+    resources:
+        requests:
+            storage: 1Gi
+    volumeName: auth-storage
 
-apiVersion: v1
-kind: ConfigMap
-metadata:
-    name: auth-config
-data:
-    MONGODB_ROOT_PASSWORD: "8103"

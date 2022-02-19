@@ -14,13 +14,13 @@ spec:
         spec:
             containers:
                 - name: employee-mongo
-                  image: bitnami/mongodb
+                  image: mongo:4.2.18
                   imagePullPolicy: IfNotPresent
                   envFrom:
                       - configMapRef:
                             name: employee-config
                   volumeMounts:
-                      - mountPath: /tmp/hostpath-provisioner/employee/
+                      - mountPath: /data/db
                         name: employee-mongo-storage
             volumes:
                 - name: employee-mongo-storage
@@ -48,18 +48,18 @@ spec:
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-    name: employee
-    labels:
-        type: local
+    name: employee-storage
 spec:
-    storageClassName: standard
-    volumeMode: Filesystem
+    claimRef:
+        name: employee-pv-claim
+        namespace: default
     capacity:
         storage: 1Gi
     accessModes:
         - ReadWriteOnce
     hostPath:
-        path: /tmp/hostpath-provisioner/employee/
+        type: DirectoryOrCreate
+        path: /data/employee
 
 ---
 apiVersion: v1
@@ -67,14 +67,12 @@ kind: PersistentVolumeClaim
 metadata:
     name: employee-pv-claim
 spec:
-    storageClassName: standard
-    volumeMode: Filesystem
     accessModes:
         - ReadWriteOnce
     resources:
         requests:
             storage: 1Gi
-    volumeName: employee
+    volumeName: employee-storage
 
 ---
 apiVersion: v1
