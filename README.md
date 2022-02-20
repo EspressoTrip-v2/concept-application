@@ -3,22 +3,29 @@
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. Ability to add a service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
 
-### Developer Note:
-***Repo changes***: Run the npm-install.sh script once you make a pull to update all the services packages. I will update this list as the application grows.
-If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
-
-***Volume persistence***:
-The setup below needs to be done on start up of minikube... minikube shuts down all deployment, whether operators or not. The data created in Mongo will persist between restarts.
-Postgres database need a bit more set up, I will get to that eventually. If you ***minikube delete*** all data will be lost. If you would like to persist data on your machine
-give me a shout I will help you set it up, it unfortunately requires another command to be run and a few adjustments in the deployment files.
-
-
-
 #### Prerequisite installations:
 
 [Skaffold](https://skaffold.dev)  
 [Minikube](https://minikube.sigs.k8s.io/docs/start/) -> Not tested with other local k8's, it's your gamble don't ask me to help  
 [kubectl](https://kubernetes.io/docs/tasks/tools/)
+
+
+
+### Developer Note:
+##### Always make sure the mongo connection strings are set to the correct deployment and that the postgres password is changed to your required in the secrets.yaml file before running the newly pulled repo.
+***Repo changes***:  
+Run the ```npm-install.sh``` script once you make a pull to update all the services packages. I will update this list as the application grows.
+If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
+
+There is a ```npm-update-common.sh``` script that I use to update the npm library that is shared amongst the services. !!!DO NOT RUN THIS!!! The library changes daily and so will 
+cause the master branch to not run as usually the library required is many versions behind the latest @espressotrip-org/concept-common library.
+
+
+***Volume persistence***:  
+The setup below needs to be done on start up of minikube... minikube shuts down all deployment, whether operators or not. The data created in Mongo will persist between restarts.
+Postgres database need a bit more set up, I will get to that eventually. If you ***minikube delete*** all data will be lost. If you would like to persist data on your machine
+give me a shout I will help you set it up, it unfortunately requires another command to be run and a few adjustments in the deployment files.
+
 
 
 ### Minikube:
@@ -153,8 +160,8 @@ database in the users collection.
 
 ```json
 {
-  "firstName" : "<USER FIRSTNAME>",
-  "lastName" : "<USER LASTNAME>",
+  "firstName" : "John",
+  "lastName" : "Doe",
   "gender" : "male",
   "race" : "white",
   "position" : "developer",
@@ -164,7 +171,7 @@ database in the users collection.
   "region" : "WC",
   "country" : "ZA",
   "phoneNUmber" : "0823333333",
-  "email" : "<USER EMAIL>",
+  "email" : "john@test.com",
   "signInType" : "UNKNOWN",
   "userRole" : "ADMIN",
   "password" : "e959c9c75eab764731150b174506ce54197eb854522e5120eb467a4961fd1f4f0b2a37dbc9061a951767afba93e5a168faef79cdc9f29ec9997e150701cc5c21.590049f253fc43f0",

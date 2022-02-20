@@ -47,15 +47,6 @@ const userSchema = new mongoose.Schema(
 userSchema.set("versionKey", "version");
 userSchema.plugin(updateIfCurrentPlugin);
 
-/** Set temporary analytics object on creation */
-userSchema.post("save", async function () {
-    userSchema.virtual("analytics").get(function () {
-        return {
-            serviceName: MicroServiceNames.AUTH_SERVICE,
-            dateSent: new Date().toISOString(),
-        };
-    });
-});
 
 /** Encrypt the password on save */
 userSchema.pre("save", async function (done) {

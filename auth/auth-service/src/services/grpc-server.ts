@@ -60,7 +60,7 @@ export class GrpcServer extends AbstractGrpcServer {
             switch (googleUser.signInType) {
                 case SignInTypes.GITHUB:
                 case SignInTypes.LOCAL:
-                    serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType}` };
+                    serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType} account` };
                     this.m_logger.publish({
                         service: MicroServiceNames.AUTH_SERVICE,
                         logContext: LogCodes.ERROR,
@@ -150,7 +150,7 @@ export class GrpcServer extends AbstractGrpcServer {
             switch (gitHubUser.signInType) {
                 case SignInTypes.GOOGLE:
                 case SignInTypes.LOCAL:
-                    serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType}` };
+                    serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType} account` };
                     this.m_logger.publish({
                         service: MicroServiceNames.AUTH_SERVICE,
                         logContext: LogCodes.ERROR,
@@ -239,7 +239,7 @@ export class GrpcServer extends AbstractGrpcServer {
             switch (localUser.signInType) {
                 case SignInTypes.GOOGLE:
                 case SignInTypes.GITHUB:
-                    serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType}` };
+                    serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType} account` };
                     this.m_logger.publish({
                         service: MicroServiceNames.AUTH_SERVICE,
                         logContext: LogCodes.ERROR,
