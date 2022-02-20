@@ -1,0 +1,37 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: log-service-config
+data:
+    LOGGLY_SUBDOMAIN: "concept"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: log-service-depl
+    labels:
+        app: log-service
+spec:
+    replicas: 1
+    template:
+        metadata:
+            name: log-service
+            labels:
+                app: log-service
+        spec:
+            containers:
+                - name: log-service
+                  image: espressotrip/concept-log-service
+                  imagePullPolicy: IfNotPresent
+                  envFrom:
+                      - configMapRef:
+                            name: global-config
+                      - configMapRef:
+                            name: log-service-config
+                      - secretRef:
+                            name: global-secret
+            restartPolicy: Always
+    selector:
+        matchLabels:
+            app: log-service

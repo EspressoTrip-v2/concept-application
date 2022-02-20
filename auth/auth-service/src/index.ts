@@ -19,7 +19,7 @@ async function main(): Promise<void> {
         console.log(`[auth-service:mongo]: Connected successfully`);
 
         /** Create gRPC server */
-        grpcServer.listen(`[auth-service:gRPC-server]: Listening on ${process.env.GRPC_SERVER_PORT}`);
+        const gRPC = grpcServer(rabbitClient.connection).listen(`[auth-service:gRPC-server]: Listening on ${process.env.GRPC_SERVER_PORT}`);
 
         /** Create RabbitMQ consumers */
         await new UpdateEmployeeSigninConsumer(rabbitClient.connection).listen();
@@ -29,22 +29,23 @@ async function main(): Promise<void> {
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
             await mongoose.connection.close();
-            grpcServer.m_server.forceShutdown();
+            gRPC.m_server.forceShutdown();
         });
         process.on("SIGTERM", async () => {
             await rabbitClient.connection.close();
             await mongoose.connection.close();
-            grpcServer.m_server.forceShutdown();
+            gRPC.m_server.forceShutdown();
         });
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
-            error: {
-                name: msg.name,
-                stack: msg.stack,
-                message: msg.message,
-            },
+        LogPublisher.getPublisher(rabbitClient.connection, LOG_OPTIONS).publish({
+            service: MicroServiceNames.ANALYTIC_API,
+            logContext: LogCodes.ERROR,
+            message: msg.message,
+            details: msg.stack,
+            origin: "main",
+            date: new Date().toISOString(),
         });
     }
 }

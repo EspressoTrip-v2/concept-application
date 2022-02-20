@@ -34,3 +34,10 @@ npm i --silent && npm update
 
 cd ../../
 
+# Log
+cd log/log-service
+echo "[log-service]---------------------------------------------------"
+npm i --silent && npm update
+
+
+cd ../../

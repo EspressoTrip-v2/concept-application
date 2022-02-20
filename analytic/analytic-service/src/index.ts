@@ -1,6 +1,11 @@
-import { ServiceStartupErrorPublisher } from "./events";
 import { grpcServer, postgresClient } from "./services";
-import { rabbitClient } from "@espressotrip-org/concept-common";
+import { LogClientOptions, LogPublisher, LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+
+/** Logging Options */
+const LOG_OPTIONS: LogClientOptions = {
+    serviceName: MicroServiceNames.ANALYTIC_SERVICE,
+    publisherName: "analytic-service-application:start",
+};
 
 async function main(): Promise<void> {
     try {
@@ -18,32 +23,32 @@ async function main(): Promise<void> {
         await postgresClient.connect(`[analytic-service:postgres]: Connected successfully`);
 
         /** Create gRPC server */
-        grpcServer.listen(`[analytic-service:gRPC-server]: Listening port ${process.env.GRPC_SERVER_PORT}`);
+        const gRPC = grpcServer(rabbitClient.connection).listen(`[analytic-service:gRPC-server]: Listening port ${process.env.GRPC_SERVER_PORT}`);
 
         /** Shut down process */
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
-            grpcServer.m_server.forceShutdown();
+            gRPC.m_server.forceShutdown();
             await postgresClient.close();
         });
         process.on("SIGTERM", async () => {
             await rabbitClient.connection.close();
-            grpcServer.m_server.forceShutdown();
+            gRPC.m_server.forceShutdown();
             await postgresClient.close();
         });
 
         /** Add RabbitMQ Listeners */
     } catch (error) {
-        const msg = (error as Error);
+        const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
-            error: {
-                name: msg.name,
-                stack: msg.stack,
-                message: msg.message,
-            },
+        LogPublisher.getPublisher(rabbitClient.connection, LOG_OPTIONS).publish({
+            service: MicroServiceNames.ANALYTIC_API,
+            logContext: LogCodes.ERROR,
+            message: msg.message,
+            details: msg.stack,
+            origin: "main",
+            date: new Date().toISOString(),
         });
-
     }
 }
 

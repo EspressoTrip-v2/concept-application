@@ -1,7 +1,14 @@
 import { app } from "./app";
 import { ServiceStartupErrorPublisher } from "./events";
-import { rabbitClient } from "@espressotrip-org/concept-common";
+import { LogClientOptions, MicroServiceNames, LogPublisher, rabbitClient, LogCodes } from "@espressotrip-org/concept-common";
+
 const PORT = process.env.PORT || 3000;
+
+/** Logging Options */
+const LOG_OPTIONS: LogClientOptions = {
+    serviceName: MicroServiceNames.AUTH_API,
+    publisherName: "auth-api-application:start",
+};
 
 async function main(): Promise<void> {
     try {
@@ -28,12 +35,13 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-api:error]: Service start up error -> ${msg}`);
-        new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
-            error: {
-                name: msg.name,
-                stack: msg.stack,
-                message: msg.message,
-            },
+        LogPublisher.getPublisher(rabbitClient.connection, LOG_OPTIONS).publish({
+            service: MicroServiceNames.ANALYTIC_API,
+            logContext: LogCodes.ERROR,
+            message: msg.message,
+            details: msg.stack,
+            origin: "main",
+            date: new Date().toISOString(),
         });
     }
 }
