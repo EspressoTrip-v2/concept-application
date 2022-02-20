@@ -4,6 +4,7 @@ metadata:
     name: log-service-config
 data:
     LOGGLY_SUBDOMAIN: "concept"
+    LOG_PROVIDER_TYPE: "loggly"
 
 ---
 apiVersion: apps/v1

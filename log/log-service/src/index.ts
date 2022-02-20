@@ -3,9 +3,8 @@ import { AllLogsConsumer } from "./events";
 
 async function main(): Promise<void> {
     try {
-        if (!process.env.LOGGLY_SUBDOMAIN) throw new Error("LOGGLY_SUBDOMAIN must be defined");
-        if (!process.env.LOGGLY_TOKEN) throw new Error("LOGGLY_TOKEN must be defined");
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
+        if (!process.env.LOG_PROVIDER_TYPE) throw new Error("LOG_PROVIDER_TYPE must be defined");
 
         /** Create RabbitMQ connection */
         await rabbitClient.connect(process.env.RABBIT_URI!, `[log-service:rabbitmq]: Connected successfully`);

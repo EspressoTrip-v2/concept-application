@@ -5,7 +5,6 @@ const router = express.Router();
 
 router.post("/api/auth/signout", validateCurrentUser, (req: Request, res: Response) => {
     const logger = LogPublisher.getPublisher(rabbitClient.connection, "auth-api:signout");
-    console.log(req.currentUser);
     /** Log Event */
     logger.publish({
         service: MicroServiceNames.AUTH_API,
