@@ -5,6 +5,8 @@ metadata:
 data:
     LOGGLY_SUBDOMAIN: "concept"
     LOG_PROVIDER_TYPE: "loggly"
+    PAPER_TRAIL_HOST: "logs6.papertrailapp.com"
+    PAPER_TRAIL_PORT: '30279'
 
 ---
 apiVersion: apps/v1
