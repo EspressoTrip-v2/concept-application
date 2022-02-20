@@ -23,7 +23,7 @@ export class AllLogsConsumer extends AbstractConsumer<LogEvent> {
             })
         );
 
-        winston.log('info', logData);
+        winston.log("info", logData);
         this.acknowledge(message);
     }
 }

@@ -2,7 +2,6 @@ import {
     AbstractConsumer,
     ExchangeNames,
     ExchangeTypes,
-    LogClientOptions,
     LogCodes,
     LogPublisher,
     MicroServiceNames,
@@ -12,17 +11,11 @@ import {
 import * as amqp from "amqplib";
 import { User } from "../../models";
 
-/** Logging Options */
-const LOG_OPTIONS: LogClientOptions = {
-    serviceName: MicroServiceNames.AUTH_SERVICE,
-    publisherName: "auth-service-consumer:update-employee-signin",
-};
-
 export class UpdateEmployeeSigninConsumer extends AbstractConsumer<UpdateEmployeeEvent> {
     m_exchangeName: ExchangeNames.EMPLOYEE = ExchangeNames.EMPLOYEE;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
     m_queue: QueueInfo.UPDATE_EMPLOYEE = QueueInfo.UPDATE_EMPLOYEE;
-    private m_logger = LogPublisher.getPublisher(this.m_connection, LOG_OPTIONS);
+    private m_logger = LogPublisher.getPublisher(this.m_connection, "auth-service:consumer-update-employee-signin");
 
     constructor(rabbitConnection: amqp.Connection) {
         super(rabbitConnection, "update-employee");
@@ -32,6 +25,7 @@ export class UpdateEmployeeSigninConsumer extends AbstractConsumer<UpdateEmploye
         const existingUser = await User.findOne({ email: data.email, userRole: data.userRole });
         if (!existingUser) {
             this.m_logger.publish({
+                service: MicroServiceNames.AUTH_SERVICE,
                 logContext: LogCodes.ERROR,
                 message: `User not found`,
                 details: `email: ${data.email}, userRole: ${data.userRole}`,

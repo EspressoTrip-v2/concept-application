@@ -1,19 +1,21 @@
 import express, { Request, Response } from "express";
-import { grpcErrorTranslator, isGRPCStatus, LogClientOptions, LogCodes, LogPublisher, MicroServiceNames, payloadValidation, rabbitClient } from "@espressotrip-org/concept-common";
+import {
+    grpcErrorTranslator,
+    isGRPCStatus,
+    LogCodes,
+    LogPublisher,
+    MicroServiceNames,
+    payloadValidation,
+    rabbitClient,
+} from "@espressotrip-org/concept-common";
 import { userGrpcClient } from "../services";
 import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
 import { localUserSchema } from "../payload-schemas";
 
 const router = express.Router();
 
-/** Logging Options */
-const LOG_OPTIONS: LogClientOptions = {
-    serviceName: MicroServiceNames.AUTH_API,
-    publisherName: "auth-api-local-auth:route",
-};
-
 router.post("/api/auth/local", payloadValidation(localUserSchema), async (req: Request, res: Response) => {
-    const logger = LogPublisher.getPublisher(rabbitClient.connection, LOG_OPTIONS);
+    const logger = LogPublisher.getPublisher(rabbitClient.connection, 'auth-api:local-auth');
     const localUser: LocalGrpcUser = req.body;
 
     /** Make the request to the gRPC auth-service server */

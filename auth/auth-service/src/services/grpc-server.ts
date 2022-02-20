@@ -3,7 +3,7 @@ import { ServerWritableStream } from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { User, UserDoc } from "../models";
-import { AbstractGrpcServer, LogClientOptions, LogCodes, LogPublisher, MicroServiceNames, SignInTypes } from "@espressotrip-org/concept-common";
+import { AbstractGrpcServer, LogCodes, LogPublisher, MicroServiceNames, SignInTypes } from "@espressotrip-org/concept-common";
 import { generateJwt, Password } from "../utils";
 import { grpcUser } from "./proto/userPackage/grpcUser";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
@@ -13,11 +13,6 @@ import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
 import { UserServiceHandlers } from "./proto/userPackage/UserService";
 import { AllGrpcUsers } from "./proto/userPackage/AllGrpcUsers";
 import amqp from "amqplib";
-
-const LOG_OPTIONS: LogClientOptions = {
-    serviceName: MicroServiceNames.AUTH_SERVICE,
-    publisherName: "auth-service-gRPC:server",
-};
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/user.proto";
@@ -29,12 +24,7 @@ export class GrpcServer extends AbstractGrpcServer {
 
     readonly m_server = new grpc.Server();
 
-    private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection, LOG_OPTIONS);
-
-    constructor(rabbitConnection: amqp.Connection) {
-        super(rabbitConnection);
-    }
-
+    private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, "auth-service:gRPC-server");
     private m_rpcMethods: UserServiceHandlers = {
         GetAllUsers: async (call: ServerWritableStream<AllGrpcUsers, grpcUser>) => {
             User.find({})
@@ -315,6 +305,10 @@ export class GrpcServer extends AbstractGrpcServer {
         },
     };
 
+    constructor(rabbitConnection: amqp.Connection) {
+        super(rabbitConnection);
+    }
+
     /**
      * Start the server
      */
@@ -335,4 +329,8 @@ export class GrpcServer extends AbstractGrpcServer {
     }
 }
 
+/**
+ * Constructs gRPC server with Rabbit client for logging
+ * @param rabbitConnection
+ */
 export const grpcServer = (rabbitConnection: amqp.Connection): GrpcServer => new GrpcServer(rabbitConnection);

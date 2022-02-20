@@ -1,19 +1,14 @@
 import express, { Request, Response } from "express";
-import { grpcErrorTranslator, isGRPCStatus, LogClientOptions, LogCodes, LogPublisher, MicroServiceNames, NotFoundError, rabbitClient } from "@espressotrip-org/concept-common";
+import { grpcErrorTranslator, isGRPCStatus, LogCodes, LogPublisher, MicroServiceNames, NotFoundError, rabbitClient } from "@espressotrip-org/concept-common";
 import { userGrpcClient } from "../services";
 import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
 
 const BASE_URI = process.env.DEV_UI_REDIRECT || process.env.BASE_URI!;
 const router = express.Router();
 
-/** Logging Options */
-const LOG_OPTIONS: LogClientOptions = {
-    serviceName: MicroServiceNames.AUTH_API,
-    publisherName: "auth-api-google-auth:route",
-};
 
 router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
-    const logger = LogPublisher.getPublisher(rabbitClient.connection, LOG_OPTIONS);
+    const logger = LogPublisher.getPublisher(rabbitClient.connection, 'auth-api:google-auth');
     const googleUser: GoogleGrpcUser = req.session?.grant.response.profile;
     if (!googleUser) throw new NotFoundError("Google user not found");
 

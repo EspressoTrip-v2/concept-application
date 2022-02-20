@@ -23,7 +23,6 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[log-service:error]: Service start up error -> ${msg}`);
-
     }
 }
 

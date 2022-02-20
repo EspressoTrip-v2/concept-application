@@ -1,11 +1,5 @@
 import { grpcServer, postgresClient } from "./services";
-import { LogClientOptions, LogPublisher, LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
-
-/** Logging Options */
-const LOG_OPTIONS: LogClientOptions = {
-    serviceName: MicroServiceNames.ANALYTIC_SERVICE,
-    publisherName: "analytic-service-application:start",
-};
+import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
 async function main(): Promise<void> {
     try {
@@ -15,6 +9,7 @@ async function main(): Promise<void> {
         if (!process.env.POSTGRES_USERNAME) throw new Error("POSTGRES_USERNAME must be defined");
         if (!process.env.ANALYTIC_POSTGRES_PASSWORD) throw new Error("ANALYTIC_POSTGRES_PASSWORD must be defined");
         if (!process.env.GRPC_SERVER_PORT) throw new Error("GRPC_SERVER_PORT must be defined");
+        if (!process.env.POSTGRES_PORT) throw new Error("POSTGRES_PORT must be defined");
 
         /** Create RabbitMQ connection */
         await rabbitClient.connect(process.env.RABBIT_URI!, `[analytic-service:rabbitmq]: Connected successfully`);
@@ -41,12 +36,12 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        LogPublisher.getPublisher(rabbitClient.connection, LOG_OPTIONS).publish({
-            service: MicroServiceNames.ANALYTIC_API,
+        await LogPublisher.getPublisher(rabbitClient.connection, "analytic-service:start-up").publish({
+            service: MicroServiceNames.ANALYTIC_SERVICE,
             logContext: LogCodes.ERROR,
             message: msg.message,
             details: msg.stack,
-            origin: "main",
+            origin: "main()",
             date: new Date().toISOString(),
         });
     }

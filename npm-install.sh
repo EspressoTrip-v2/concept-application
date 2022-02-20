@@ -4,40 +4,40 @@
 
 # Auth
 cd auth/auth-api
-echo "[auth-api]---------------------------------------------------"
-npm i --silent && npm update
+echo "[auth-api]: Installing"
+npm i --silent
 cd ../auth-service
-echo "[auth-service]---------------------------------------------------"
-npm i --silent && npm update
+echo "[auth-service]: Installing"
+npm i --silent
 
 # Root
 cd ../../
 
 # Analytic
 cd analytic/analytic-api
-echo  "[analytic-api]---------------------------------------------------"
-npm i --silent && npm update
+echo  "[analytic-api]: Installing"
+npm i --silent
 cd ../analytic-service
-echo "[analytic-service]---------------------------------------------------"
-npm i --silent && npm update
+echo "[analytic-service]: Installing"
+npm i --silent
 
 # Root
 cd ../../
 
 # Employee
-cd employee/employee-api
-echo "[employee-api]---------------------------------------------------"
-npm i --silent && npm update
-cd ../employee-service
-echo "[employee-service]---------------------------------------------------"
-npm i --silent && npm update
+#cd employee/employee-api
+#echo "[employee-api]: Installing"
+#npm i --silent
+#cd ../employee-service
+#echo "[employee-service]: Installing"
+#npm i --silent
 
-cd ../../
+#cd ../../
 
 # Log
 cd log/log-service
-echo "[log-service]---------------------------------------------------"
-npm i --silent && npm update
+echo "[log-service]: Installing"
+npm i --silent
 
 
 cd ../../

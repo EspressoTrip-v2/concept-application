@@ -1,7 +1,7 @@
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
-import { CreateEmployeeSigninConsumer, ServiceStartupErrorPublisher, UpdateEmployeeSigninConsumer } from "./events";
-import { rabbitClient } from "@espressotrip-org/concept-common";
+import { CreateEmployeeSigninConsumer, UpdateEmployeeSigninConsumer } from "./events";
+import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
 async function main(): Promise<void> {
     try {
@@ -39,12 +39,12 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        LogPublisher.getPublisher(rabbitClient.connection, LOG_OPTIONS).publish({
-            service: MicroServiceNames.ANALYTIC_API,
+        await LogPublisher.getPublisher(rabbitClient.connection, "auth-service:startup").publish({
+            service: MicroServiceNames.AUTH_SERVICE,
             logContext: LogCodes.ERROR,
             message: msg.message,
             details: msg.stack,
-            origin: "main",
+            origin: "main()",
             date: new Date().toISOString(),
         });
     }

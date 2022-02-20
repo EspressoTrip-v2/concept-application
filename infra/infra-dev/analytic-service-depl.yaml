@@ -6,6 +6,7 @@ data:
     PORT: "3000"
     POSTGRES_SERVICE_NAME: "acid-analytic-postgres"
     POSTGRES_USERNAME: root
+    POSTGRES_PORT: '5432'
 
 ---
 apiVersion: apps/v1

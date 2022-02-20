@@ -1,13 +1,7 @@
 import { app } from "./app";
-import { LogClientOptions, LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
 const PORT = process.env.PORT || 3000;
-
-/** Logging Options */
-const LOG_OPTIONS: LogClientOptions = {
-    serviceName: MicroServiceNames.ANALYTIC_API,
-    publisherName: "analytic-api-application:start",
-};
 
 async function main(): Promise<void> {
     try {
@@ -27,12 +21,12 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[analytic-api:error]: Service start up error -> ${msg}`);
-        LogPublisher.getPublisher(rabbitClient.connection, LOG_OPTIONS).publish({
+        await LogPublisher.getPublisher(rabbitClient.connection, "analytic-api:startup").publish({
             service: MicroServiceNames.ANALYTIC_API,
             logContext: LogCodes.ERROR,
             message: msg.message,
             details: msg.stack,
-            origin: "main",
+            origin: "main()",
             date: new Date().toISOString(),
         });
     }

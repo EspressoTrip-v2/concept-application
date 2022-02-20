@@ -14,7 +14,5 @@ spec:
             - createdb
     databases:
         analytic: root # dbname: owner
-    preparedDatabases:
-        bar: {}
     postgresql:
         version: "14"
