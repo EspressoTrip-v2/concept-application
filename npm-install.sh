@@ -5,10 +5,10 @@
 # Auth
 cd auth/auth-api
 echo "[auth-api]---------------------------------------------------"
-npm i --silent && npm update
+npm i --silent
 cd ../auth-service
 echo "[auth-service]---------------------------------------------------"
-npm i --silent && npm update
+npm i --silent
 
 # Root
 cd ../../
@@ -16,10 +16,10 @@ cd ../../
 # Analytic
 cd analytic/analytic-api
 echo  "[analytic-api]---------------------------------------------------"
-npm i --silent && npm update
+npm i --silent
 cd ../analytic-service
 echo "[analytic-service]---------------------------------------------------"
-npm i --silent && npm update
+npm i --silent
 
 # Root
 cd ../../
@@ -27,10 +27,10 @@ cd ../../
 # Employee
 cd employee/employee-api
 echo "[employee-api]---------------------------------------------------"
-npm i --silent && npm update
+npm i --silent
 cd ../employee-service
 echo "[employee-service]---------------------------------------------------"
-npm i --silent && npm update
+npm i --silent
 
 cd ../../
 
