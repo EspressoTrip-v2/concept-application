@@ -50,6 +50,16 @@ build:
               - src: "src/**/*.ts"
                 dest: .
 
+      # Log-Service service
+        - image: espressotrip/concept-log-service
+          context: log/log-service
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*.ts"
+                dest: .
+
         # Client service
         - image: espressotrip/concept-auth-web
           context: auth/auth-web

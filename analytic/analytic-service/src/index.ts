@@ -1,6 +1,5 @@
-import { ServiceStartupErrorPublisher } from "./events";
 import { grpcServer, postgresClient } from "./services";
-import { rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
 async function main(): Promise<void> {
     try {
@@ -10,6 +9,7 @@ async function main(): Promise<void> {
         if (!process.env.POSTGRES_USERNAME) throw new Error("POSTGRES_USERNAME must be defined");
         if (!process.env.ANALYTIC_POSTGRES_PASSWORD) throw new Error("ANALYTIC_POSTGRES_PASSWORD must be defined");
         if (!process.env.GRPC_SERVER_PORT) throw new Error("GRPC_SERVER_PORT must be defined");
+        if (!process.env.POSTGRES_PORT) throw new Error("POSTGRES_PORT must be defined");
 
         /** Create RabbitMQ connection */
         await rabbitClient.connect(process.env.RABBIT_URI!, `[analytic-service:rabbitmq]: Connected successfully`);
@@ -18,32 +18,32 @@ async function main(): Promise<void> {
         await postgresClient.connect(`[analytic-service:postgres]: Connected successfully`);
 
         /** Create gRPC server */
-        grpcServer.listen(`[analytic-service:gRPC-server]: Listening port ${process.env.GRPC_SERVER_PORT}`);
+        const gRPC = grpcServer(rabbitClient.connection).listen(`[analytic-service:gRPC-server]: Listening port ${process.env.GRPC_SERVER_PORT}`);
 
         /** Shut down process */
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
-            grpcServer.m_server.forceShutdown();
+            gRPC.m_server.forceShutdown();
             await postgresClient.close();
         });
         process.on("SIGTERM", async () => {
             await rabbitClient.connection.close();
-            grpcServer.m_server.forceShutdown();
+            gRPC.m_server.forceShutdown();
             await postgresClient.close();
         });
 
         /** Add RabbitMQ Listeners */
     } catch (error) {
-        const msg = (error as Error);
+        const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
-            error: {
-                name: msg.name,
-                stack: msg.stack,
-                message: msg.message,
-            },
+        await LogPublisher.getPublisher(rabbitClient.connection, "analytic-service:start-up").publish({
+            service: MicroServiceNames.ANALYTIC_SERVICE,
+            logContext: LogCodes.ERROR,
+            message: msg.message,
+            details: msg.stack,
+            origin: "main()",
+            date: new Date().toISOString(),
         });
-
     }
 }
 

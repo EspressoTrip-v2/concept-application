@@ -1,9 +1,7 @@
 import { app } from "./app";
-import { ServiceStartupErrorPublisher } from "./events/publishers";
-import { rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
 const PORT = process.env.PORT || 3000;
-
 
 async function main(): Promise<void> {
     try {
@@ -11,7 +9,7 @@ async function main(): Promise<void> {
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!,`[auth-api:rabbitmq]: Connected successfully`);
+        await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
 
         /** Shut down process */
         process.on("SIGTERM", async () => {
@@ -20,16 +18,16 @@ async function main(): Promise<void> {
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
         });
-
     } catch (error) {
-        const msg = (error as Error);
+        const msg = error as Error;
         console.log(`[analytic-api:error]: Service start up error -> ${msg}`);
-        await new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
-            error: {
-                name: msg.name,
-                stack: msg.stack,
-                message: msg.message,
-            },
+        await LogPublisher.getPublisher(rabbitClient.connection, "analytic-api:startup").publish({
+            service: MicroServiceNames.ANALYTIC_API,
+            logContext: LogCodes.ERROR,
+            message: msg.message,
+            details: msg.stack,
+            origin: "main()",
+            date: new Date().toISOString(),
         });
     }
 }

@@ -1,7 +1,7 @@
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
-import { CreateEmployeeSigninConsumer, ServiceStartupErrorPublisher, UpdateEmployeeSigninConsumer } from "./events";
-import { rabbitClient } from "@espressotrip-org/concept-common";
+import { CreateEmployeeSigninConsumer, UpdateEmployeeSigninConsumer } from "./events";
+import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
 async function main(): Promise<void> {
     try {
@@ -19,7 +19,7 @@ async function main(): Promise<void> {
         console.log(`[auth-service:mongo]: Connected successfully`);
 
         /** Create gRPC server */
-        grpcServer.listen(`[auth-service:gRPC-server]: Listening on ${process.env.GRPC_SERVER_PORT}`);
+        const gRPC = grpcServer(rabbitClient.connection).listen(`[auth-service:gRPC-server]: Listening on ${process.env.GRPC_SERVER_PORT}`);
 
         /** Create RabbitMQ consumers */
         await new UpdateEmployeeSigninConsumer(rabbitClient.connection).listen();
@@ -29,22 +29,23 @@ async function main(): Promise<void> {
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
             await mongoose.connection.close();
-            grpcServer.m_server.forceShutdown();
+            gRPC.m_server.forceShutdown();
         });
         process.on("SIGTERM", async () => {
             await rabbitClient.connection.close();
             await mongoose.connection.close();
-            grpcServer.m_server.forceShutdown();
+            gRPC.m_server.forceShutdown();
         });
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        new ServiceStartupErrorPublisher(rabbitClient.connection).publish({
-            error: {
-                name: msg.name,
-                stack: msg.stack,
-                message: msg.message,
-            },
+        await LogPublisher.getPublisher(rabbitClient.connection, "auth-service:startup").publish({
+            service: MicroServiceNames.AUTH_SERVICE,
+            logContext: LogCodes.ERROR,
+            message: msg.message,
+            details: msg.stack,
+            origin: "main()",
+            date: new Date().toISOString(),
         });
     }
 }

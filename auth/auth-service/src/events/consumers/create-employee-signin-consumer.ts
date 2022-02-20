@@ -1,20 +1,13 @@
-import {
-    AbstractConsumer,
-    CreateEmployeeEvent,
-    ExchangeNames,
-    ExchangeTypes,
-    QueueInfo,
-    SignInTypes,
-    UpdateEmployeeEvent,
-    UserRoles,
-} from "@espressotrip-org/concept-common";
+import { AbstractConsumer, CreateEmployeeEvent, ExchangeNames, ExchangeTypes, LogCodes, LogPublisher, MicroServiceNames, QueueInfo } from "@espressotrip-org/concept-common";
 import * as amqp from "amqplib";
-import { User, UserAttrs } from "../../models";
+import { User } from "../../models";
+
 
 export class CreateEmployeeSigninConsumer extends AbstractConsumer<CreateEmployeeEvent> {
     m_exchangeName: ExchangeNames.EMPLOYEE = ExchangeNames.EMPLOYEE;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
     m_queue: QueueInfo.CREATE_EMPLOYEE = QueueInfo.CREATE_EMPLOYEE;
+    private m_logger = LogPublisher.getPublisher(this.m_connection, "auth-service:consumer-create-employee-signin");
 
     constructor(rabbitConnection: amqp.Connection) {
         super(rabbitConnection, "create-employee");
@@ -22,7 +15,18 @@ export class CreateEmployeeSigninConsumer extends AbstractConsumer<CreateEmploye
 
     async onMessage(data: CreateEmployeeEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
         const existingEmployee = await User.findOne({ email: data.email, userRole: data.userRole });
-        if (existingEmployee) throw new Error("CreateEmployeeSignIn: Employee sign-in already exists.");
+        if (existingEmployee) {
+            this.m_logger.publish({
+                service: MicroServiceNames.AUTH_SERVICE,
+                logContext: LogCodes.ERROR,
+                message: `Employee sign-in already exists`,
+                details: `email: ${existingEmployee.email}, id: ${existingEmployee.id}`,
+                origin: `CreateEmployeeSigninConsumer`,
+                date: new Date().toISOString(),
+            });
+
+            throw new Error("CreateEmployeeSignIn: Employee sign-in already exists.");
+        }
 
         const user = User.build({
             firstName: data.firstName,
@@ -43,6 +47,14 @@ export class CreateEmployeeSigninConsumer extends AbstractConsumer<CreateEmploye
             providerId: data.providerId,
         });
         await user.save();
+        this.m_logger.publish({
+            service: MicroServiceNames.AUTH_SERVICE,
+            logContext: LogCodes.CREATED,
+            message: `Employee sign-in created`,
+            details: `email: ${user.email}, id: ${user.id}`,
+            origin: `CreateEmployeeSigninConsumer`,
+            date: new Date().toISOString(),
+        });
         this.acknowledge(message);
     }
 }

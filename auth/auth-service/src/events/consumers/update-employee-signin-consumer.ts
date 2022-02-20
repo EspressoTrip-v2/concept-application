@@ -15,6 +15,7 @@ export class UpdateEmployeeSigninConsumer extends AbstractConsumer<UpdateEmploye
     m_exchangeName: ExchangeNames.EMPLOYEE = ExchangeNames.EMPLOYEE;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
     m_queue: QueueInfo.UPDATE_EMPLOYEE = QueueInfo.UPDATE_EMPLOYEE;
+    private m_logger = LogPublisher.getPublisher(this.m_connection, "auth-service:consumer-update-employee-signin");
 
     constructor(rabbitConnection: amqp.Connection) {
         super(rabbitConnection, "update-employee");
@@ -23,10 +24,12 @@ export class UpdateEmployeeSigninConsumer extends AbstractConsumer<UpdateEmploye
     async onMessage(data: UpdateEmployeeEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
         const existingUser = await User.findOne({ email: data.email, userRole: data.userRole });
         if (!existingUser) {
-            new LogPublisher(this.m_connection, MicroServiceNames.AUTH_SERVICE, "auth-service-consumer:UpdateEmployeeSigninConsumer").publish({
-                code: LogCodes.ERROR,
-                message: "User not found",
-                origin: "[auth-service]: UpdateEmployeeSigninConsumer",
+            this.m_logger.publish({
+                service: MicroServiceNames.AUTH_SERVICE,
+                logContext: LogCodes.ERROR,
+                message: `User not found`,
+                details: `email: ${data.email}, userRole: ${data.userRole}`,
+                origin: "UpdateEmployeeSigninConsumer",
                 date: new Date().toISOString(),
             });
             throw new Error("User not found.");

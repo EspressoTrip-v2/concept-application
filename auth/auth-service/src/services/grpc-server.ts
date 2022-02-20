@@ -3,7 +3,7 @@ import { ServerWritableStream } from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { User, UserDoc } from "../models";
-import { AbstractGrpcServer, LogCodes, MicroServiceNames, rabbitClient, SignInTypes } from "@espressotrip-org/concept-common";
+import { AbstractGrpcServer, LogCodes, LogPublisher, MicroServiceNames, SignInTypes } from "@espressotrip-org/concept-common";
 import { generateJwt, Password } from "../utils";
 import { grpcUser } from "./proto/userPackage/grpcUser";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
@@ -12,6 +12,7 @@ import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
 import { UserServiceHandlers } from "./proto/userPackage/UserService";
 import { AllGrpcUsers } from "./proto/userPackage/AllGrpcUsers";
+import amqp from "amqplib";
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/user.proto";
@@ -23,7 +24,8 @@ export class GrpcServer extends AbstractGrpcServer {
 
     readonly m_server = new grpc.Server();
 
-    m_rpcMethods: UserServiceHandlers = {
+    private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, "auth-service:gRPC-server");
+    private m_rpcMethods: UserServiceHandlers = {
         GetAllUsers: async (call: ServerWritableStream<AllGrpcUsers, grpcUser>) => {
             User.find({})
                 .cursor()
@@ -44,12 +46,14 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.NOT_FOUND,
                     details: "User not found.",
                 };
-                this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                    code: LogCodes.ERROR,
+                this.m_logger.publish({
+                    service: MicroServiceNames.AUTH_SERVICE,
+                    logContext: LogCodes.ERROR,
                     message: serverError.details,
-                    origin: "[auth-service]: LoginGoogleUser",
+                    origin: "LoginGoogleUser",
+                    details: `email: ${call.request.email}`,
                     date: new Date().toISOString(),
-                },"auth-service-gRPC:server");
+                });
                 return callback(serverError);
             }
 
@@ -57,16 +61,26 @@ export class GrpcServer extends AbstractGrpcServer {
                 case SignInTypes.GITHUB:
                 case SignInTypes.LOCAL:
                     serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType}` };
-                    this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                        code: LogCodes.ERROR,
+                    this.m_logger.publish({
+                        service: MicroServiceNames.AUTH_SERVICE,
+                        logContext: LogCodes.ERROR,
                         message: serverError.details,
-                        origin: "[auth-service]: LoginGoogleUser",
+                        details: `email: ${call.request.email}, account: ${googleUser.signInType}`,
+                        origin: "LoginGoogleUser",
                         date: new Date().toISOString(),
-                    },"auth-service-gRPC:server");
+                    });
                     return callback(serverError);
                 case SignInTypes.UNKNOWN:
                     googleUser.set({ signInType: SignInTypes.GOOGLE, providerId: call.request.sub });
                     await googleUser.save();
+                    this.m_logger.publish({
+                        service: MicroServiceNames.AUTH_SERVICE,
+                        logContext: LogCodes.UPDATED,
+                        message: "User registered",
+                        details: `email: ${call.request.email},  id: ${googleUser.id}`,
+                        date: new Date().toISOString(),
+                        origin: "LoginGoogleUser",
+                    });
                     return callback(null, {
                         user: googleUser,
                         jwt: generateJwt(googleUser),
@@ -84,12 +98,14 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.PERMISSION_DENIED,
                             details: "Invalid credentials",
                         };
-                        this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                            code: LogCodes.ERROR,
+                        this.m_logger.publish({
+                            service: MicroServiceNames.AUTH_SERVICE,
+                            logContext: LogCodes.ERROR,
                             message: serverError.details,
-                            origin: "[auth-service]: LoginGoogleUser",
+                            origin: "LoginGoogleUser",
+                            details: `email: ${call.request.email},  id: ${call.request.sub}`,
                             date: new Date().toISOString(),
-                        },"auth-service-gRPC:server");
+                        });
                         return callback(serverError);
                     }
                 default:
@@ -97,18 +113,20 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "User not found",
                     };
-                    this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                        code: LogCodes.ERROR,
+                    this.m_logger.publish({
+                        service: MicroServiceNames.AUTH_SERVICE,
+                        logContext: LogCodes.ERROR,
                         message: serverError.details,
-                        origin: "[auth-service]: LoginGoogleUser",
+                        origin: "LoginGoogleUser",
+                        details: `email: ${call.request.email}`,
                         date: new Date().toISOString(),
-                    },"auth-service-gRPC:server");
+                    });
                     callback(serverError);
             }
         },
         LoginGitHubUser: async (
             call: grpc.ServerUnaryCall<GitHubGrpcUser, CreateGrpcUserInfo>,
-            callback: grpc.sendUnaryData<CreateGrpcUserInfo>,
+            callback: grpc.sendUnaryData<CreateGrpcUserInfo>
         ): Promise<void> => {
             let gitHubUser: UserDoc | null;
             let serverError: Partial<grpc.StatusObject>;
@@ -119,28 +137,40 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.NOT_FOUND,
                     details: "User not found",
                 };
-                this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                    code: LogCodes.ERROR,
+                this.m_logger.publish({
+                    service: MicroServiceNames.AUTH_SERVICE,
+                    logContext: LogCodes.ERROR,
                     message: serverError.details,
-                    origin: "[auth-service]: LoginGitHubUser",
+                    origin: "LoginGitHubUser",
+                    details: `email: ${call.request.email}`,
                     date: new Date().toISOString(),
-                },"auth-service-gRPC:server");
+                });
                 return callback(serverError);
             }
             switch (gitHubUser.signInType) {
                 case SignInTypes.GOOGLE:
                 case SignInTypes.LOCAL:
                     serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType}` };
-                    this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                        code: LogCodes.ERROR,
+                    this.m_logger.publish({
+                        service: MicroServiceNames.AUTH_SERVICE,
+                        logContext: LogCodes.ERROR,
                         message: serverError.details,
-                        origin: "[auth-service]: LoginGitHubUser",
+                        origin: "LoginGitHubUser",
+                        details: `email: ${call.request.email}, account: ${gitHubUser.signInType}`,
                         date: new Date().toISOString(),
-                    },"auth-service-gRPC:server");
+                    });
                     return callback(serverError);
                 case SignInTypes.UNKNOWN:
                     gitHubUser.set({ signInType: SignInTypes.GITHUB, providerId: call.request.id!.toString() });
                     await gitHubUser.save();
+                    this.m_logger.publish({
+                        service: MicroServiceNames.AUTH_SERVICE,
+                        logContext: LogCodes.UPDATED,
+                        message: "User registered",
+                        details: `email: ${gitHubUser.email},  id:  ${gitHubUser.id}`,
+                        date: new Date().toISOString(),
+                        origin: "LoginGitHubUser",
+                    });
                     return callback(null, {
                         user: gitHubUser,
                         jwt: generateJwt(gitHubUser),
@@ -158,12 +188,14 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.PERMISSION_DENIED,
                             details: "Invalid credentials",
                         };
-                        this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                            code: LogCodes.ERROR,
+                        this.m_logger.publish({
+                            service: MicroServiceNames.AUTH_SERVICE,
+                            logContext: LogCodes.ERROR,
                             message: serverError.details,
-                            origin: "[auth-service]: LoginGitHubUser",
+                            origin: "LoginGitHubUser",
+                            details: `email: ${call.request.email},  id: ${call.request.id}`,
                             date: new Date().toISOString(),
-                        },"auth-service-gRPC:server");
+                        });
                         return callback(serverError);
                     }
                 default:
@@ -171,12 +203,14 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "User not found",
                     };
-                    this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                        code: LogCodes.ERROR,
+                    this.m_logger.publish({
+                        service: MicroServiceNames.AUTH_SERVICE,
+                        logContext: LogCodes.ERROR,
                         message: serverError.details,
-                        origin: "[auth-service]: LoginGitHubUser",
+                        origin: "LoginGitHubUser",
+                        details: `email: ${call.request.email}`,
                         date: new Date().toISOString(),
-                    }, "auth-service-gRPC:server");
+                    });
                     callback(serverError);
             }
         },
@@ -191,12 +225,14 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.NOT_FOUND,
                     details: "User does not exists.",
                 };
-                this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                    code: LogCodes.ERROR,
+                this.m_logger.publish({
+                    service: MicroServiceNames.AUTH_SERVICE,
+                    logContext: LogCodes.ERROR,
                     message: serverError.details,
-                    origin: "[auth-service]: LoginLocalUser",
+                    origin: "LoginLocalUser",
+                    details: `email: ${call.request.email}`,
                     date: new Date().toISOString(),
-                }, "auth-service-gRPC:server");
+                });
                 return callback(serverError);
             }
 
@@ -204,16 +240,26 @@ export class GrpcServer extends AbstractGrpcServer {
                 case SignInTypes.GOOGLE:
                 case SignInTypes.GITHUB:
                     serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType}` };
-                    this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                        code: LogCodes.ERROR,
+                    this.m_logger.publish({
+                        service: MicroServiceNames.AUTH_SERVICE,
+                        logContext: LogCodes.ERROR,
                         message: serverError.details,
-                        origin: "[auth-service]: LoginLocalUser",
+                        origin: "LoginLocalUser",
+                        details: `email: ${call.request.email}, account: ${localUser.signInType}`,
                         date: new Date().toISOString(),
-                    }, "auth-service-gRPC:server");
+                    });
                     return callback(serverError);
                 case SignInTypes.UNKNOWN:
                     localUser.set({ signInType: SignInTypes.LOCAL });
                     await localUser.save();
+                    this.m_logger.publish({
+                        service: MicroServiceNames.AUTH_SERVICE,
+                        logContext: LogCodes.UPDATED,
+                        message: "User registered",
+                        details: `email: ${call.request.email}, id: ${localUser.id}`,
+                        date: new Date().toISOString(),
+                        origin: "LoginLocalUser",
+                    });
                     return callback(null, {
                         user: localUser,
                         jwt: generateJwt(localUser),
@@ -231,34 +277,42 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.PERMISSION_DENIED,
                             details: "Invalid credentials",
                         };
-                        this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                            code: LogCodes.ERROR,
+                        this.m_logger.publish({
+                            service: MicroServiceNames.AUTH_SERVICE,
+                            logContext: LogCodes.ERROR,
                             message: serverError.details,
-                            origin: "[auth-service]: LoginLocalUser",
+                            origin: "LoginLocalUser",
+                            details: `email: ${call.request.email}, password: ${call.request.password}`,
                             date: new Date().toISOString(),
-                        }, "auth-service-gRPC:server");
+                        });
                         return callback(serverError);
                     }
                 default:
                     serverError = {
                         code: grpc.status.NOT_FOUND,
-                        details: "User not found",
+                        details: "Undefined error",
                     };
-                    this.publishLog(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, {
-                        code: LogCodes.ERROR,
+                    this.m_logger.publish({
+                        service: MicroServiceNames.AUTH_SERVICE,
+                        logContext: LogCodes.ERROR,
                         message: serverError.details,
-                        origin: "[auth-service]: LoginLocalUser",
+                        origin: "LoginLocalUser",
+                        details: "Undefined error",
                         date: new Date().toISOString(),
-                    }, "auth-service-gRPC:server");
+                    });
                     callback(serverError);
             }
         },
     };
 
+    constructor(rabbitConnection: amqp.Connection) {
+        super(rabbitConnection);
+    }
+
     /**
      * Start the server
      */
-    listen(logMessage: string): void {
+    listen(logMessage: string): GrpcServer {
         this.m_server.addService(this.m_package.UserService.service, {
             GetAllUsers: this.m_rpcMethods.GetAllUsers,
             LoginGoogleUser: this.m_rpcMethods.LoginGoogleUser,
@@ -271,7 +325,12 @@ export class GrpcServer extends AbstractGrpcServer {
             console.log(logMessage);
             this.m_server.start();
         });
+        return this;
     }
 }
 
-export const grpcServer = new GrpcServer();
+/**
+ * Constructs gRPC server with Rabbit client for logging
+ * @param rabbitConnection
+ */
+export const grpcServer = (rabbitConnection: amqp.Connection): GrpcServer => new GrpcServer(rabbitConnection);

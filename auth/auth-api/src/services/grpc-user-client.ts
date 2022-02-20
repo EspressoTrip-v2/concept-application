@@ -8,6 +8,7 @@ import { CreateGrpcUserInfo } from "./proto/userPackage/CreateGrpcUserInfo";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
+import amqp from "amqplib";
 
 export class GrpcUserClient extends AbstractGrpcClient {
     readonly m_protoPath = __dirname + "/proto/user.proto";
@@ -17,11 +18,15 @@ export class GrpcUserClient extends AbstractGrpcClient {
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
     readonly m_package = this.m_grpcObject.userPackage;
 
+    constructor() {
+        super();
+    }
+
     /**
      * Save a Google user
      * @param user {GoogleGrpcUser}
      */
-    loginGoogleUser(user: GoogleGrpcUser): Promise<grpc.ServiceError | CreateGrpcUserInfo>{
+    loginGoogleUser(user: GoogleGrpcUser): Promise<grpc.ServiceError | CreateGrpcUserInfo> {
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
         return new Promise(async (resolve, reject) => {
             client.LoginGoogleUser(user, (error: grpc.ServiceError | null, createUserInfo?: CreateGrpcUserInfo) => {
