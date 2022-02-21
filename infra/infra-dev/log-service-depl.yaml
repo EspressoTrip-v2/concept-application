@@ -4,7 +4,7 @@ metadata:
     name: log-service-config
 data:
     LOGGLY_SUBDOMAIN: "concept"
-    LOG_PROVIDER_TYPE: "loggly"
+    LOG_PROVIDER_TYPE: "papertrail"
     PAPER_TRAIL_HOST: "logs6.papertrailapp.com"
     PAPER_TRAIL_PORT: '30279'
 
