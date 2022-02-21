@@ -202,3 +202,6 @@ Folder structure changes will have to go with skaffold.yaml changes to update th
 
 The services use ts-node-dev to run, so changes need to be made if we want to run a production version of the application. 
 Also the Dockerfile.prod is not complete for production build, there needs to be a nginx.conf file created for the usage of react-router-dom in the container.
+
+### Architectural Model:
+![acme-fast-foods](https://user-images.githubusercontent.com/9296659/154967637-29999ee6-9fd4-40da-b96a-dc3612477aa0.png)

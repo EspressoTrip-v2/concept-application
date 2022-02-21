@@ -19,9 +19,9 @@ router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
     logger.publish({
         service: MicroServiceNames.AUTH_API,
         logContext: LogCodes.INFO,
-        message: `Google SignIn`,
+        message: `GitHUb SignIn`,
         details: `email: ${gitHubUser.email}`,
-        origin: "/api/auth/google/redirect",
+        origin: "/api/auth/github/redirect",
         date: new Date().toISOString(),
     });
 
