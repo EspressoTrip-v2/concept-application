@@ -17,7 +17,6 @@ export interface ProtoGrpcType {
     ServerStreamUserResponse: MessageTypeDefinition
     UserService: SubtypeConstructor<typeof grpc.Client, _userPackage_UserServiceClient> & { service: _userPackage_UserServiceDefinition }
     grpcUser: MessageTypeDefinition
-    grpcUserUpdate: MessageTypeDefinition
   }
 }
 

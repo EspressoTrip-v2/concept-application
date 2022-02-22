@@ -1,13 +1,21 @@
-import { AbstractConsumer, CreateEmployeeEvent, ExchangeNames, ExchangeTypes, LogCodes, LogPublisher, MicroServiceNames, QueueInfo } from "@espressotrip-org/concept-common";
+import {
+    AbstractConsumer,
+    CreateEmployeeEvent,
+    ExchangeNames,
+    ExchangeTypes,
+    LogCodes,
+    LogPublisher,
+    MicroServiceNames,
+    QueueInfo,
+} from "@espressotrip-org/concept-common";
 import * as amqp from "amqplib";
 import { User } from "../../models";
-
 
 export class CreateEmployeeSigninConsumer extends AbstractConsumer<CreateEmployeeEvent> {
     m_exchangeName: ExchangeNames.EMPLOYEE = ExchangeNames.EMPLOYEE;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
     m_queue: QueueInfo.CREATE_EMPLOYEE = QueueInfo.CREATE_EMPLOYEE;
-    private m_logger = LogPublisher.getPublisher(this.m_connection, "auth-service:consumer-create-employee-signin");
+    private m_logger = LogPublisher.getPublisher(this.m_connection, MicroServiceNames.AUTH_SERVICE, "auth-service:consumer-create-employee-signin");
 
     constructor(rabbitConnection: amqp.Connection) {
         super(rabbitConnection, "create-employee");
@@ -16,15 +24,12 @@ export class CreateEmployeeSigninConsumer extends AbstractConsumer<CreateEmploye
     async onMessage(data: CreateEmployeeEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
         const existingEmployee = await User.findOne({ email: data.email, userRole: data.userRole });
         if (existingEmployee) {
-            this.m_logger.publish({
-                service: MicroServiceNames.AUTH_SERVICE,
-                logContext: LogCodes.ERROR,
-                message: `Employee sign-in already exists`,
-                details: `email: ${existingEmployee.email}, id: ${existingEmployee.id}`,
-                origin: `CreateEmployeeSigninConsumer`,
-                date: new Date().toISOString(),
-            });
-
+            this.m_logger.publish(
+                LogCodes.ERROR,
+                `Employee sign-in already exists`,
+                `CreateEmployeeSigninConsumer`,
+                `email: ${existingEmployee.email}, id: ${existingEmployee.id}`
+            );
             throw new Error("CreateEmployeeSignIn: Employee sign-in already exists.");
         }
 
@@ -46,15 +51,19 @@ export class CreateEmployeeSigninConsumer extends AbstractConsumer<CreateEmploye
             password: data.password,
             providerId: data.providerId,
         });
-        await user.save();
-        this.m_logger.publish({
-            service: MicroServiceNames.AUTH_SERVICE,
-            logContext: LogCodes.CREATED,
-            message: `Employee sign-in created`,
-            details: `email: ${user.email}, id: ${user.id}`,
-            origin: `CreateEmployeeSigninConsumer`,
-            date: new Date().toISOString(),
+        await user.save().catch(error => {
+            if (error) {
+                this.m_logger.publish(LogCodes.ERROR, "Could not save employee as new user sign-in", "CreateEmployeeSigninConsumer", `email: ${user?.email}`);
+            }
         });
+
+        this.m_logger.publish(
+            LogCodes.CREATED,
+            `Employee saved as new user sign-in created`,
+            `CreateEmployeeSigninConsumer`,
+            `email: ${user.email}, id: ${user.id}`
+        );
+
         this.acknowledge(message);
     }
 }

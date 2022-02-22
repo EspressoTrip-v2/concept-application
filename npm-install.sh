@@ -25,14 +25,14 @@ npm i --silent
 cd ../../
 
 # Employee
-#cd employee/employee-api
-#echo "[employee-api]: Installing"
-#npm i --silent
-#cd ../employee-service
-#echo "[employee-service]: Installing"
-#npm i --silent
+cd employee/employee-api
+echo "[employee-api]: Installing"
+npm i --silent
+cd ../employee-service
+echo "[employee-service]: Installing"
+npm i --silent
 
-#cd ../../
+cd ../../
 
 # Log
 cd log/log-service

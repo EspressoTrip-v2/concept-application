@@ -4,16 +4,10 @@ import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient, validateCurren
 const router = express.Router();
 
 router.post("/api/auth/signout", validateCurrentUser, (req: Request, res: Response) => {
-    const logger = LogPublisher.getPublisher(rabbitClient.connection, "auth-api:signout");
+    const logger = LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.AUTH_API, "auth-api:signout");
+
     /** Log Event */
-    logger.publish({
-        service: MicroServiceNames.AUTH_API,
-        logContext: LogCodes.INFO,
-        message: `User SignOut`,
-        details: `email: ${req.currentUser?.email}`,
-        origin: "/api/auth/signout",
-        date: new Date().toISOString(),
-    });
+    logger.publish(LogCodes.INFO, `User SignOut`, "/api/auth/signout", `email: ${req.currentUser?.email}`);
 
     req.session = null;
     res.send({ cookie: req.session });

@@ -3,7 +3,7 @@
 
 export interface ServerStreamUserResponse {
   'id'?: (string);
-  'firstNAme'?: (string);
+  'firstName'?: (string);
   'lastName'?: (string);
   'gender'?: (string);
   'race'?: (string);
@@ -23,7 +23,7 @@ export interface ServerStreamUserResponse {
 
 export interface ServerStreamUserResponse__Output {
   'id': (string);
-  'firstNAme': (string);
+  'firstName': (string);
   'lastName': (string);
   'gender': (string);
   'race': (string);

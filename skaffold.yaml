@@ -60,12 +60,14 @@ build:
               - src: "src/**/*.ts"
                 dest: .
 
-        # Client service
+        # Auth-Web service
         - image: espressotrip/concept-auth-web
           context: auth/auth-web
           docker:
               dockerfile: Dockerfile
           sync:
               manual:
-                  - src: "src/**/*.ts"
+                  - src: "src/**/*.jsx"
+                    dest: .
+                  - src: "src/**/*.js"
                     dest: .

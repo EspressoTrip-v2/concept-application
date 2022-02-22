@@ -28,14 +28,12 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-api:error]: Service start up error -> ${msg}`);
-        await LogPublisher.getPublisher(rabbitClient.connection, "auth-api:startup").publish({
-            service: MicroServiceNames.ANALYTIC_API,
-            logContext: LogCodes.ERROR,
-            message: msg.message,
-            details: msg.stack,
-            origin: "main()",
-            date: new Date().toISOString(),
-        });
+        await LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.AUTH_API, "auth-api:startup").publish(
+            LogCodes.ERROR,
+            msg.message || "Service Error",
+            "main()",
+            msg.stack! || "No stack trace"
+        );
     }
 }
 

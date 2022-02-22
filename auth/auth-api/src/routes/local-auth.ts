@@ -15,7 +15,7 @@ import { localUserSchema } from "../payload-schemas";
 const router = express.Router();
 
 router.post("/api/auth/local", payloadValidation(localUserSchema), async (req: Request, res: Response) => {
-    const logger = LogPublisher.getPublisher(rabbitClient.connection, 'auth-api:local-auth');
+    const logger = LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.AUTH_API, "auth-api:local-auth");
     const localUser: LocalGrpcUser = req.body;
 
     /** Make the request to the gRPC auth-service server */
@@ -23,14 +23,7 @@ router.post("/api/auth/local", payloadValidation(localUserSchema), async (req: R
     if (isGRPCStatus(rpcResponse)) throw grpcErrorTranslator(rpcResponse);
 
     /** Log Event */
-    logger.publish({
-        service: MicroServiceNames.AUTH_API,
-        logContext: LogCodes.INFO,
-        message: `Local SignIn`,
-        details: `email: ${localUser.email}`,
-        origin: "/api/auth/local",
-        date: new Date().toISOString(),
-    });
+    logger.publish(LogCodes.INFO, `Local SignIn`, "/api/auth/local", `email: ${localUser.email}`);
 
     /** Add to the session */
     req.session = {
