@@ -1,12 +1,24 @@
 import Google from '../img/google.png';
 import Facebook from '../img/facebook.png';
 import Github from '../img/github.png';
-import { useState } from 'react';
-import axios from 'axios';
+import { useLayoutEffect, useState } from 'react';
+import { useStoreState, useStoreActions } from 'easy-peasy';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import getUser from '../helpers';
 
 const Login = () => {
   const navigate = useNavigate();
+  const userSessionCookie = useStoreState((state) => state.userSessionCookie);
+  useLayoutEffect(() => {
+    if (userSessionCookie) {
+      navigate('/');
+    }
+  }, [userSessionCookie, navigate]);
+  const updateUserSessionCookie = useStoreActions(
+    (actions) => actions.updateUserSessionCookie
+  );
+
   const [input, setInput] = useState({ email: '', password: '' });
 
   const google = () => {
@@ -29,8 +41,10 @@ const Login = () => {
       email: input.email,
       password: input.password,
     };
-    await axios.post('/api/auth/local', user);
-    navigate('/');
+    await axios.post('/api/auth/local', user).then(async () => {
+      const userCookie = await getUser();
+      await updateUserSessionCookie(userCookie);
+    });
   };
 
   return (
@@ -58,19 +72,23 @@ const Login = () => {
         <form className='right' onSubmit={onSubmit}>
           <div className='right'>
             <input
+              required
               name='email'
               type='email'
               placeholder='Email'
               onChange={handleOnChange}
             />
             <input
-              name={'password'}
+              required
+              name='password'
               type='password'
               placeholder='Password'
               onChange={handleOnChange}
             />
 
-            <button className='submit'>Sign In</button>
+            <button className='submit' type='submit'>
+              Sign In
+            </button>
           </div>
         </form>
       </div>

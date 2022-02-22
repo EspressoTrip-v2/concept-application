@@ -1,36 +1,37 @@
-import Navbar from "./components/Navbar";
-import "./app.css";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css'
-toast.configure()
+import './app.css';
+import { useStoreActions } from 'easy-peasy';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useLayoutEffect } from 'react';
+import { toast } from 'react-toastify';
+import getUser from './helpers';
+import 'react-toastify/dist/ReactToastify.css';
+toast.configure();
+
 const App = () => {
-    const [userData, setUserData] = useState(false);
+  const updateUserSessionCookie = useStoreActions(
+    (actions) => actions.updateUserSessionCookie
+  );
 
-    useEffect(() => {
-        const getUser = async () => {
-            const result = await axios.get("https://acmefast.dev/api/auth/login-success");
-            console.log(result);
-            if (result.data.session) setUserData(result.data);
-        };
-        getUser();
-    }, []);
+  useLayoutEffect(() => {
+    const doUserData = async () => {
+      const session = await getUser();
+      await updateUserSessionCookie(session);
+    };
+    doUserData();
+  }, [updateUserSessionCookie]);
 
-    return (
-        <BrowserRouter>
-            <div>
-                <Navbar userData={userData} setUserData={setUserData} />
-                <Routes>
-                    <Route path="/" element={userData.session ? <Home session={userData.session} /> : <Navigate to="/login" />} />
-                    <Route path="/login" element={userData.session ? <Navigate to="/" /> : <Login  />} />
-                </Routes>
-            </div>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <Navbar />
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/login' element={<Login />} />
+      </Routes>
+    </BrowserRouter>
+  );
 };
 
 export default App;
