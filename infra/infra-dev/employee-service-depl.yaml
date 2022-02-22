@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: employee-service-config
+data:
+    MONGO_DBNAME: "employee"
+    MONGO_URI: "mongodb://root:8103@employee-mongo-0.employee-mongo-svc.default.svc.cluster.local:27017/employee?ssl=false"
+#    Uncomment the below if you are using the stand-alone deployments
+#    MONGO_URI: "mongodb://employee-mongo-srv:27017"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: employee-service-depl
+    labels:
+        app: employee-service
+spec:
+    replicas: 1
+    template:
+        metadata:
+            name: employee-service
+            labels:
+                app: employee-service
+        spec:
+            containers:
+                - name: employee-service
+                  image: espressotrip/concept-employee-service
+                  imagePullPolicy: IfNotPresent
+                  envFrom:
+                      - configMapRef:
+                            name: employee-service-config
+                      - configMapRef:
+                            name: global-config
+                      - secretRef:
+                            name: global-secret
+                  ports:
+                      - containerPort: 8080
+
+            restartPolicy: Always
+    selector:
+        matchLabels:
+            app: employee-service
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: employee-service-srv
+spec:
+    selector:
+        app: employee-service
+    ports:
+        - port: 8080
+          targetPort: 8080
+          name: employee-service-grpc

@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: employee-api-config
+data:
+    PORT: "3000"
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: employee-api-depl
+    labels:
+        app: employee-api
+spec:
+    replicas: 1
+    template:
+        metadata:
+            name: employee-api
+            labels:
+                app: employee-api
+        spec:
+            containers:
+                - name: employee-api
+                  image: espressotrip/concept-employee-api
+                  imagePullPolicy: IfNotPresent
+                  envFrom:
+                      - configMapRef:
+                            name: employee-api-config
+                      - configMapRef:
+                            name: global-config
+                      - secretRef:
+                            name: global-secret
+            restartPolicy: Always
+    selector:
+        matchLabels:
+            app: employee-api
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: employee-api-srv
+spec:
+    selector:
+        app: employee-api
+    ports:
+        - port: 3000
+          targetPort: 3000
+          name: employee-api

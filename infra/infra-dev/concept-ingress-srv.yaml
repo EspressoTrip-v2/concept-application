@@ -36,6 +36,24 @@ spec:
                         port:
                           number: 3000
 
+                # Employee API
+                  - path: /api/employee/?(.*)
+                    pathType: Prefix
+                    backend:
+                      service:
+                        name: employee-api-srv
+                        port:
+                          number: 3000
+
+                # Employee-Web UI
+                  - path: /employee/?(.*)
+                    pathType: Prefix
+                    backend:
+                      service:
+                        name: employee-web-srv
+                        port:
+                          number: 3000
+
                 # Auth-Web UI
                   - path: /?(.*)
                     pathType: Prefix

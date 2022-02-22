@@ -10,7 +10,7 @@ import { GrpcEmployeeAttributes } from "./proto/employeePackage/GrpcEmployeeAttr
 import { Employee } from "../models";
 
 export class GrpcServer extends AbstractGrpcServer {
-    readonly m_protoPath = __dirname + "/proto/user.proto";
+    readonly m_protoPath = __dirname + "/proto/employee.proto";
     readonly m_port = process.env.GRPC_SERVER_PORT!;
 
     readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
@@ -20,7 +20,7 @@ export class GrpcServer extends AbstractGrpcServer {
     readonly m_server = new grpc.Server();
 
     /** Event Logger */
-    private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, "employee-service:gRPC-server");
+    private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, MicroServiceNames.EMPLOYEE_SERVICE, "employee-service:gRPC-server");
 
     private m_rpcMethods: EmployeeServiceHandlers = {
         CreateEmployee: async (call: grpc.ServerUnaryCall<GrpcEmployeeAttributes, GrpcEmployeeInfo>, callback: grpc.sendUnaryData<GrpcEmployeeInfo>) => {
@@ -46,25 +46,12 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.INTERNAL,
                         details: "Could not create new employee, employee save failed",
                     };
-                    this.m_logger.publish({
-                        date: new Date().toISOString(),
-                        service: MicroServiceNames.EMPLOYEE_SERVICE,
-                        origin: "CreateEmployee()",
-                        logContext: LogCodes.ERROR,
-                        message: "Employee save failed",
-                        details: `email: ${employee.email}, id: ${employee.id}`,
-                    });
+                    this.m_logger.publish(LogCodes.ERROR, "Employee save failed", "CreateEmployee()", `email: ${employee.email}, id: ${employee.id}`);
+
                     return callback(serverError);
                 }
             });
-            this.m_logger.publish({
-                date: new Date().toISOString(),
-                service: MicroServiceNames.EMPLOYEE_SERVICE,
-                origin: "CreateEmployee()",
-                logContext: LogCodes.CREATED,
-                message: "Employee created",
-                details: `email: ${employee.email}, id: ${employee.id}`,
-            });
+            this.m_logger.publish(LogCodes.CREATED, "Employee created", "CreateEmployee()", `email: ${employee.email}, id: ${employee.id}`);
         },
         DeleteEmployee: (call: grpc.ServerUnaryCall<EmployeeId, GrpcEmployeeInfo>, callback: grpc.sendUnaryData<GrpcEmployeeInfo>) => {},
         GetEmployee: (call: grpc.ServerUnaryCall<EmployeeId, GrpcEmployeeInfo>, callback: grpc.sendUnaryData<GrpcEmployeeInfo>) => {},

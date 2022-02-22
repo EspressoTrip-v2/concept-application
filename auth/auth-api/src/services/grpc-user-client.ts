@@ -2,13 +2,10 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { AbstractGrpcClient, GrpcServicePorts } from "@espressotrip-org/concept-common";
-import { grpcUserUpdate } from "./proto/userPackage/grpcUserUpdate";
-import { grpcUser } from "./proto/userPackage/grpcUser";
 import { CreateGrpcUserInfo } from "./proto/userPackage/CreateGrpcUserInfo";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
-import amqp from "amqplib";
 
 export class GrpcUserClient extends AbstractGrpcClient {
     readonly m_protoPath = __dirname + "/proto/user.proto";

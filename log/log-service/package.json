@@ -8,7 +8,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@espressotrip-org/concept-common": "^1.1.78",
+        "@espressotrip-org/concept-common": "^1.1.81",
         "@types/amqplib": "^0.8.2",
         "@types/winston-loggly-bulk": "^3.0.3",
         "@types/winston-syslog": "^2.4.0",

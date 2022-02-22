@@ -5,6 +5,8 @@ const PORT = process.env.PORT || 3000;
 
 async function main(): Promise<void> {
     try {
+        /** RabbitMQ */
+        if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
         /** Google */
         if (!process.env.GOOGLE_CLIENT_ID) throw new Error("GOOGLE_CLIENT_ID must be defined");
         if (!process.env.GOOGLE_SECRET) throw new Error("GOOGLE_SECRET must be defined");

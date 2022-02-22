@@ -50,6 +50,26 @@ build:
               - src: "src/**/*.ts"
                 dest: .
 
+      # Employee-api service
+        - image: espressotrip/concept-employee-api
+          context: employee/employee-api
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*.ts"
+                dest: .
+
+      # Employee-Service service
+        - image: espressotrip/concept-employee-service
+          context: employee/employee-service
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*.ts"
+                dest: .
+
       # Log-Service service
         - image: espressotrip/concept-log-service
           context: log/log-service
