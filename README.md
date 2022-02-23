@@ -55,7 +55,7 @@ Once **Minikube** is running, move to next step.
 
 ___
 ### IMPORTANT:
-___
+
 You can choose to not run the operators for Mongo and RabbitMQ. The operators deploy a host of custom resources to manage the container. There is another script
 and yaml files that allow for stand-alone deployments of all the Mongo and RabbitMQ containers. You will have to make one or two small adjustments in the deployment
 ConfigMaps that are using the MongoDB pods. Postgres will still run with the operator, simply because the adjustments required can not be done without changing the source code.
@@ -203,8 +203,7 @@ If you have any issues with failure to connect to the MongoDB operator cluster p
 Copy the infra/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
 
 ___
-### Infrastructure Folder Note  
-___
+### Infrastructure Folder Note
 The folder infra/apm is not meant to be used for development, this is test case APM files that are only to be used for showcase.
 Please only deploy files from the .sh scripts that are mentioned 
 ___
