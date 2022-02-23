@@ -4,8 +4,8 @@ metadata:
     name: auth-api-config
 data:
     PORT: "3000"
-    GOOGLE_CALLBACK_URL: '/api/auth/google/redirect'
-    GITHUB_CALLBACK_URL: '/api/auth/github/redirect'
+    GOOGLE_CALLBACK_URL: "/api/auth/google/redirect"
+    GITHUB_CALLBACK_URL: "/api/auth/github/redirect"
 
 ---
 apiVersion: apps/v1
@@ -21,11 +21,17 @@ spec:
             name: auth-api
             labels:
                 app: auth-api
+                deployment: acme-fast
         spec:
             containers:
                 - name: auth-api
                   image: espressotrip/concept-auth-api
                   imagePullPolicy: IfNotPresent
+                  env:
+                      - name: NEW_RELIC_APP_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: auth-api-config

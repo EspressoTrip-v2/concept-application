@@ -7,7 +7,7 @@ const BASE_URI = process.env.DEV_UI_REDIRECT || process.env.BASE_URI!;
 const router = express.Router();
 
 router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
-    const logger = LogPublisher.getPublisher(rabbitClient.connection, 'auth-api:github-auth');
+    const logger = LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.AUTH_API, "auth-api:github-auth");
     const gitHubUser: GitHubGrpcUser = req.session?.grant.response.profile;
     if (!gitHubUser) throw new NotFoundError("Github user not found");
 
@@ -16,14 +16,7 @@ router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
     if (isGRPCStatus(rpcResponse)) throw grpcErrorTranslator(rpcResponse);
 
     /** Log Event */
-    logger.publish({
-        service: MicroServiceNames.AUTH_API,
-        logContext: LogCodes.INFO,
-        message: `Google SignIn`,
-        details: `email: ${gitHubUser.email}`,
-        origin: "/api/auth/google/redirect",
-        date: new Date().toISOString(),
-    });
+    logger.publish(LogCodes.INFO, `GitHUb SignIn`, "/api/auth/github/redirect", `email: ${gitHubUser.email}`);
 
     /** Add to the session */
     req.session = {

@@ -7,12 +7,12 @@ import { AbstractGrpcServer, LogCodes, LogPublisher, MicroServiceNames, SignInTy
 import { generateJwt, Password } from "../utils";
 import { grpcUser } from "./proto/userPackage/grpcUser";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
-import { CreateGrpcUserInfo } from "./proto/userPackage/CreateGrpcUserInfo";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
 import { UserServiceHandlers } from "./proto/userPackage/UserService";
 import { AllGrpcUsers } from "./proto/userPackage/AllGrpcUsers";
 import amqp from "amqplib";
+import { GrpcResponsePayload } from "./proto/userPackage/GrpcResponsePayload";
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/user.proto";
@@ -24,7 +24,7 @@ export class GrpcServer extends AbstractGrpcServer {
 
     readonly m_server = new grpc.Server();
 
-    private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, "auth-service:gRPC-server");
+    private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, MicroServiceNames.AUTH_SERVICE, "auth-service:gRPC-server");
     private m_rpcMethods: UserServiceHandlers = {
         GetAllUsers: async (call: ServerWritableStream<AllGrpcUsers, grpcUser>) => {
             User.find({})
@@ -36,7 +36,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     call.end();
                 });
         },
-        LoginGoogleUser: async (call: grpc.ServerUnaryCall<GoogleGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>) => {
+        LoginGoogleUser: async (call: grpc.ServerUnaryCall<GoogleGrpcUser, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
             let googleUser: UserDoc | null;
             let serverError: Partial<grpc.StatusObject>;
             googleUser = await User.findOne({ email: call.request.email });
@@ -44,16 +44,9 @@ export class GrpcServer extends AbstractGrpcServer {
             if (!googleUser) {
                 serverError = {
                     code: grpc.status.NOT_FOUND,
-                    details: "User not found.",
+                    details: "Sign-in user not found.",
                 };
-                this.m_logger.publish({
-                    service: MicroServiceNames.AUTH_SERVICE,
-                    logContext: LogCodes.ERROR,
-                    message: serverError.details,
-                    origin: "LoginGoogleUser",
-                    details: `email: ${call.request.email}`,
-                    date: new Date().toISOString(),
-                });
+                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
                 return callback(serverError);
             }
 
@@ -61,35 +54,36 @@ export class GrpcServer extends AbstractGrpcServer {
                 case SignInTypes.GITHUB:
                 case SignInTypes.LOCAL:
                     serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType} account` };
-                    this.m_logger.publish({
-                        service: MicroServiceNames.AUTH_SERVICE,
-                        logContext: LogCodes.ERROR,
-                        message: serverError.details,
-                        details: `email: ${call.request.email}, account: ${googleUser.signInType}`,
-                        origin: "LoginGoogleUser",
-                        date: new Date().toISOString(),
-                    });
+                    this.m_logger.publish(
+                        LogCodes.ERROR,
+                        serverError.details!,
+                        "LoginGoogleUser",
+                        `email: ${call.request.email}, account: ${googleUser.signInType}`
+                    );
                     return callback(serverError);
                 case SignInTypes.UNKNOWN:
                     googleUser.set({ signInType: SignInTypes.GOOGLE, providerId: call.request.sub });
-                    await googleUser.save();
-                    this.m_logger.publish({
-                        service: MicroServiceNames.AUTH_SERVICE,
-                        logContext: LogCodes.UPDATED,
-                        message: "User registered",
-                        details: `email: ${call.request.email},  id: ${googleUser.id}`,
-                        date: new Date().toISOString(),
-                        origin: "LoginGoogleUser",
+                    await googleUser.save().catch(error => {
+                        if (error) {
+                            serverError = {
+                                code: grpc.status.INTERNAL,
+                                details: "Could not update Google user signInType, user save failed",
+                            };
+                            this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${googleUser?.email}`);
+                            return callback(serverError);
+                        }
                     });
+                    this.m_logger.publish(LogCodes.UPDATED, "Sign-in user registered", "LoginGoogleUser", `email: ${call.request.email},  id: ${googleUser.id}`);
+
                     return callback(null, {
-                        user: googleUser,
+                        data: googleUser,
                         jwt: generateJwt(googleUser),
                         status: 200,
                     });
                 case SignInTypes.GOOGLE:
                     if (googleUser.providerId === call.request.sub)
                         return callback(null, {
-                            user: googleUser,
+                            data: googleUser,
                             jwt: generateJwt(googleUser),
                             status: 200,
                         });
@@ -98,14 +92,13 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.PERMISSION_DENIED,
                             details: "Invalid credentials",
                         };
-                        this.m_logger.publish({
-                            service: MicroServiceNames.AUTH_SERVICE,
-                            logContext: LogCodes.ERROR,
-                            message: serverError.details,
-                            origin: "LoginGoogleUser",
-                            details: `email: ${call.request.email},  id: ${call.request.sub}`,
-                            date: new Date().toISOString(),
-                        });
+                        this.m_logger.publish(
+                            LogCodes.ERROR,
+                            serverError.details!,
+                            "LoginGoogleUser",
+                            `email: ${call.request.email},  id: ${call.request.sub}`
+                        );
+
                         return callback(serverError);
                     }
                 default:
@@ -113,20 +106,13 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "User not found",
                     };
-                    this.m_logger.publish({
-                        service: MicroServiceNames.AUTH_SERVICE,
-                        logContext: LogCodes.ERROR,
-                        message: serverError.details,
-                        origin: "LoginGoogleUser",
-                        details: `email: ${call.request.email}`,
-                        date: new Date().toISOString(),
-                    });
+                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
                     callback(serverError);
             }
         },
         LoginGitHubUser: async (
-            call: grpc.ServerUnaryCall<GitHubGrpcUser, CreateGrpcUserInfo>,
-            callback: grpc.sendUnaryData<CreateGrpcUserInfo>
+            call: grpc.ServerUnaryCall<GitHubGrpcUser, GrpcResponsePayload>,
+            callback: grpc.sendUnaryData<GrpcResponsePayload>
         ): Promise<void> => {
             let gitHubUser: UserDoc | null;
             let serverError: Partial<grpc.StatusObject>;
@@ -137,49 +123,45 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.NOT_FOUND,
                     details: "User not found",
                 };
-                this.m_logger.publish({
-                    service: MicroServiceNames.AUTH_SERVICE,
-                    logContext: LogCodes.ERROR,
-                    message: serverError.details,
-                    origin: "LoginGitHubUser",
-                    details: `email: ${call.request.email}`,
-                    date: new Date().toISOString(),
-                });
+                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
+
                 return callback(serverError);
             }
             switch (gitHubUser.signInType) {
                 case SignInTypes.GOOGLE:
                 case SignInTypes.LOCAL:
                     serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType} account` };
-                    this.m_logger.publish({
-                        service: MicroServiceNames.AUTH_SERVICE,
-                        logContext: LogCodes.ERROR,
-                        message: serverError.details,
-                        origin: "LoginGitHubUser",
-                        details: `email: ${call.request.email}, account: ${gitHubUser.signInType}`,
-                        date: new Date().toISOString(),
-                    });
+                    this.m_logger.publish(
+                        LogCodes.ERROR,
+                        serverError.details!,
+                        "LoginGitHubUser",
+                        `email: ${call.request.email}, account: ${gitHubUser.signInType}`
+                    );
+
                     return callback(serverError);
                 case SignInTypes.UNKNOWN:
                     gitHubUser.set({ signInType: SignInTypes.GITHUB, providerId: call.request.id!.toString() });
-                    await gitHubUser.save();
-                    this.m_logger.publish({
-                        service: MicroServiceNames.AUTH_SERVICE,
-                        logContext: LogCodes.UPDATED,
-                        message: "User registered",
-                        details: `email: ${gitHubUser.email},  id:  ${gitHubUser.id}`,
-                        date: new Date().toISOString(),
-                        origin: "LoginGitHubUser",
+                    await gitHubUser.save().catch(error => {
+                        if (error) {
+                            serverError = {
+                                code: grpc.status.INTERNAL,
+                                details: "Could not update GitHub user signInType, user save failed",
+                            };
+                            this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${gitHubUser?.email}`);
+                            return callback(serverError);
+                        }
                     });
+                    this.m_logger.publish(LogCodes.UPDATED, "Sign-in user registered", "LoginGitHubUser", `email: ${gitHubUser.email},  id:  ${gitHubUser.id}`);
+
                     return callback(null, {
-                        user: gitHubUser,
+                        data: gitHubUser,
                         jwt: generateJwt(gitHubUser),
                         status: 200,
                     });
                 case SignInTypes.GITHUB:
                     if (gitHubUser.providerId === call.request.id!.toString())
                         return callback(null, {
-                            user: gitHubUser,
+                            data: gitHubUser,
                             jwt: generateJwt(gitHubUser),
                             status: 200,
                         });
@@ -188,14 +170,8 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.PERMISSION_DENIED,
                             details: "Invalid credentials",
                         };
-                        this.m_logger.publish({
-                            service: MicroServiceNames.AUTH_SERVICE,
-                            logContext: LogCodes.ERROR,
-                            message: serverError.details,
-                            origin: "LoginGitHubUser",
-                            details: `email: ${call.request.email},  id: ${call.request.id}`,
-                            date: new Date().toISOString(),
-                        });
+                        this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email},  id: ${call.request.id}`);
+
                         return callback(serverError);
                     }
                 default:
@@ -203,18 +179,12 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "User not found",
                     };
-                    this.m_logger.publish({
-                        service: MicroServiceNames.AUTH_SERVICE,
-                        logContext: LogCodes.ERROR,
-                        message: serverError.details,
-                        origin: "LoginGitHubUser",
-                        details: `email: ${call.request.email}`,
-                        date: new Date().toISOString(),
-                    });
+                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
+
                     callback(serverError);
             }
         },
-        LoginLocalUser: async (call: grpc.ServerUnaryCall<LocalGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>) => {
+        LoginLocalUser: async (call: grpc.ServerUnaryCall<LocalGrpcUser, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
             let localUser: UserDoc | null;
             let serverError: Partial<grpc.StatusObject>;
 
@@ -225,14 +195,8 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.NOT_FOUND,
                     details: "User does not exists.",
                 };
-                this.m_logger.publish({
-                    service: MicroServiceNames.AUTH_SERVICE,
-                    logContext: LogCodes.ERROR,
-                    message: serverError.details,
-                    origin: "LoginLocalUser",
-                    details: `email: ${call.request.email}`,
-                    date: new Date().toISOString(),
-                });
+                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `email: ${call.request.email}`);
+
                 return callback(serverError);
             }
 
@@ -240,35 +204,37 @@ export class GrpcServer extends AbstractGrpcServer {
                 case SignInTypes.GOOGLE:
                 case SignInTypes.GITHUB:
                     serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType} account` };
-                    this.m_logger.publish({
-                        service: MicroServiceNames.AUTH_SERVICE,
-                        logContext: LogCodes.ERROR,
-                        message: serverError.details,
-                        origin: "LoginLocalUser",
-                        details: `email: ${call.request.email}, account: ${localUser.signInType}`,
-                        date: new Date().toISOString(),
-                    });
+                    this.m_logger.publish(
+                        LogCodes.ERROR,
+                        serverError.details!,
+                        "LoginLocalUser",
+                        `email: ${call.request.email}, account: ${localUser.signInType}`
+                    );
+
                     return callback(serverError);
                 case SignInTypes.UNKNOWN:
                     localUser.set({ signInType: SignInTypes.LOCAL });
-                    await localUser.save();
-                    this.m_logger.publish({
-                        service: MicroServiceNames.AUTH_SERVICE,
-                        logContext: LogCodes.UPDATED,
-                        message: "User registered",
-                        details: `email: ${call.request.email}, id: ${localUser.id}`,
-                        date: new Date().toISOString(),
-                        origin: "LoginLocalUser",
+                    await localUser.save().catch(error => {
+                        if (error) {
+                            serverError = {
+                                code: grpc.status.INTERNAL,
+                                details: "Could not update Local user signInType, user save failed",
+                            };
+                            this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `email: ${localUser?.email}`);
+                            return callback(serverError);
+                        }
                     });
+                    this.m_logger.publish(LogCodes.UPDATED, "Sign-in user registered", "LoginLocalUser", `email: ${call.request.email}, id: ${localUser.id}`);
+
                     return callback(null, {
-                        user: localUser,
+                        data: localUser,
                         jwt: generateJwt(localUser),
                         status: 200,
                     });
                 case SignInTypes.LOCAL:
                     if (await Password.compare(localUser.password, call.request.password!))
                         return callback(null, {
-                            user: localUser,
+                            data: localUser,
                             jwt: generateJwt(localUser),
                             status: 200,
                         });
@@ -277,14 +243,13 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.PERMISSION_DENIED,
                             details: "Invalid credentials",
                         };
-                        this.m_logger.publish({
-                            service: MicroServiceNames.AUTH_SERVICE,
-                            logContext: LogCodes.ERROR,
-                            message: serverError.details,
-                            origin: "LoginLocalUser",
-                            details: `email: ${call.request.email}, password: ${call.request.password}`,
-                            date: new Date().toISOString(),
-                        });
+                        this.m_logger.publish(
+                            LogCodes.ERROR,
+                            serverError.details!,
+                            "LoginLocalUser",
+                            `email: ${call.request.email}, password: ${call.request.password}`
+                        );
+
                         return callback(serverError);
                     }
                 default:
@@ -292,14 +257,8 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "Undefined error",
                     };
-                    this.m_logger.publish({
-                        service: MicroServiceNames.AUTH_SERVICE,
-                        logContext: LogCodes.ERROR,
-                        message: serverError.details,
-                        origin: "LoginLocalUser",
-                        details: "Undefined error",
-                        date: new Date().toISOString(),
-                    });
+                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", "Undefined error");
+
                     callback(serverError);
             }
         },

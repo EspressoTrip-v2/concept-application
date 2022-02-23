@@ -8,15 +8,15 @@ import { LogCodes } from "@espressotrip-org/concept-common";
 const winstonSys = winston.transports as Transports & { Syslog: SyslogTransportInstance };
 
 export class PapertrailProvider extends AbstractLogger<winston.Logger> {
-    private m_papertrail: SyslogTransportInstance;
+    private readonly m_papertrail: SyslogTransportInstance;
 
-    constructor() {
+    constructor(logOrigin: string) {
         super();
         this.m_papertrail = new winstonSys.Syslog({
             host: process.env.PAPER_TRAIL_HOST,
             port: parseInt(process.env.PAPER_TRAIL_PORT!),
             protocol: "tls4",
-            localhost: "acme-fast",
+            localhost: logOrigin,
             eol: "\n",
         });
 

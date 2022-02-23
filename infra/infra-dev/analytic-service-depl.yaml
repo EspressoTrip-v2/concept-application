@@ -6,7 +6,7 @@ data:
     PORT: "3000"
     POSTGRES_SERVICE_NAME: "acid-analytic-postgres"
     POSTGRES_USERNAME: root
-    POSTGRES_PORT: '5432'
+    POSTGRES_PORT: "5432"
 
 ---
 apiVersion: apps/v1
@@ -22,11 +22,17 @@ spec:
             name: analytic-service
             labels:
                 app: analytic-service
+                deployment: acme-fast
         spec:
             containers:
                 - name: analytic-service
                   image: espressotrip/concept-analytic-service
                   imagePullPolicy: IfNotPresent
+                  env:
+                      - name: NEW_RELIC_APP_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: analytic-service-config

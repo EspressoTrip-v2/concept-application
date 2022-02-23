@@ -1,3 +1,4 @@
+import 'newrelic'
 import { app } from "./app";
 import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
@@ -21,14 +22,12 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[analytic-api:error]: Service start up error -> ${msg}`);
-        await LogPublisher.getPublisher(rabbitClient.connection, "analytic-api:startup").publish({
-            service: MicroServiceNames.ANALYTIC_API,
-            logContext: LogCodes.ERROR,
-            message: msg.message,
-            details: msg.stack,
-            origin: "main()",
-            date: new Date().toISOString(),
-        });
+        await LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.ANALYTIC_API, "analytic-api:startup").publish(
+            LogCodes.ERROR,
+            msg.message || "Service Error",
+            "main()",
+            msg.stack! || "No stack trace",
+        );
     }
 }
 

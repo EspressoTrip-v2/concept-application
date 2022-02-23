@@ -2,14 +2,14 @@
 
 import type { grpcUser as _userPackage_grpcUser, grpcUser__Output as _userPackage_grpcUser__Output } from '../userPackage/grpcUser';
 
-export interface CreateGrpcUserInfo {
+export interface GrpcResponsePayload {
   'status'?: (number);
   'jwt'?: (string);
-  'user'?: (_userPackage_grpcUser | null);
+  'data'?: (_userPackage_grpcUser | null);
 }
 
-export interface CreateGrpcUserInfo__Output {
+export interface GrpcResponsePayload__Output {
   'status': (number);
   'jwt': (string);
-  'user': (_userPackage_grpcUser__Output | null);
+  'data': (_userPackage_grpcUser__Output | null);
 }

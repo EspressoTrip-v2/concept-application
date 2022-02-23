@@ -2,70 +2,90 @@
 apiVersion: skaffold/v2alpha3
 kind: Config
 deploy:
-  kubectl:
-    manifests:
-      - ./infra/infra-dev/*
+    kubectl:
+        manifests:
+            - ./infra/infra-dev/*
 build:
-  local:
-    push: false
+    local:
+        push: false
 
-  artifacts:
-    # Auth-API service
-    - image: espressotrip/concept-auth-api
-      context: auth/auth-api
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
+    artifacts:
+        # Auth-API service
+        - image: espressotrip/concept-auth-api
+          context: auth/auth-api
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
 
-    # Auth-Service service
-    - image: espressotrip/concept-auth-service
-      context: auth/auth-service
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
+        # Auth-Service service
+        - image: espressotrip/concept-auth-service
+          context: auth/auth-service
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
 
-    # Analytic-API service
-    - image: espressotrip/concept-analytic-api
-      context: analytic/analytic-api
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
+        # Analytic-API service
+        - image: espressotrip/concept-analytic-api
+          context: analytic/analytic-api
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
 
-    # Analytic-Service service
-    - image: espressotrip/concept-analytic-service
-      context: analytic/analytic-service
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
+        # Analytic-Service service
+        - image: espressotrip/concept-analytic-service
+          context: analytic/analytic-service
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
 
-    # Log-Service service
-    - image: espressotrip/concept-log-service
-      context: log/log-service
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*.ts'
-            dest: .
+        # Employee-api service
+        - image: espressotrip/concept-employee-api
+          context: employee/employee-api
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
 
-    # Auth-Web service
-    - image: espressotrip/concept-auth-web
-      context: auth/auth-web
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: 'src/**/*'
-            dest: .
+        # Employee-Service service
+        - image: espressotrip/concept-employee-service
+          context: employee/employee-service
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
+
+        # Log-Service service
+        - image: espressotrip/concept-log-service
+          context: log/log-service
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
+
+        # Auth-Web service
+        - image: espressotrip/concept-auth-web
+          context: auth/auth-web
+          docker:
+              dockerfile: Dockerfile
+          sync:
+              manual:
+                  - src: "src/**/*"
+                    dest: .

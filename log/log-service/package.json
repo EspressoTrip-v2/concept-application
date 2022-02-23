@@ -8,7 +8,7 @@
     "author": "",
     "license": "ISC",
     "dependencies": {
-        "@espressotrip-org/concept-common": "^1.1.76",
+        "@espressotrip-org/concept-common": "^1.1.93",
         "@types/amqplib": "^0.8.2",
         "@types/winston-loggly-bulk": "^3.0.3",
         "@types/winston-syslog": "^2.4.0",
@@ -18,7 +18,9 @@
         "typescript": "^4.5.5",
         "winston": "^3.6.0",
         "winston-loggly-bulk": "^3.2.1",
-        "winston-syslog": "^2.5.0"
+        "winston-syslog": "^2.5.0",
+        "@types/newrelic": "^7.0.3",
+        "newrelic": "^8.7.1"
     },
     "devDependencies": {}
 }

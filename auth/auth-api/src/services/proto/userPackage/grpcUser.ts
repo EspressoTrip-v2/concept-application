@@ -3,7 +3,7 @@
 
 export interface grpcUser {
   'id'?: (string);
-  'firstNAme'?: (string);
+  'firstName'?: (string);
   'lastName'?: (string);
   'gender'?: (string);
   'race'?: (string);
@@ -24,7 +24,7 @@ export interface grpcUser {
 
 export interface grpcUser__Output {
   'id': (string);
-  'firstNAme': (string);
+  'firstName': (string);
   'lastName': (string);
   'gender': (string);
   'race': (string);

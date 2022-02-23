@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Convenience scripts to install and update packages
+# NB!!!!!!!!!!!! DO NOT RUN THIS FILE UNLESS SPECIFICALLY TOLD SO !!!!!!!!!!!!!!!!!
 
 # Auth
 cd auth/auth-api
@@ -25,14 +25,14 @@ npm update @espressotrip-org/concept-common
 cd ../../
 
 # Employee
-#cd employee/employee-api
-#echo "[employee-api]: Updating"
-#npm update
-#cd ../employee-service
-#echo "[employee-service]: Updating"
-#npm update
+cd employee/employee-api
+echo "[employee-api]: Updating"
+npm update
+cd ../employee-service
+echo "[employee-service]: Updating"
+npm update
 
-#cd ../../
+cd ../../
 
 # Log
 cd log/log-service

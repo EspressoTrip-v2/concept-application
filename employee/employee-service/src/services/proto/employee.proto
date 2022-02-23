@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package employeePackage;
+
+message GrpcEmployee {
+    string id = 1;
+    string firstName = 2;
+    string lastName = 3;
+    string gender = 4;
+    string race = 5;
+    string position = 6;
+    string startDate = 7;
+    string shiftPreference = 8;
+    string branchName = 9;
+    string region = 10;
+    string country = 11;
+    string phoneNumber = 12;
+    string email = 13;
+    int32 version = 14;
+    string signInType = 15;
+    string providerId = 16;
+    string password = 17;
+    string userRole = 18;
+}
+
+message GrpcEmployeeAttributes {
+    string firstName = 1;
+    string lastName = 2;
+    string gender = 3;
+    string race = 4;
+    string position = 5;
+    string startDate = 6;
+    string shiftPreference = 7;
+    string branchName = 8;
+    string region = 9;
+    string country = 10;
+    string phoneNumber = 11;
+    string email = 12;
+    string password = 13;
+    string id = 14;
+}
+
+message EmployeeId {
+    string id = 1;
+}
+
+message GrpcResponsePayload{
+    int32 status = 1;
+    GrpcEmployee data = 2;
+}
+
+
+service EmployeeService {
+    rpc CreateEmployee(GrpcEmployeeAttributes) returns (GrpcResponsePayload) {};
+    rpc UpdateEmployee(GrpcEmployeeAttributes) returns (GrpcResponsePayload) {};
+    rpc DeleteEmployee(EmployeeId) returns (GrpcResponsePayload) {};
+    rpc GetEmployee(EmployeeId) returns (GrpcResponsePayload) {};
+}
