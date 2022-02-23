@@ -13,7 +13,7 @@ export interface ProtoGrpcType {
     EmployeeService: SubtypeConstructor<typeof grpc.Client, _employeePackage_EmployeeServiceClient> & { service: _employeePackage_EmployeeServiceDefinition }
     GrpcEmployee: MessageTypeDefinition
     GrpcEmployeeAttributes: MessageTypeDefinition
-    GrpcEmployeeInfo: MessageTypeDefinition
+    GrpcResponsePayload: MessageTypeDefinition
   }
 }
 

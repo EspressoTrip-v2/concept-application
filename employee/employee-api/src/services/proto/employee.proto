@@ -44,15 +44,15 @@ message EmployeeId {
     string id = 1;
 }
 
-message GrpcEmployeeInfo{
+message GrpcResponsePayload{
     int32 status = 1;
-    GrpcEmployee user = 2;
+    GrpcEmployee data = 2;
 }
 
 
 service EmployeeService {
-    rpc CreateEmployee(GrpcEmployeeAttributes) returns (GrpcEmployeeInfo) {};
-    rpc UpdateEmployee(GrpcEmployeeAttributes) returns (GrpcEmployeeInfo) {};
-    rpc DeleteEmployee(EmployeeId) returns (GrpcEmployeeInfo) {};
-    rpc GetEmployee(EmployeeId) returns (GrpcEmployeeInfo) {};
+    rpc CreateEmployee(GrpcEmployeeAttributes) returns (GrpcResponsePayload) {};
+    rpc UpdateEmployee(GrpcEmployeeAttributes) returns (GrpcResponsePayload) {};
+    rpc DeleteEmployee(EmployeeId) returns (GrpcResponsePayload) {};
+    rpc GetEmployee(EmployeeId) returns (GrpcResponsePayload) {};
 }

@@ -5,6 +5,11 @@ import process from "process";
 import { LogCodes } from "@espressotrip-org/concept-common";
 
 export class LogglyProvider extends AbstractLogger<winston.Logger> {
+
+    constructor(logOrigin: string) {
+        super();
+    }
+
     createLog(logData: Record<string, any>): void {
         this.m_logger = winston.add(
             new Loggly({

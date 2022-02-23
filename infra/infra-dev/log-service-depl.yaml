@@ -6,7 +6,7 @@ data:
     LOGGLY_SUBDOMAIN: "concept"
     LOG_PROVIDER_TYPE: "papertrail"
     PAPER_TRAIL_HOST: "logs6.papertrailapp.com"
-    PAPER_TRAIL_PORT: '30279'
+    PAPER_TRAIL_PORT: "30279"
 
 ---
 apiVersion: apps/v1
@@ -22,11 +22,17 @@ spec:
             name: log-service
             labels:
                 app: log-service
+                deployment: acme-fast
         spec:
             containers:
                 - name: log-service
                   image: espressotrip/concept-log-service
                   imagePullPolicy: IfNotPresent
+                  env:
+                      - name: NEW_RELIC_APP_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: global-config

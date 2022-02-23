@@ -7,12 +7,12 @@ import { AbstractGrpcServer, LogCodes, LogPublisher, MicroServiceNames, SignInTy
 import { generateJwt, Password } from "../utils";
 import { grpcUser } from "./proto/userPackage/grpcUser";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
-import { CreateGrpcUserInfo } from "./proto/userPackage/CreateGrpcUserInfo";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
 import { UserServiceHandlers } from "./proto/userPackage/UserService";
 import { AllGrpcUsers } from "./proto/userPackage/AllGrpcUsers";
 import amqp from "amqplib";
+import { GrpcResponsePayload } from "./proto/userPackage/GrpcResponsePayload";
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/user.proto";
@@ -36,7 +36,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     call.end();
                 });
         },
-        LoginGoogleUser: async (call: grpc.ServerUnaryCall<GoogleGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>) => {
+        LoginGoogleUser: async (call: grpc.ServerUnaryCall<GoogleGrpcUser, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
             let googleUser: UserDoc | null;
             let serverError: Partial<grpc.StatusObject>;
             googleUser = await User.findOne({ email: call.request.email });
@@ -76,14 +76,14 @@ export class GrpcServer extends AbstractGrpcServer {
                     this.m_logger.publish(LogCodes.UPDATED, "Sign-in user registered", "LoginGoogleUser", `email: ${call.request.email},  id: ${googleUser.id}`);
 
                     return callback(null, {
-                        user: googleUser,
+                        data: googleUser,
                         jwt: generateJwt(googleUser),
                         status: 200,
                     });
                 case SignInTypes.GOOGLE:
                     if (googleUser.providerId === call.request.sub)
                         return callback(null, {
-                            user: googleUser,
+                            data: googleUser,
                             jwt: generateJwt(googleUser),
                             status: 200,
                         });
@@ -111,8 +111,8 @@ export class GrpcServer extends AbstractGrpcServer {
             }
         },
         LoginGitHubUser: async (
-            call: grpc.ServerUnaryCall<GitHubGrpcUser, CreateGrpcUserInfo>,
-            callback: grpc.sendUnaryData<CreateGrpcUserInfo>
+            call: grpc.ServerUnaryCall<GitHubGrpcUser, GrpcResponsePayload>,
+            callback: grpc.sendUnaryData<GrpcResponsePayload>
         ): Promise<void> => {
             let gitHubUser: UserDoc | null;
             let serverError: Partial<grpc.StatusObject>;
@@ -154,14 +154,14 @@ export class GrpcServer extends AbstractGrpcServer {
                     this.m_logger.publish(LogCodes.UPDATED, "Sign-in user registered", "LoginGitHubUser", `email: ${gitHubUser.email},  id:  ${gitHubUser.id}`);
 
                     return callback(null, {
-                        user: gitHubUser,
+                        data: gitHubUser,
                         jwt: generateJwt(gitHubUser),
                         status: 200,
                     });
                 case SignInTypes.GITHUB:
                     if (gitHubUser.providerId === call.request.id!.toString())
                         return callback(null, {
-                            user: gitHubUser,
+                            data: gitHubUser,
                             jwt: generateJwt(gitHubUser),
                             status: 200,
                         });
@@ -184,7 +184,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     callback(serverError);
             }
         },
-        LoginLocalUser: async (call: grpc.ServerUnaryCall<LocalGrpcUser, CreateGrpcUserInfo>, callback: grpc.sendUnaryData<CreateGrpcUserInfo>) => {
+        LoginLocalUser: async (call: grpc.ServerUnaryCall<LocalGrpcUser, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
             let localUser: UserDoc | null;
             let serverError: Partial<grpc.StatusObject>;
 
@@ -227,14 +227,14 @@ export class GrpcServer extends AbstractGrpcServer {
                     this.m_logger.publish(LogCodes.UPDATED, "Sign-in user registered", "LoginLocalUser", `email: ${call.request.email}, id: ${localUser.id}`);
 
                     return callback(null, {
-                        user: localUser,
+                        data: localUser,
                         jwt: generateJwt(localUser),
                         status: 200,
                     });
                 case SignInTypes.LOCAL:
                     if (await Password.compare(localUser.password, call.request.password!))
                         return callback(null, {
-                            user: localUser,
+                            data: localUser,
                             jwt: generateJwt(localUser),
                             status: 200,
                         });

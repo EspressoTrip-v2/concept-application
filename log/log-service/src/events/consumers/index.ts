@@ -1,1 +1,1 @@
-export * from "./all-logs-consumer";
+export * from "./logs-consumer";

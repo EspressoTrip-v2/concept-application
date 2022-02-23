@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import { EmployeeAttrs, EmployeeDoc, EmployeeModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { MicroServiceNames, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { EmployeeMsg, GenderType, MicroServiceNames, RaceTypes, ShiftPreference, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Password } from "../utils";
+import { GrpcEmployee } from "../services/proto/employeePackage/GrpcEmployee";
 
 /**
  * User model that uses update-if-current version incrementation
@@ -44,7 +45,6 @@ const employeeSchema = new mongoose.Schema(
 employeeSchema.set("versionKey", "version");
 employeeSchema.plugin(updateIfCurrentPlugin);
 
-
 /** Encrypt the password on save */
 employeeSchema.pre("save", async function (done) {
     const password = this.get("password");
@@ -61,6 +61,29 @@ employeeSchema.pre("save", async function (done) {
  */
 employeeSchema.statics.build = function (attributes: EmployeeAttrs): EmployeeDoc {
     return new Employee(attributes);
+};
+
+employeeSchema.statics.convertToGrpcMessage = function (document: EmployeeDoc): EmployeeMsg {
+    return {
+        id: document.id,
+        country: document.country,
+        email: document.email,
+        gender: document.gender as GenderType,
+        branchName: document.branchName,
+        lastName: document.lastName,
+        password: document.password,
+        race: document.race as RaceTypes,
+        region: document.region,
+        position: document.position,
+        providerId: document.providerId,
+        shiftPreference: document.shiftPreference as ShiftPreference,
+        startDate: document.startDate,
+        signInType: document.signInType,
+        userRole: document.userRole as UserRoles,
+        version: document.version,
+        firstName: document.firstName,
+        phoneNumber: document.phoneNumber,
+    };
 };
 /** Create model from schema */
 const Employee = mongoose.model<EmployeeDoc, EmployeeModel>("Employee", employeeSchema);

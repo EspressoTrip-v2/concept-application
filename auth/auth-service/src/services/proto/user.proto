@@ -98,15 +98,15 @@ message LocalGrpcUser{
     string password = 2;
 }
 
-message CreateGrpcUserInfo{
+message GrpcResponsePayload{
     int32 status = 1;
     string jwt = 2;
-    grpcUser user = 3;
+    grpcUser data = 3;
 }
 
 service UserService {
     rpc GetAllUsers(AllGrpcUsers) returns (stream ServerStreamUserResponse) {};
-    rpc LoginGoogleUser(GoogleGrpcUser) returns (CreateGrpcUserInfo) {};
-    rpc LoginGitHubUser(GitHubGrpcUser) returns (CreateGrpcUserInfo) {};
-    rpc LoginLocalUser(LocalGrpcUser) returns (CreateGrpcUserInfo) {};
+    rpc LoginGoogleUser(GoogleGrpcUser) returns (GrpcResponsePayload) {};
+    rpc LoginGitHubUser(GitHubGrpcUser) returns (GrpcResponsePayload) {};
+    rpc LoginLocalUser(LocalGrpcUser) returns (GrpcResponsePayload) {};
 }

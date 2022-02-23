@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Convenience scripts to install and update packages
+# NB!!!!!!!!!!!! DO NOT RUN THIS FILE UNLESS SPECIFICALLY TOLD SO !!!!!!!!!!!!!!!!!
 
 # Auth
 cd auth/auth-api

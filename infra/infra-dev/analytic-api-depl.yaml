@@ -19,11 +19,17 @@ spec:
             name: analytic-api
             labels:
                 app: analytic-api
+                deployment: acme-fast
         spec:
             containers:
                 - name: analytic-api
                   image: espressotrip/concept-analytic-api
                   imagePullPolicy: IfNotPresent
+                  env:
+                      - name: NEW_RELIC_APP_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: analytic-api-config

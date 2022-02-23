@@ -2,10 +2,11 @@ import { AbstractConsumer, ExchangeNames, ExchangeTypes, LogEvent, QueueInfo } f
 import amqp from "amqplib";
 import { LogFactory, LogProviderTypes } from "../../log-providers";
 
-export class AllLogsConsumer extends AbstractConsumer<LogEvent> {
+export class LogsConsumer extends AbstractConsumer<LogEvent> {
     m_exchangeName: ExchangeNames.LOG = ExchangeNames.LOG;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
     m_queue: QueueInfo.LOG_EVENT = QueueInfo.LOG_EVENT;
+    m_logger = LogFactory.getLogger(process.env.LOG_PROVIDER_TYPE! as LogProviderTypes, "acme-fast");
 
     constructor(rabbitConnection: amqp.Connection) {
         super(rabbitConnection, "all-logs");
@@ -13,8 +14,7 @@ export class AllLogsConsumer extends AbstractConsumer<LogEvent> {
 
     onMessage(data: LogEvent["data"], message: amqp.ConsumeMessage): void {
         const logData = JSON.parse(data.toString());
-        const logger = LogFactory.getLogger(process.env.LOG_PROVIDER_TYPE! as LogProviderTypes);
-        logger.createLog(logData);
+        this.m_logger.createLog(logData);
         this.acknowledge(message);
     }
 }

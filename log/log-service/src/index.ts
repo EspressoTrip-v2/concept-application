@@ -1,5 +1,6 @@
+import 'newrelic'
 import { rabbitClient } from "@espressotrip-org/concept-common";
-import { AllLogsConsumer } from "./events";
+import { LogsConsumer } from "./events";
 
 async function main(): Promise<void> {
     try {
@@ -10,7 +11,7 @@ async function main(): Promise<void> {
         await rabbitClient.connect(process.env.RABBIT_URI!, `[log-service:rabbitmq]: Connected successfully`);
 
         /** Create RabbitMQ consumers */
-        await new AllLogsConsumer(rabbitClient.connection).listen();
+        await new LogsConsumer(rabbitClient.connection).listen();
 
         /** Shut down process */
         process.on("SIGINT", async () => {

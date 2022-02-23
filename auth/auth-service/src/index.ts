@@ -1,3 +1,4 @@
+import 'newrelic'
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
 import { CreateEmployeeSigninConsumer, UpdateEmployeeSigninConsumer } from "./events";

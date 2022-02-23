@@ -2,12 +2,12 @@
 
 import type { GrpcEmployee as _employeePackage_GrpcEmployee, GrpcEmployee__Output as _employeePackage_GrpcEmployee__Output } from '../employeePackage/GrpcEmployee';
 
-export interface GrpcEmployeeInfo {
+export interface GrpcResponsePayload {
   'status'?: (number);
-  'user'?: (_employeePackage_GrpcEmployee | null);
+  'data'?: (_employeePackage_GrpcEmployee | null);
 }
 
-export interface GrpcEmployeeInfo__Output {
+export interface GrpcResponsePayload__Output {
   'status': (number);
-  'user': (_employeePackage_GrpcEmployee__Output | null);
+  'data': (_employeePackage_GrpcEmployee__Output | null);
 }

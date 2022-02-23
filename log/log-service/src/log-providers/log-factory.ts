@@ -5,17 +5,17 @@ import { LogClass, LogglyProvider, LogProviderTypes, PapertrailProvider } from "
  * The variable needs to match one of the LogProviderTypes in interface.ts
  */
 export class LogFactory {
-    static getLogger(logType: LogProviderTypes): LogClass {
+    static getLogger(logType: LogProviderTypes, logOrigin: string): LogClass {
         switch (logType) {
             case LogProviderTypes.loggly:
                 if (!process.env.LOGGLY_TOKEN) throw new Error("LOGGLY_TOKEN must be defined");
                 if (!process.env.LOGGLY_SUBDOMAIN) throw new Error("LOGGLY_SUBDOMAIN must be defined");
-                return new LogglyProvider();
+                return new LogglyProvider(logOrigin);
 
             case LogProviderTypes.papertrail:
                 if (!process.env.PAPER_TRAIL_HOST) throw new Error("PAPER_TRAIL_HOST must be defined");
                 if (!process.env.PAPER_TRAIL_PORT) throw new Error("PAPER_TRAIL_PORT must be defined");
-                return new PapertrailProvider();
+                return new PapertrailProvider(logOrigin);
             default:
                 throw new Error("No matching log provider found.");
         }

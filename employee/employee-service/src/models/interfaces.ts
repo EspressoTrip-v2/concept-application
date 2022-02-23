@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-import { SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { EmployeeMsg, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { GrpcEmployee } from "../services/proto/employeePackage/GrpcEmployee";
 
 /** User Interface */
 export interface EmployeeAttrs {
@@ -24,6 +25,7 @@ export interface EmployeeAttrs {
 /** Static build method to model */
 export interface EmployeeModel extends mongoose.Model<EmployeeDoc> {
     build(attributes: EmployeeAttrs): EmployeeDoc;
+    convertToGrpcMessage(document: EmployeeDoc): EmployeeMsg;
 }
 
 /** Extend mongoose document with product document values */

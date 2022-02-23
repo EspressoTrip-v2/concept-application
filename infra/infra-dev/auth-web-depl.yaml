@@ -1,29 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: auth-web-depl
+    name: auth-web-depl
 spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: auth-web
-  template:
-    metadata:
-      labels:
-        app: auth-web
-    spec:
-      containers:
-        - name: auth-web
-          image: espressotrip/concept-auth-web
+    replicas: 1
+    selector:
+        matchLabels:
+            app: auth-web
+    template:
+        metadata:
+            labels:
+                app: auth-web
+        spec:
+            containers:
+                - name: auth-web
+                  image: espressotrip/concept-auth-web
+                  env:
+                      - name: NEW_RELIC_APP_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: auth-web-srv
+    name: auth-web-srv
 spec:
-  selector:
-    app: auth-web
-  ports:
-    - name: auth-web
-      port: 3000
-      targetPort: 3000
+    selector:
+        app: auth-web
+    ports:
+        - name: auth-web
+          port: 3000
+          targetPort: 3000

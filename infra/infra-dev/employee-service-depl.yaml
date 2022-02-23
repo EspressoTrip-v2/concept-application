@@ -15,6 +15,7 @@ metadata:
     name: employee-service-depl
     labels:
         app: employee-service
+        deployment: acme-fast
 spec:
     replicas: 1
     template:
@@ -27,6 +28,11 @@ spec:
                 - name: employee-service
                   image: espressotrip/concept-employee-service
                   imagePullPolicy: IfNotPresent
+                  env:
+                      - name: NEW_RELIC_APP_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: employee-service-config

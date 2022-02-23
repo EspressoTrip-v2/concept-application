@@ -1,13 +1,14 @@
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
-import { AbstractGrpcServer, LogCodes, LogPublisher, MicroServiceNames } from "@espressotrip-org/concept-common";
+import { AbstractGrpcServer, EmployeeMsg, LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { ProtoGrpcType } from "./proto/employee";
 import { EmployeeServiceHandlers } from "./proto/employeePackage/EmployeeService";
-import { GrpcEmployeeInfo } from "./proto/employeePackage/GrpcEmployeeInfo";
 import { EmployeeId } from "./proto/employeePackage/EmployeeId";
 import { GrpcEmployeeAttributes } from "./proto/employeePackage/GrpcEmployeeAttributes";
-import { Employee } from "../models";
+import { Employee, EmployeeDoc } from "../models";
+import { GrpcResponsePayload } from "./proto/employeePackage/GrpcResponsePayload";
+import { DeleteEmployeePublisher } from "../events";
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/employee.proto";
@@ -23,7 +24,7 @@ export class GrpcServer extends AbstractGrpcServer {
     private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, MicroServiceNames.EMPLOYEE_SERVICE, "employee-service:gRPC-server");
 
     private m_rpcMethods: EmployeeServiceHandlers = {
-        CreateEmployee: async (call: grpc.ServerUnaryCall<GrpcEmployeeAttributes, GrpcEmployeeInfo>, callback: grpc.sendUnaryData<GrpcEmployeeInfo>) => {
+        CreateEmployee: async (call: grpc.ServerUnaryCall<GrpcEmployeeAttributes, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
             const data: GrpcEmployeeAttributes = call.request;
             const employee = Employee.build({
                 firstName: data.firstName!,
@@ -53,9 +54,25 @@ export class GrpcServer extends AbstractGrpcServer {
             });
             this.m_logger.publish(LogCodes.CREATED, "Employee created", "CreateEmployee()", `email: ${employee.email}, id: ${employee.id}`);
         },
-        DeleteEmployee: (call: grpc.ServerUnaryCall<EmployeeId, GrpcEmployeeInfo>, callback: grpc.sendUnaryData<GrpcEmployeeInfo>) => {},
-        GetEmployee: (call: grpc.ServerUnaryCall<EmployeeId, GrpcEmployeeInfo>, callback: grpc.sendUnaryData<GrpcEmployeeInfo>) => {},
-        UpdateEmployee: (call: grpc.ServerUnaryCall<GrpcEmployeeAttributes, GrpcEmployeeInfo>, callback: grpc.sendUnaryData<GrpcEmployeeInfo>) => {},
+        DeleteEmployee: async (call: grpc.ServerUnaryCall<EmployeeId, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
+            const { id }: EmployeeId = call.request;
+            const deletedEmployee = await Employee.findByIdAndDelete(id);
+            if (deletedEmployee) {
+                this.m_logger.publish(
+                    LogCodes.DELETED,
+                    "Employee deleted successfully",
+                    "DeleteEmployee()",
+                    `email: ${deletedEmployee.email}, id: ${deletedEmployee.id}`
+                );
+                new DeleteEmployeePublisher(this.m_rabbitConnection!).publish(Employee.convertToGrpcMessage(deletedEmployee));
+                return callback(null, {
+                    status: 200,
+                    data: deletedEmployee,
+                });
+            }
+        },
+        GetEmployee: (call: grpc.ServerUnaryCall<EmployeeId, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {},
+        UpdateEmployee: (call: grpc.ServerUnaryCall<GrpcEmployeeAttributes, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {},
     };
 
     constructor(rabbitConnection: amqp.Connection) {
