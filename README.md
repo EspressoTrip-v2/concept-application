@@ -51,12 +51,17 @@ the rabbit.info is to access the message bus from your browser.
 192.168.49.2 acmefast.dev
 192.168.49.2 rabbit.acmefast.dev
 ```
+Once **Minikube** is running, move to next step.
 
-### IMPORTANT BEFORE MOVING ON:
+----
+### IMPORTANT:
 You can choose to not run the operators for Mongo and RabbitMQ. The operators deploy a host of custom resources to manage the container. There is another script
 and yaml files that allow for stand-alone deployments of all the Mongo and RabbitMQ containers. You will have to make one or two small adjustments in the deployment
 ConfigMaps that are using the MongoDB pods. Postgres will still run with the operator, simply because the adjustments required can not be done without changing the source code.
+----
 
+### Stand-Alone Deployments:
+Single deployments for Mongo, Postgres and RabbitMQ
 ```bash
 # Deploys all PV, PVC and pods
 ~$ ./pod-deploys.sh
@@ -83,7 +88,7 @@ volume-storage-1                           1Gi        RWO            Retain     
 Make sure to comment out the cluster connection string (Long version) and uncomment the deployment connection string (Short version) in the infra/infra-dev deployment files
 ConfigMaps for those that are using the MongoDB databases, once everything is up and running skip the below operators section and go to **Skaffold**.
 ### Operators:
-Once **Minikube** is running, begin deploying the operators and operator deployments.
+Operator deployments for Mongo, Postgres and RabbitMQ.
 
 ```bash
 ~$ ./operator-controllers.sh
@@ -196,12 +201,12 @@ If you have any issues with failure to connect to the MongoDB operator cluster p
 ```
 Copy the infra/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
 
-### Side Note:
-If you really can't get things running give me a shout. If you are building the front end, you don't need to make a PR, but please do so on any back-end changes. 
-Folder structure changes will have to go with skaffold.yaml changes to update the development environment.
+----
+### Infrastructure Folder Note  
+The folder infra/apm is not meant to be used for development, this is test case APM files that are only to be used for showcase.
+Please only deploy files from the .sh scripts that are mentioned 
+----
 
-The services use ts-node-dev to run, so changes need to be made if we want to run a production version of the application. 
-Also the Dockerfile.prod is not complete for production build, there needs to be a nginx.conf file created for the usage of react-router-dom in the container.
 
 ### Architectural Model:
 ![acme-fast-foods](https://user-images.githubusercontent.com/9296659/154967637-29999ee6-9fd4-40da-b96a-dc3612477aa0.png)
