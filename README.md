@@ -45,8 +45,8 @@ You will need to add the domain to your OS hosts file (Linux: etc/hosts)
 # Get the ip of your running minikube
 ~$ minikube ip
 ```
-Add the minikube ip with the domain of the application (concept.dev) into the hosts file,
-the rabbit.info is to access the message bus from your browser.
+Add the minikube ip with the domain of the application into the hosts file,
+the rabbit.acmefast.dev is to access the message bus from your browser.
 ```text
 192.168.49.2 acmefast.dev
 192.168.49.2 rabbit.acmefast.dev
@@ -121,7 +121,7 @@ If you have included the message bus domain in your hosts file http://rabbit.acm
 If you are on Chrome and you get a warning about certificates, without the ability to ignore. Click anywhere on the webpage and type "thisisunsafe" and enter.
 
 ### Skaffold Image Handling:
-Every time you make shut Skaffold down it removes the created deployments, there is a small issue that sometimes it leaves dangling images that take up space. You might get a low
+Every time you shut Skaffold down it removes the created deployments, there is a small issue that sometimes it leaves dangling images that take up space. You might get a low
 memory warning from minikube. To clean any dangling images you need to ssh into minikube to clear then out.
 ```bash
 ~$  minikube ssh -- docker system prune
