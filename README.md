@@ -200,7 +200,7 @@ If you have any issues with failure to connect to the MongoDB operator cluster p
 # task-service Mongo database
 ~$ kubectl get secret task-mongo-task-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
 ```
-Copy the infra/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
+Copy the connection string that applies and in the infra/infra-dev/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
 
 ___
 ### Infrastructure Folder Note
