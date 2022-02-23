@@ -80,14 +80,12 @@ build:
               - src: "src/**/*.ts"
                 dest: .
 
-        # Auth-Web service
-        - image: espressotrip/concept-auth-web
-          context: auth/auth-web
-          docker:
-              dockerfile: Dockerfile
-          sync:
-              manual:
-                  - src: "src/**/*.jsx"
-                    dest: .
-                  - src: "src/**/*.js"
-                    dest: .
+      # Auth-Web service
+      - image: espressotrip/concept-auth-web
+        context: auth/auth-web
+        docker:
+          dockerfile: Dockerfile
+        sync:
+          manual:
+            - src: 'src/**/*'
+              dest: .
