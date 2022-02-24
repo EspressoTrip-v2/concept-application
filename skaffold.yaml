@@ -93,3 +93,53 @@ build:
                     dest: .
                   - src: "src/**/*.css"
                     dest: .
+
+        # App-Shell-Web service
+        - image: espressotrip/concept-app-shell-web
+          context: app-shell/app-shell-web
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*"
+                dest: .
+
+        # Employee-Web service
+        - image: espressotrip/concept-employee-web
+          context: employee/employee-web
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*"
+                dest: .
+
+        # Employee-Dashboard-Web service
+        - image: espressotrip/concept-employee-dashboard-web
+          context: employee-dashboard/employee-dashboard-web
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*"
+                dest: .
+
+        # Division-Web service
+        - image: espressotrip/concept-division-web
+          context: division/division-web
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*"
+                dest: .
+
+        # Task-Web service
+        - image: espressotrip/concept-task-web
+          context: task/task-web
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*"
+                dest: .

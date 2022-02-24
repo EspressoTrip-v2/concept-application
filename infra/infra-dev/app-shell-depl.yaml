@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-shell-web-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-shell-web
+  template:
+    metadata:
+      labels:
+        app: app-shell-web
+    spec:
+      containers:
+        - name: app-shell-web
+          image: espressotrip/concept-app-shell-web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-shell-web-srv
+spec:
+  selector:
+    app: app-shell-web
+  ports:
+    - name: app-shell-web
+      port: 3000
+      targetPort: 3000

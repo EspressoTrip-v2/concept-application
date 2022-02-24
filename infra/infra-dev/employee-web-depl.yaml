@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-web-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: employee-web
+  template:
+    metadata:
+      labels:
+        app: employee-web
+    spec:
+      containers:
+        - name: employee-web
+          image: espressotrip/concept-employee-web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: employee-web-srv
+spec:
+  selector:
+    app: employee-web
+  ports:
+    - name: employee-web
+      port: 3000
+      targetPort: 3000

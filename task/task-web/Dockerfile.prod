@@ -1,0 +1,17 @@
+# STAGE ONE
+FROM node:16.13.2-alpine3.15 AS builder
+WORKDIR /app
+COPY package.json ./
+COPY package-lock.json ./
+ENV NODE_ENV production
+RUN npm install
+COPY . ./
+RUN npm run build
+
+# STAGE TWO
+FROM nginx:1.19.0
+WORKDIR /usr/share/nginx/html
+# Remove Nginx Default Static Resource
+RUN rm -rf ./*
+COPY --from=builder /app/build .
+ENTRYPOINT ["nginx", "-g", "daemon off;"]

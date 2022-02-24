@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: employee-dashboard-web-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: employee-dashboard-web
+  template:
+    metadata:
+      labels:
+        app: employee-dashboard-web
+    spec:
+      containers:
+        - name: employee-dashboard-web
+          image: espressotrip/concept-employee-dashboard-web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: employee-dashboard-web-srv
+spec:
+  selector:
+    app: employee-dashboard-web
+  ports:
+    - name: employee-dashboard-web
+      port: 3000
+      targetPort: 3000

@@ -69,3 +69,48 @@ spec:
                             name: auth-web-srv
                             port:
                                 number: 3000
+
+                # App-Shell-Web UI
+                  - path: /app-shell
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: app-shell-web-srv
+                            port:
+                                number: 3000
+
+                # Employee-Web UI
+                  - path: /employee
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: employee-web-srv
+                            port:
+                                number: 3000
+
+                # Employee-Dashboard-Web UI
+                  - path: /employee-dashboard
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: employee-dashboard-web-srv
+                            port:
+                                number: 3000
+
+                # Employee-Web UI
+                  - path: /task
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: task-web-srv
+                            port:
+                                number: 3000
+
+                # Employee-Web UI
+                  - path: /division
+                    pathType: Prefix
+                    backend:
+                        service:
+                            name: division-web-srv
+                            port:
+                                number: 3000

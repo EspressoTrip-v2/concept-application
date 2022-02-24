@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: division-web-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: division-web
+  template:
+    metadata:
+      labels:
+        app: division-web
+    spec:
+      containers:
+        - name: division-web
+          image: espressotrip/concept-division-web
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: division-web-srv
+spec:
+  selector:
+    app: division-web
+  ports:
+    - name: division-web
+      port: 3000
+      targetPort: 3000
