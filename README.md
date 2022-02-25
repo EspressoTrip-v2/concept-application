@@ -13,11 +13,13 @@ Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. A
 
 ***Developer Note***:  
 Always make sure the mongo connection strings are set to the correct deployment and that the postgres password is changed to your required in the secrets.yaml file before running the newly pulled repo.
+
 ***Repo changes***:  
 Run the ```npm-install.sh``` script once you make a pull to update all the services packages. I will update this list as the application grows.
 If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
 
-There is a ```npm-update-common.sh``` script that I use to update the npm library that is shared amongst the services. !!!DO NOT RUN THIS!!! The library changes daily and so will 
+There is a ```npm-update-common.sh``` script that I use to update the npm library that is shared amongst the services. 
+!!!DO NOT RUN THIS!!! The library changes daily and so will 
 cause the master branch to not run as usually the library required is many versions behind the latest @espressotrip-org/concept-common library.
 
 
