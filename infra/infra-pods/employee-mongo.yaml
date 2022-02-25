@@ -8,6 +8,8 @@ spec:
     replicas: 1
     template:
         metadata:
+            annotations:
+                config.linkerd.io/proxy-log-level: error
             name: employee-mongo
             labels:
                 app: employee-mongo

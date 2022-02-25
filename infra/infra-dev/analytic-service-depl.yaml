@@ -19,6 +19,8 @@ spec:
     replicas: 1
     template:
         metadata:
+            annotations:
+              config.linkerd.io/proxy-log-level: error
             name: analytic-service
             labels:
                 app: analytic-service
@@ -28,11 +30,6 @@ spec:
                 - name: analytic-service
                   image: espressotrip/concept-analytic-service
                   imagePullPolicy: IfNotPresent
-                  env:
-                      - name: NEW_RELIC_APP_NAME
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: analytic-service-config

@@ -11,8 +11,8 @@ Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. A
 
 
 
-### Developer Note:
-##### Always make sure the mongo connection strings are set to the correct deployment and that the postgres password is changed to your required in the secrets.yaml file before running the newly pulled repo.
+***Developer Note***:  
+Always make sure the mongo connection strings are set to the correct deployment and that the postgres password is changed to your required in the secrets.yaml file before running the newly pulled repo.
 ***Repo changes***:  
 Run the ```npm-install.sh``` script once you make a pull to update all the services packages. I will update this list as the application grows.
 If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
@@ -26,13 +26,14 @@ The setup below needs to be done on start up of minikube... minikube shuts down 
 Postgres database need a bit more set up, I will get to that eventually. If you ***minikube delete*** all data will be lost. If you would like to persist data on your machine
 give me a shout I will help you set it up, it unfortunately requires another command to be run and a few adjustments in the deployment files.
 
-
+___
+### Service Mesh Deployment:
+You can deploy the application with a service mesh. Navigate to [Linkerd Deployment](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/service-mesh/README.md) README file and follow the instructions.
+___
 
 ### Minikube:
 ```bash
-# The memory and cpu allocation is if you intend running a service mesh.
-# Run 'minikube start' for standard allocation
-~$ minikube start --memory 8000 --cpus 4
+~$ minikube start 
 ```
 ```bash
 # This adds a nginx ingress controller, it is required else you will not 
@@ -201,13 +202,6 @@ If you have any issues with failure to connect to the MongoDB operator cluster p
 ~$ kubectl get secret task-mongo-task-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
 ```
 Copy the connection string that applies and in the infra/infra-dev/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
-
-___
-### Infrastructure Folder Note
-The folder infra/apm is not meant to be used for development, this is test case APM files that are only to be used for showcase.
-Please only deploy files from the .sh scripts that are mentioned 
-___
-
 
 ### Architectural Model:
 ![acme-fast-foods](https://user-images.githubusercontent.com/9296659/154967637-29999ee6-9fd4-40da-b96a-dc3612477aa0.png)

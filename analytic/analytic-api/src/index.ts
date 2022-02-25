@@ -1,4 +1,3 @@
-import 'newrelic'
 import { app } from "./app";
 import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
@@ -26,7 +25,7 @@ async function main(): Promise<void> {
             LogCodes.ERROR,
             msg.message || "Service Error",
             "main()",
-            msg.stack! || "No stack trace",
+            msg.stack! || "No stack trace"
         );
     }
 }
