@@ -30,7 +30,7 @@ give me a shout I will help you set it up, it unfortunately requires another com
 
 ___
 ### Service Mesh Deployment:
-You can deploy the application with a service mesh. Navigate to Linkerd Deployment [README.md](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/service-mesh/README.md) file and follow the instructions.
+You can deploy the application with a service mesh. Navigate to [Linkerd Deployment](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/service-mesh) folder and follow the README instructions.
 ___
 
 ### Minikube:

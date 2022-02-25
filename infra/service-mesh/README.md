@@ -68,5 +68,5 @@ Once everything is up and running, run the ```linkerd-setup.sh``` script to comp
 Open your browser on [linkerd.acmefast.dev](https://linkerd.acmefast.dev), select the default namespace. Watch as the pods deploy that they come online 
 and display as meshed.
 
-Please go back to the main [README.md](https://github.com/EspressoTrip-v2/concept-application/tree/master/README.md) and continue from the ***Stand-Alone Deployments*** section.
+Please go back to the [Root](https://github.com/EspressoTrip-v2/concept-application) folder and continue from the ***Stand-Alone Deployments*** section in the README.
 To complete setup for the application.
