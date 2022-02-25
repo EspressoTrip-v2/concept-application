@@ -16,6 +16,8 @@ spec:
     replicas: 1
     template:
         metadata:
+            annotations:
+              config.linkerd.io/proxy-log-level: error
             name: employee-api
             labels:
                 app: employee-api
@@ -25,11 +27,6 @@ spec:
                 - name: employee-api
                   image: espressotrip/concept-employee-api
                   imagePullPolicy: IfNotPresent
-                  env:
-                      - name: NEW_RELIC_APP_NAME
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: employee-api-config

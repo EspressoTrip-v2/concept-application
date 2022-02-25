@@ -1,4 +1,3 @@
-import 'newrelic'
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
 import { CreateEmployeeSigninConsumer, UpdateEmployeeSigninConsumer } from "./events";
@@ -16,7 +15,7 @@ async function main(): Promise<void> {
         await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-service:rabbitmq]: Connected successfully`);
 
         // /** Create Mongoose connection */
-        await mongoose.connect(process.env.MONGO_URI!, { dbName: process.env.MONGO_DBNAME! });
+        await mongoose.connect(process.env.MONGO_URI!, { dbName: process.env.MONGO_DBNAME!});
         console.log(`[auth-service:mongo]: Connected successfully`);
 
         /** Create gRPC server */

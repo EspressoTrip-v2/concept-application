@@ -9,17 +9,14 @@ spec:
             app: auth-web
     template:
         metadata:
+            annotations:
+                config.linkerd.io/proxy-log-level: error
             labels:
                 app: auth-web
         spec:
             containers:
                 - name: auth-web
                   image: espressotrip/concept-auth-web
-                  env:
-                      - name: NEW_RELIC_APP_NAME
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: metadata.name
 ---
 apiVersion: v1
 kind: Service

@@ -18,6 +18,8 @@ spec:
     replicas: 1
     template:
         metadata:
+            annotations:
+              config.linkerd.io/proxy-log-level: error
             name: auth-api
             labels:
                 app: auth-api
@@ -27,11 +29,6 @@ spec:
                 - name: auth-api
                   image: espressotrip/concept-auth-api
                   imagePullPolicy: IfNotPresent
-                  env:
-                      - name: NEW_RELIC_APP_NAME
-                        valueFrom:
-                            fieldRef:
-                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: auth-api-config

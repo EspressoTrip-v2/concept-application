@@ -1,4 +1,3 @@
-import 'newrelic'
 import { rabbitClient } from "@espressotrip-org/concept-common";
 import { LogsConsumer } from "./events";
 

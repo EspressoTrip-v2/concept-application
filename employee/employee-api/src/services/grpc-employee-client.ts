@@ -2,12 +2,12 @@ import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { AbstractGrpcClient, GrpcServicePorts } from "@espressotrip-org/concept-common";
 import { ProtoGrpcType } from "./proto/employee";
-import { GrpcEmployeeInfo } from "./proto/employeePackage/GrpcEmployeeInfo";
 import { GrpcEmployeeAttributes } from "./proto/employeePackage/GrpcEmployeeAttributes";
 import { EmployeeId } from "./proto/employeePackage/EmployeeId";
+import { GrpcResponsePayload } from "./proto/employeePackage/GrpcResponsePayload";
 
 export class GrpcEmployeeClient extends AbstractGrpcClient {
-    readonly m_protoPath = __dirname + "/proto/user.proto";
+    readonly m_protoPath = __dirname + "/proto/employee.proto";
     readonly m_port = GrpcServicePorts.EMPLOYEE_SERVICE;
 
     readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
@@ -22,12 +22,12 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
      * Creates a new employee
      * @param employee {GrpcEmployeeAttributes}
      */
-    createEmployee(employee: GrpcEmployeeAttributes): Promise<grpc.ServiceError | GrpcEmployeeInfo> {
+    createEmployee(employee: GrpcEmployeeAttributes): Promise<grpc.ServiceError | GrpcResponsePayload> {
         const client = new this.m_package.EmployeeService(this.m_port, grpc.credentials.createInsecure());
         return new Promise(async (resolve, reject) => {
-            client.CreateEmployee(employee, (error: grpc.ServiceError | null, employeeInfo?: GrpcEmployeeInfo) => {
+            client.CreateEmployee(employee, (error: grpc.ServiceError | null, responsePayload?: GrpcResponsePayload) => {
                 if (error) return reject(error);
-                return resolve(employeeInfo!);
+                return resolve(responsePayload!);
             });
         });
     }
@@ -36,15 +36,15 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
      * Get single employee
      * @param employeeId {string}
      */
-    getEmployee(employeeId: string): Promise<grpc.ServiceError | GrpcEmployeeInfo> {
+    getEmployee(employeeId: string): Promise<grpc.ServiceError | GrpcResponsePayload> {
         const grpcEmployeeId: EmployeeId = {
             id: employeeId,
         };
         const client = new this.m_package.EmployeeService(this.m_port, grpc.credentials.createInsecure());
         return new Promise(async (resolve, reject) => {
-            client.GetEmployee(grpcEmployeeId, (error: grpc.ServiceError | null, employeeInfo?: GrpcEmployeeInfo) => {
+            client.GetEmployee(grpcEmployeeId, (error: grpc.ServiceError | null, responsePayload?: GrpcResponsePayload) => {
                 if (error) return reject(error);
-                return resolve(employeeInfo!);
+                return resolve(responsePayload!);
             });
         });
     }
@@ -53,12 +53,12 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
      * Creates a new employee
      * @param employee {GrpcEmployeeAttributes}
      */
-    updateEmployee(employee: GrpcEmployeeAttributes): Promise<grpc.ServiceError | GrpcEmployeeInfo> {
+    updateEmployee(employee: GrpcEmployeeAttributes): Promise<grpc.ServiceError | GrpcResponsePayload> {
         const client = new this.m_package.EmployeeService(this.m_port, grpc.credentials.createInsecure());
         return new Promise(async (resolve, reject) => {
-            client.UpdateEmployee(employee, (error: grpc.ServiceError | null, employeeInfo?: GrpcEmployeeInfo) => {
+            client.UpdateEmployee(employee, (error: grpc.ServiceError | null, responsePayload?: GrpcResponsePayload) => {
                 if (error) return reject(error);
-                return resolve(employeeInfo!);
+                return resolve(responsePayload!);
             });
         });
     }
@@ -67,18 +67,18 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
      * Delete single employee
      * @param employeeId {string}
      */
-    deleteEmployee(employeeId: string): Promise<grpc.ServiceError | GrpcEmployeeInfo> {
+    deleteEmployee(employeeId: string): Promise<grpc.ServiceError | GrpcResponsePayload> {
         const grpcEmployeeId: EmployeeId = {
             id: employeeId,
         };
         const client = new this.m_package.EmployeeService(this.m_port, grpc.credentials.createInsecure());
         return new Promise(async (resolve, reject) => {
-            client.DeleteEmployee(grpcEmployeeId, (error: grpc.ServiceError | null, employeeInfo?: GrpcEmployeeInfo) => {
+            client.DeleteEmployee(grpcEmployeeId, (error: grpc.ServiceError | null, responsePayload?: GrpcResponsePayload) => {
                 if (error) return reject(error);
-                return resolve(employeeInfo!);
+                return resolve(responsePayload!);
             });
         });
     }
 }
 
-export const userGrpcClient = new GrpcEmployeeClient();
+export const employeeGrpcClient = new GrpcEmployeeClient();

@@ -1,4 +1,3 @@
-import 'newrelic'
 import { grpcServer, postgresClient } from "./services";
 import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 

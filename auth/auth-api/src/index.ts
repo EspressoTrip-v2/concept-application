@@ -1,4 +1,3 @@
-import 'newrelic'
 import { app } from "./app";
 import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
