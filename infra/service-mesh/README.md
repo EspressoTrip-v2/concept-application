@@ -66,7 +66,7 @@ You can run ```linkerd check``` or alternatively.
 Once everything is up and running, run the ```linkerd-setup.sh``` script to complete the setup. I have not setup the operators to use Linkerd, so please use the ```pod-deploy.sh```
 to start the deployments when going back to the root README.
 
-Open your browser on [linkerd.acmefast.dev](https://linkerd.acmefast.dev), select the default namespace. You can keep this open as you deploy the rest of the application. Any pod in the 
+Open your browser on [linkerd.acmefast.dev](https://linkerd.acmefast.dev) (username: admin, password: admin), select the default namespace. You can keep this open as you deploy the rest of the application. Any pod in the 
 ingress-nginx and the default namespace should be automatically meshed as they start up. 
 
 
