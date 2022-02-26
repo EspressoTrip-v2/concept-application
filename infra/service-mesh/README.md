@@ -63,10 +63,12 @@ You can run ```linkerd check``` or alternatively.
 ~$ kubectl get pods -n linkerd-viz -w
 ```
 
-Once everything is up and running, run the ```linkerd-setup.sh``` script to complete the setup. I have not setup the operators to use Linkerd.
+Once everything is up and running, run the ```linkerd-setup.sh``` script to complete the setup. I have not setup the operators to use Linkerd, so please use the ```pod-deploy.sh```
+to start the deployments when going back to the root README.
 
-Open your browser on [linkerd.acmefast.dev](https://linkerd.acmefast.dev), select the default namespace. Watch as the pods deploy that they come online 
-and display as meshed.
+Open your browser on [linkerd.acmefast.dev](https://linkerd.acmefast.dev), select the default namespace. You can keep this open as you deploy the rest of the application. Any pod in the 
+ingress-nginx and the default namespace should be automatically meshed as they start up. 
+
 
 Please go back to the [Root](https://github.com/EspressoTrip-v2/concept-application) folder and continue from the ***Stand-Alone Deployments*** section in the README.
-To complete setup for the application.
+To complete the rest of the setup for the application.
