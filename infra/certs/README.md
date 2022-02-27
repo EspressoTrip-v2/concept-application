@@ -72,7 +72,7 @@ Minikube can use ```mkcert``` to insert a SSL certificate into the ingress addon
 ```bash
 ~$ mkcert -install
 ```
-You will then need to add certificate for the ```acmefast``` domain:
+You will then need to add the certificates for the ```acmefast``` domain:
 ```bash
 #  Replace <MINIKUBE IP> with the correct ip address of your Minikube instance
 ~$ mkcert acmefast.dev rabbit.acmefast.dev linkerd.acmefast.dev <MINIKUBE IP>
@@ -81,7 +81,8 @@ You will get an output that looks like this:
 ```
 Created a new certificate valid for the following names 📜
  - "acmefast.dev"
- - "*.acmefast.dev"
+ - "rabbit.acmefast.dev"
+ - "linkerd.acmefast.dev"
  - "192.168.49.2"
 
 Reminder: X.509 wildcards only go one level deep, so this won't match a.b.acmefast.dev ℹ️
