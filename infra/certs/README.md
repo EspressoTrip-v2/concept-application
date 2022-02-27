@@ -72,4 +72,4 @@ Now enable the ingress controller.
 ```
 
 Click here: [Linkerd Service Mesh Setup](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/service-mesh) to set up the service mesh.  
-Click here: [Main Page](https://github.com/EspressoTrip-v2/concept-application#stand-alone-deployments) to continue with the standard setup.
+Click here: [Main Page: Stand-ALone Deployments](https://github.com/EspressoTrip-v2/concept-application#stand-alone-deployments) to continue with the standard setup.
