@@ -24,14 +24,11 @@ Always make sure the mongo connection strings are set to the correct deployment 
 Run the ```npm-install.sh``` script once you make a pull to update all the services packages. I will update this list as the application grows.
 If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
 
-There is a ```npm-update-common.sh``` script that I use to update the npm library that is shared amongst the services. 
-!!!DO NOT RUN THIS!!! The library changes daily and so will 
-cause the master branch to not run as usually the library required is many versions behind the latest @espressotrip-org/concept-common library.
+There is a ```npm-update-common.sh``` script that I use to update the npm library that is shared amongst the services...***DO NOT RUN THIS***. The library changes daily and so will cause the master branch to not run as usually the library required is many versions behind the latest @espressotrip-org/concept-common library.
 
 
 ##### Volume persistence:  
-All data wil persist on restarts, if you do a ```minikube delete``` everything will be lost. The latest version of Minikube v1.25.2 also will maintain any deployments after restart.
-Versions before that you will have to manually restart all the deployments again as described below... my suggestion is upgrade.
+All data wil persist on restarts, if you do a ```minikube delete``` everything will be lost. The latest version of Minikube v1.25.2 also will maintain any deployments after restart. Versions before that you will have to manually restart all the deployments again as described below... my suggestion is upgrade.
 ___
 ### Note:
 If you have completed any of the optional setup above, please skip ***Minikube*** section and move to the [***Stand Alone Deployments***](#stand-alone-deployments) section.
@@ -62,8 +59,7 @@ ___
 ### Note:
 
 You can choose to not run the operators for Mongo and RabbitMQ. The operators deploy a host of custom resources to manage the container. There is another script
-and yaml files that allow for stand-alone deployments of all the Mongo and RabbitMQ containers. You will have to make one or two small adjustments in the deployment
-ConfigMaps that are using the MongoDB pods. Postgres will still run with the operator, simply because the adjustments required can not be done without changing the source code.
+and yaml files that allow for stand-alone deployments of all the Mongo and RabbitMQ containers. You will have to make one or two small adjustments in the deployment ConfigMaps that are using the MongoDB pods. Postgres will still run with the operator, simply because the adjustments required can not be done without changing the source code.
 ___
 ### Operators:
 Operator deployments for Mongo, Postgres and RabbitMQ.
@@ -97,8 +93,7 @@ Ensure that the pods are all running, the Postgres deployment might take a littl
 ~$ kubectl get pods
 ```
 
-Make sure to comment out the cluster connection string (Long version) and uncomment the deployment connection string (Short version) in the infra/infra-dev deployment files
-ConfigMaps for those that are using the MongoDB databases.
+Make sure to comment out the cluster connection string (Long version) and uncomment the deployment connection string (Short version) in the infra/infra-dev deployment files ConfigMaps for those that are using the MongoDB databases.
 
 ___
 ### Connections:
