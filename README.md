@@ -146,7 +146,7 @@ Copy the connection string that applies and in the infra/infra-dev/ folder find 
 ___
 ### Data:
 #### Add Dummy User
-Users will not be created from a UI, they will have to be added manually. Only employees will be created from the UI. Insert the below document into the auth-service mongo database in the users collection. If the database does not exist you can create one and the users collection, or run ```skaffold dev``` and the auth service will create it on start up.
+Users will not be created from a UI, they will have to be added manually. Only employees will be created from the UI. Insert the below document into the auth-service mongo database in the users collection. If the database does not exist, you can create one and the users collection, or run ```skaffold dev``` and the auth service will create it on start up.
 
 ```json
 {
@@ -182,7 +182,7 @@ Application uses Skaffold for the management of the Kubernetes cluster during de
 Once everything is up and running open your browser and go to http://acmefast.dev. 
 If you have included the message bus domain in your hosts file http://rabbit.acmefast.dev will display the message bus UI. Rabit dashboard username and password is "guest".
 
-If you have not setup TLS and Chrome gives you a warning about certificates. Click anywhere on the webpage and type "thisisunsafe" and enter. Unfortunately new versions of Firefox will not allow you to by-pass the security issue.
+If you have not setup TLS and Chrome gives you a warning about certificates. Click anywhere on the webpage and type "thisisunsafe". Unfortunately new versions of Firefox will not allow you to by-pass the missing certificate.
 
 #### Skaffold Image Handling:
 Every time you shut Skaffold down it removes the created deployments, there is a small issue that sometimes it leaves dangling images that take up space. You might get a low
