@@ -146,8 +146,7 @@ Copy the connection string that applies and in the infra/infra-dev/ folder find 
 ___
 ### Data:
 #### Add Dummy User
-Users will not be created from a UI, they will have to be added manually. Only employees will be created from the UI. Insert the below document into the auth-service mongo
-database in the users collection.
+Users will not be created from a UI, they will have to be added manually. Only employees will be created from the UI. Insert the below document into the auth-service mongo database in the users collection. If the database does not exist you can create one and the users collection, or run ```skaffold dev``` and the auth service will create it on start up.
 
 ```json
 {
