@@ -2,14 +2,9 @@
 ![acmefast-slogan](https://user-images.githubusercontent.com/9296659/154143145-06262ea3-02d3-4cce-97f5-bbeb2f8d7c53.png)
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. Ability to add a service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
-
-### Important Note:  
-If you have already done deployments to the default namespace you will have to manually inject the proxy sidecars, this can be done with:
-```bash
-# Linkerd has to be installed first and have access to your cluster
-~$ kubectl get deploy <DEPLOYMENT_NAME> -o yaml | linkerd inject - | kubectl apply -f -
-```
-
+### Note:
+If you have completed the certificate install skip the ***Minikube*** section and start at ***Linkerd Install***
+___
 ### Minikube:
 ```bash
 ~$ minikube start --memory 8000 --cpus 4
@@ -32,7 +27,8 @@ to get to the service mesh dashboard.
 192.168.49.2 rabbit.acmefast.dev
 192.168.49.2 linkerd.acmefast.dev
 ```
-
+___
+###Linkerd Install   
 Install the Linkerd CLI.
 ```bash
 ~$ curl --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
@@ -80,11 +76,14 @@ You can access the dashboard by going to [https://buoyant.cloud](https://buoyant
 ~$ linkerd buoyant dashboard &
 ```
 
-Once everything is up and running, run the ```linkerd-setup.sh``` script to complete the setup. I have not setup the operators to use Linkerd, so please use the ```pod-deploy.sh```
-to start the deployments when going back to the root README.
+### Proxy Injection: 
+Once everything is up and running, run the ```linkerd-setup.sh``` script to setup the ingress fro the Viz dashboard and set annotations for proxy injection.
+Please use the ```pod-deploy.sh``` to start the deployments. I have not spent the time to ensure the operator namespaces will allow proxy injection, so there are 
+no guarantees it will function correctly.
 
-Open your browser on [linkerd.acmefast.dev](https://linkerd.acmefast.dev) (username: admin, password: admin) select the default namespace, alternatively run the Buoyant Cloud command. You can keep this open as you deploy the rest of the application. Any pod in the
-ingress-nginx and the default namespace should be automatically meshed as they start up.
+### Dashboard
+Open your browser on [linkerd.acmefast.dev](https://linkerd.acmefast.dev) (username: admin, password: admin) select the default namespace, alternatively go to [Buoyant Cloud](https://buoyant.cloud). 
+You can see the deployments come online within the dashboard. If you have any issues let me know.
 
-Please go back to the [Root](https://github.com/EspressoTrip-v2/concept-application) folder and continue from the ***Stand-Alone Deployments*** section in the README.
+Please go back to the [Main Page](https://github.com/EspressoTrip-v2/concept-application) folder and continue from the ***Stand Alone Deployments*** section in the README.
 To complete the rest of the setup for the application.

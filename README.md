@@ -2,19 +2,25 @@
 ![acmefast-slogan](https://user-images.githubusercontent.com/9296659/154143145-06262ea3-02d3-4cce-97f5-bbeb2f8d7c53.png)
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. Ability to add a service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
-
+___
 #### Prerequisite installations:
 
 [Skaffold](https://skaffold.dev)  
-[Minikube](https://minikube.sigs.k8s.io/docs/start/) -> Not tested with other local k8's, it's your gamble don't ask me to help  
+[Minikube](https://minikube.sigs.k8s.io/docs/start/)  
 [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
+___
+#### Certificates (Optional):  
+***Go here for [SSL Certificate Setup](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/certs) before moving on***
+___
+#### Service Mesh Deployment (Optional):
+***Go here for [Linkerd Servive Mesh Setup](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/service-mesh) before moving on***
+___
 
-
-***Developer Note***:  
+#### Developer Notes:    
 Always make sure the mongo connection strings are set to the correct deployment and that the postgres password is changed to your required in the secrets.yaml file before running the newly pulled repo.
 
-***Repo changes***:  
+##### Repo changes:  
 Run the ```npm-install.sh``` script once you make a pull to update all the services packages. I will update this list as the application grows.
 If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
 
@@ -23,15 +29,12 @@ There is a ```npm-update-common.sh``` script that I use to update the npm librar
 cause the master branch to not run as usually the library required is many versions behind the latest @espressotrip-org/concept-common library.
 
 
-***Volume persistence***:  
-The data created in Mongo will persist between restarts. Postgres database need a bit more set up, I will get to that eventually. If you ***minikube delete*** all data will be lost. If you would like to persist data on your machine
-give me a shout I will help you set it up, it unfortunately requires another command to be run and a few adjustments in the deployment files.
-
+##### Volume persistence:  
+All data wil persist on restarts, if you do a ```minikube delete``` everything will be lost. The latest version of Minikube v1.25.2 also will maintain any deployments after restart.
+Versions before that you will have to manually restart all the deployments again as described below... my suggestion is upgrade.
 ___
-### Service Mesh Deployment:
-You can deploy the application with a service mesh. Navigate to [Linkerd Deployment](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/service-mesh) folder and follow the README instructions.
-___
-
+### Note:
+If you have completed any of the optional setup above, please skip ***Minikube*** section and move to the [***Stand Alone Deployments***](#stand-alone-deployments:) section.
 ### Minikube:
 ```bash
 ~$ minikube start 
@@ -42,7 +45,7 @@ ___
 ~$ minikube addons enable ingress
 ```
 
-You will need to add the domain to your OS hosts file (Linux: etc/hosts)
+You will need to add the domain to your OS hosts file.
 ```bash
 # Get the ip of your running minikube
 ~$ minikube ip
@@ -50,20 +53,20 @@ You will need to add the domain to your OS hosts file (Linux: etc/hosts)
 Add the minikube ip with the domain of the application into the hosts file,
 the rabbit.acmefast.dev is to access the message bus from your browser.
 ```text
-192.168.49.2 acmefast.dev
-192.168.49.2 rabbit.acmefast.dev
+<MINIKUBE IP> acmefast.dev
+<MINIKUBE IP> rabbit.acmefast.dev
 ```
 Once **Minikube** is running, move to next step.
 
 ___
-### IMPORTANT:
+### Note:
 
 You can choose to not run the operators for Mongo and RabbitMQ. The operators deploy a host of custom resources to manage the container. There is another script
 and yaml files that allow for stand-alone deployments of all the Mongo and RabbitMQ containers. You will have to make one or two small adjustments in the deployment
 ConfigMaps that are using the MongoDB pods. Postgres will still run with the operator, simply because the adjustments required can not be done without changing the source code.
 ___
 
-### Stand-Alone Deployments:
+### Stand Alone Deployments:
 Single deployments for Mongo, Postgres and RabbitMQ
 ```bash
 # Deploys all PV, PVC and pods
@@ -90,6 +93,7 @@ volume-storage-1                           1Gi        RWO            Retain     
 ```
 Make sure to comment out the cluster connection string (Long version) and uncomment the deployment connection string (Short version) in the infra/infra-dev deployment files
 ConfigMaps for those that are using the MongoDB databases, once everything is up and running skip the below operators section and go to **Skaffold**.
+___
 ### Operators:
 Operator deployments for Mongo, Postgres and RabbitMQ.
 
@@ -109,7 +113,7 @@ All operators need to have status **Running**. Then deploy the operator deployme
 ~$ kubectl get pods
 ```
 These also need to have status **Running** before any other deployment can be run.
-
+___
 ### Skaffold:
 
 Application uses Skaffold for the management of the Kubernetes cluster during development. Node can be buggy sometimes, so you might have to stop and restart Skaffold after making changes.
@@ -122,7 +126,7 @@ If you have included the message bus domain in your hosts file http://rabbit.acm
 
 If you are on Chrome and you get a warning about certificates, without the ability to ignore. Click anywhere on the webpage and type "thisisunsafe" and enter.
 
-### Skaffold Image Handling:
+#### Skaffold Image Handling:
 Every time you shut Skaffold down it removes the created deployments, there is a small issue that sometimes it leaves dangling images that take up space. You might get a low
 memory warning from minikube. To clean any dangling images you need to ssh into minikube to clear then out.
 ```bash
@@ -134,8 +138,9 @@ This should stop the warnings.
 ~$  minikube ssh -- docker system prune -a
 ```
 Using the -a flag will wipe all images and Skaffold will have to rebuild them all at start.
-
-### Postgres Database Connections:
+___
+### Connections:  
+#### Postgres Database Connections:
 Some services use Postgres for databases (e.g. analytic-service), on startup of a Postgres operator deployment you will have to get the generated password so the application can connect to it.
 To get the passwords for the existing databases:
 ```bash
@@ -152,7 +157,7 @@ This will give you the base64 encrypted password and user, ignore the user as it
 ```
 In the infra/secrets.yaml paste the password into the relevant services Postgres password key. 
 
-### Connecting to a Kubernetes Mongo Database:
+#### Connecting to a Kubernetes Mongo Database:
 ```bash
 # First find the service that connects the database you want
 ~$ kubectl get service
@@ -162,7 +167,23 @@ In the infra/secrets.yaml paste the password into the relevant services Postgres
 Open Compass or Studio3T and connect to the database on localhost:27017. If you already have a local database running you can map the service port to a different
 local port (e.g. 27018:27017 Then adjust your connection string)
 
-### Add Dummy User
+#### Mongo Database Connections for operator clusters:
+If you have any issues with failure to connect to the MongoDB operator cluster pods, run the below commands in the terminal.
+!!!NB. This is not for the pod-deploy.sh MongoDB instances !!!
+```bash
+# auth-service Mongo database
+~$ kubectl get secret auth-mongo-auth-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
+# division-service Mongo database
+~$ kubectl get secret division-mongo-division-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
+# employee-service Mongo database
+~$ kubectl get secret employee-mongo-employee-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
+# task-service Mongo database
+~$ kubectl get secret task-mongo-task-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
+```
+Copy the connection string that applies and in the infra/infra-dev/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
+___
+### Data:
+#### Add Dummy User
 Users will not be created from a UI, they will have to be added manually. Only employees will be created from the UI. Insert the below document into the auth-service mongo
 database in the users collection. 
 
@@ -187,22 +208,8 @@ database in the users collection.
   "version" : 0
 }
 ```
-Emails need to be unique: Password is ***12345***
+Email values need to be unique: Password is ***12345***
 
-### Mongo Database Connections for operator clusters: 
-If you have any issues with failure to connect to the MongoDB operator cluster pods, run the below commands in the terminal.
-!!!NB. This is not for the pod-deploy.sh MongoDB instances !!!
-```bash
-# auth-service Mongo database
-~$ kubectl get secret auth-mongo-auth-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
-# division-service Mongo database
-~$ kubectl get secret division-mongo-division-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
-# employee-service Mongo database
-~$ kubectl get secret employee-mongo-employee-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
-# task-service Mongo database
-~$ kubectl get secret task-mongo-task-root -o json | jq -r '.data | with_entries(.value |= @base64d)'
-```
-Copy the connection string that applies and in the infra/infra-dev/ folder find the relevant deployment file and paste the connection string in the ConfigMap at MONGO_URI key.
 
 ### Architectural Model:
 ![acme-fast-foods](https://user-images.githubusercontent.com/9296659/154967637-29999ee6-9fd4-40da-b96a-dc3612477aa0.png)
