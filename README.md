@@ -1,7 +1,7 @@
 
 ![acmefast-slogan](https://user-images.githubusercontent.com/9296659/154143145-06262ea3-02d3-4cce-97f5-bbeb2f8d7c53.png)
 
-Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. Ability to add a service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
+Event driven microservice concept application using RabbitMQ, gRPC and Nodejs.
 ___
 #### Prerequisite installations:
 
