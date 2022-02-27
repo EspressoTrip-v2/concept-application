@@ -59,7 +59,7 @@ You can run ```linkerd check``` or alternatively.
 
 
 ### Buoynat Cloud Dashboard:  
-Buoyant Cloud is a hosted management service for Linkerd it has a more comprehensive dashboard than viz.
+Buoyant Cloud is a hosted management service for Linkerd, it has a more comprehensive dashboard than the Viz dashboard. It still requires the Viz install to function.
 ```bash
 ~$ curl --tlsv1.2 -sSfL buoyant.cloud/install | sh
 ~$ linkerd buoyant install | kubectl apply -f -
