@@ -24,7 +24,7 @@ Always make sure the mongo connection strings are set to the correct deployment 
 Run the ```npm-install.sh``` script once you make a pull to update all the services packages. I will update this list as the application grows.
 If there are any changes to the codebase, please re-run the infrastructure scripts again to ensure there are no missing deployments.
 
-There is a ```npm-update-common.sh``` script that I use to update the npm library that is shared amongst the services...***DO NOT RUN THIS***. The library changes daily and so will cause the master branch to fail, the library required by the master branch is many versions behind the latest @espressotrip-org/concept-common npm package.
+There is a ```npm-update-common.sh``` script that I use to update the npm library that is shared amongst the services...***DO NOT RUN THIS***. The library changes daily and so will cause the master branch to fail. The library required by the master branch is many versions behind the latest @espressotrip-org/concept-common npm package.
 
 
 ##### Volume persistence:  
