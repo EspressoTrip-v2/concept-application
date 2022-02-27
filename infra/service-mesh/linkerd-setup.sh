@@ -8,6 +8,6 @@ kubectl annotate namespace --overwrite=true default linkerd.io/inject=enabled
 
 
 # Add the Linkerd annotation to the ingress-nginx namespace
+kubectl create namespace ingress-nginx
 kubectl annotate namespace --overwrite=true ingress-nginx linkerd.io/inject=enabled
-kubectl get deploy -n ingress-nginx ingress-nginx-controller -o yaml | linkerd inject - | kubectl apply -f -
 

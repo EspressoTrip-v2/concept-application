@@ -5,7 +5,44 @@ Event driven microservice concept application using RabbitMQ, gRPC and Nodejs.
 
 ## SSL Certificates:  
 This will assist you in setting up a local Certificate Authority for development and the annoyance of security blocks from the browser. 
+___
+#### File Changes:
+Before continuing changes need to be made to the ingress yaml files to allow TLS on port 443.
+The files that need to be changes are:
+ - infra/infra-dev/concept-ingress-srv.yaml
+ - infra/infra-dev/rabbit-ingress-srv.yaml
+ - infra/service-mesh/linkerd-dashboard-ingress.yaml  
 
+Example:
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: rabbit-ingress-srv
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+spec:
+  # This section needs to be uncommented to use TLS
+  tls:
+    - hosts:
+        - rabbit.acmefast.dev
+      secretName: mkcert
+    # #########################################
+  rules:
+    - host: rabbit.acmefast.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: rabbit-cluster
+                port:
+                  number: 15672
+```
+
+___
 #### Prerequisite installations:
 [Skaffold](https://skaffold.dev)  
 [Minikube](https://minikube.sigs.k8s.io/docs/start/)  
@@ -38,7 +75,7 @@ Minikube can use ```mkcert``` to insert a SSL certificate into the ingress addon
 You will then need to add certificate for the ```acmefast``` domain:
 ```bash
 #  Replace <MINIKUBE IP> with the correct ip address of your Minikube instance
-~$ mkcert acmefast.dev "*.acmefast.dev" <MINIKUBE IP>
+~$ mkcert acmefast.dev rabbit.acmefast.dev linkerd.acmefast.dev <MINIKUBE IP>
 ```
 You will get an output that looks like this:
 ```
@@ -66,10 +103,12 @@ You will then need to update the ingress config before enabling it.
 -- Enter custom cert(format is "namespace/secret"): kube-system/mkcert
 ````
 
-Now enable the ingress controller.
+If you are going to include the service mesh.
+Click here: [Linkerd Service Mesh Setup: Linkerd Install](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/service-mesh#linkerd-install) to set up the service mesh.
+
+Else run the below command:
 ```bash
 ~$ minikube addons enable ingress
 ```
-
-Click here: [Linkerd Service Mesh Setup](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/service-mesh) to set up the service mesh.  
+ 
 Click here: [Main Page: Stand-Alone Deployments](https://github.com/EspressoTrip-v2/concept-application#stand-alone-deployments) to continue with the standard setup.

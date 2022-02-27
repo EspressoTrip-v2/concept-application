@@ -11,6 +11,7 @@ spec:
           targetPort: 27017
           name: auth-db
 ---
+
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -38,15 +39,15 @@ spec:
                         name: auth-mongo-storage
             restartPolicy: Always
     volumeClaimTemplates:
-        - metadata:
-              name: auth-mongo-storage
-          spec:
-              accessModes:
-                  - ReadWriteOnce
-              storageClassName: standard
-              resources:
-                  requests:
-                      storage: 250Mi
+        -   metadata:
+                name: auth-mongo-storage
+            spec:
+                accessModes:
+                    -   ReadWriteOnce
+                storageClassName: standard
+                resources:
+                    requests:
+                        storage: 250Mi
     persistentVolumeClaimRetentionPolicy:
         whenDeleted: Delete
         whenScaled: Delete

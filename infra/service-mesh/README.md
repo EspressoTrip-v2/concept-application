@@ -9,13 +9,9 @@ ___
 ```bash
 ~$ minikube start --memory 8000 --cpus 4
 ```
-```bash
-# This adds a nginx ingress controller, it is required else you will not 
-# be able to access the application through the browser.
-~$ minikube addons enable ingress
-```
 
-You will need to add the domain to your OS hosts file (Linux: etc/hosts)
+
+You will need to add the domain to your OS hosts file.
 ```bash
 # Get the ip of your running minikube
 ~$ minikube ip
@@ -23,9 +19,9 @@ You will need to add the domain to your OS hosts file (Linux: etc/hosts)
 Add the minikube ip with the domain of the application into the hosts file, rabbit.acmefast.dev is to access the message bus from your browser. linkerd.acme.dev is 
 to get to the service mesh dashboard.
 ```text
-192.168.49.2 acmefast.dev
-192.168.49.2 rabbit.acmefast.dev
-192.168.49.2 linkerd.acmefast.dev
+<MINIKUBE IP> acmefast.dev
+<MINIKUBE IP> rabbit.acmefast.dev
+<MINIKUBE IP> linkerd.acmefast.dev 
 ```
 ___
 ###Linkerd Install   
@@ -78,6 +74,14 @@ You can access the dashboard by going to [https://buoyant.cloud](https://buoyant
 
 ### Proxy Injection: 
 Once everything is up and running, run the ```linkerd-setup.sh``` script to setup the ingress fro the Viz dashboard and set annotations for proxy injection.
+
+Then run:
+```bash
+# This adds a nginx ingress controller, it is required else you will not 
+# be able to access the application through the browser.
+~$ minikube addons enable ingress
+```
+
 Please use the ```pod-deploy.sh``` to start the deployments. I have not spent the time to ensure the operator namespaces will allow proxy injection, so there are 
 no guarantees it will function correctly.
 

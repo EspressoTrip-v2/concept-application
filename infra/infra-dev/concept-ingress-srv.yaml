@@ -7,11 +7,17 @@ metadata:
         nginx.ingress.kubernetes.io/use-regex: "true"
         nginx.ingress.kubernetes.io/service-upstream: "true"
 spec:
+  # This section needs to be uncommented to use TLS
+    tls:
+        - hosts:
+              - acmefast.dev
+          secretName: mkcert
+        # #########################################
     rules:
         - host: acmefast.dev
           http:
               paths:
-                # Auth API
+                  # Auth API
                   - path: /api/auth/?(.*)
                     pathType: Prefix
                     backend:
@@ -19,7 +25,7 @@ spec:
                             name: auth-api-srv
                             port:
                                 number: 3000
-                # Analytics API
+                  # Analytics API
                   - path: /api/analytic/?(.*)
                     pathType: Prefix
                     backend:
@@ -28,34 +34,34 @@ spec:
                             port:
                                 number: 3000
 
-                # Analytics-Web UI
+                  # Analytics-Web UI
                   - path: /analytic/?(.*)
                     pathType: Prefix
                     backend:
-                      service:
-                        name: auth-web-srv
-                        port:
-                          number: 3000
+                        service:
+                            name: auth-web-srv
+                            port:
+                                number: 3000
 
-                # Employee API
+                  # Employee API
                   - path: /api/employee/?(.*)
                     pathType: Prefix
                     backend:
-                      service:
-                        name: employee-api-srv
-                        port:
-                          number: 3000
+                        service:
+                            name: employee-api-srv
+                            port:
+                                number: 3000
 
-                # Employee-Web UI
+                  # Employee-Web UI
                   - path: /employee/?(.*)
                     pathType: Prefix
                     backend:
-                      service:
-                        name: employee-web-srv
-                        port:
-                          number: 3000
+                        service:
+                            name: employee-web-srv
+                            port:
+                                number: 3000
 
-                # Auth-Web UI
+                  # Auth-Web UI
                   - path: /?(.*)
                     pathType: Prefix
                     backend:
