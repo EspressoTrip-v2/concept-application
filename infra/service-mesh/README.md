@@ -73,7 +73,7 @@ You can access the dashboard by going to [https://buoyant.cloud](https://buoyant
 ```
 
 ### Proxy Injection: 
-Once everything is up and running, run the ```linkerd-setup.sh``` script to setup the ingress fro the Viz dashboard and set annotations for proxy injection.
+Once everything is up and running, run the ```linkerd-setup.sh``` script to setup the ingress for the Viz dashboard and also all the annotations for the sidecar proxy injection.
 
 Then run:
 ```bash
