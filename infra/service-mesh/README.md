@@ -1,7 +1,8 @@
 
 ![acmefast-slogan](https://user-images.githubusercontent.com/9296659/154143145-06262ea3-02d3-4cce-97f5-bbeb2f8d7c53.png)
 
-Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. Ability to add a service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
+Event driven microservice concept application using RabbitMQ, gRPC and Nodejs.
+
 ### Note:
 If you have completed the certificate install skip the ***Minikube*** section and start at [Linkerd Install](#linkerd-install) section.
 ___
@@ -16,8 +17,7 @@ You will need to add the domain to your OS hosts file.
 # Get the ip of your running minikube
 ~$ minikube ip
 ```
-Add the minikube ip with the domain of the application into the hosts file, rabbit.acmefast.dev is to access the message bus from your browser. linkerd.acme.dev is 
-to get to the service mesh dashboard.
+Add the minikube ip with the domain of the application into the hosts file, rabbit.acmefast.dev is to access the message bus from your browser. linkerd.acme.dev is to get to the service mesh dashboard.
 ```text
 <MINIKUBE IP> acmefast.dev
 <MINIKUBE IP> rabbit.acmefast.dev
@@ -58,7 +58,7 @@ You can run ```linkerd check``` or alternatively.
 ```
 
 
-### Buoynat Cloud Dashboard:  
+### Buoyant Cloud Dashboard:  
 Buoyant Cloud is a hosted management service for Linkerd, it has a more comprehensive dashboard than the Viz dashboard. It still requires the Viz install to function.
 ```bash
 ~$ curl --tlsv1.2 -sSfL buoyant.cloud/install | sh
