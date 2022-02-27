@@ -85,4 +85,4 @@ no guarantees it will function correctly.
 Open your browser on [linkerd.acmefast.dev](https://linkerd.acmefast.dev) (username: admin, password: admin) select the default namespace, alternatively go to [Buoyant Cloud](https://buoyant.cloud). 
 You can see the deployments come online within the dashboard. If you have any issues let me know.
 
-Click here:  [Main Page: Stand-ALone Deployments](https://github.com/EspressoTrip-v2/concept-application#stand-alone-deployments), to complete the setup.
+Click here:  [Main Page: Stand-Alone Deployments](https://github.com/EspressoTrip-v2/concept-application#stand-alone-deployments), to complete the setup.
