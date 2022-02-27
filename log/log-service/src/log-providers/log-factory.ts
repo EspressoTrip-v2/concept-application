@@ -13,7 +13,7 @@ export class LogFactory {
                 return new LogglyProvider(logOrigin);
 
             case LogProviderTypes.papertrail:
-                if (!process.env.PAPER_TRAIL_HOST) throw new Error("PAPER_TRAIL_HOST must be defined");
+                if (!process.env.PAPER_TRAIL_SERVICE) throw new Error("PAPER_TRAIL_HOST must be defined");
                 if (!process.env.PAPER_TRAIL_PORT) throw new Error("PAPER_TRAIL_PORT must be defined");
                 return new PapertrailProvider(logOrigin);
             default:

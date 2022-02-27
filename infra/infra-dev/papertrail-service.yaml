@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: papertrail-srv
+spec:
+  type: ExternalName
+  externalName: logs6.papertrailapp.com

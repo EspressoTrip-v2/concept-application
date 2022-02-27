@@ -1,19 +1,34 @@
-apiVersion: apps/v1
-kind: Deployment
+apiVersion: v1
+kind: Service
 metadata:
-    name: employee-mongo-dpl
+    name: employee-mongo-srv
+spec:
+    clusterIP: None
+    selector:
+        app: employee-mongo
+    ports:
+        - port: 27017
+          targetPort: 27017
+          name: employee-db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: employee-mongo-ss
     labels:
         app: employee-mongo
 spec:
+    serviceName: employee-mongo-srv
     replicas: 1
     template:
         metadata:
             annotations:
-                config.linkerd.io/proxy-log-level: error
+                config.linkerd.io/proxy-log-level: warn
             name: employee-mongo
             labels:
                 app: employee-mongo
         spec:
+            terminationGracePeriodSeconds: 10
             containers:
                 - name: employee-mongo
                   image: mongo:4.2.18
@@ -21,55 +36,21 @@ spec:
                   volumeMounts:
                       - mountPath: /data/db
                         name: employee-mongo-storage
-            volumes:
-                - name: employee-mongo-storage
-                  persistentVolumeClaim:
-                      claimName: employee-pv-claim
             restartPolicy: Always
+    volumeClaimTemplates:
+        - metadata:
+              name: employee-mongo-storage
+          spec:
+              accessModes:
+                  - ReadWriteOnce
+              storageClassName: standard
+              resources:
+                  requests:
+                      storage: 250Mi
+    persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Delete
+
     selector:
         matchLabels:
             app: employee-mongo
-
----
-apiVersion: v1
-kind: Service
-metadata:
-    name: employee-mongo-srv
-spec:
-    selector:
-        app: employee-mongo
-    ports:
-        - port: 27017
-          targetPort: 27017
-          name: employee-db
-
----
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-    name: employee-storage
-spec:
-    persistentVolumeReclaimPolicy: Delete
-    claimRef:
-        name: employee-pv-claim
-        namespace: default
-    capacity:
-        storage: 1Gi
-    accessModes:
-        - ReadWriteOnce
-    hostPath:
-        type: DirectoryOrCreate
-        path: /data/employee
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-    name: employee-pv-claim
-spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-            storage: 1Gi
-    volumeName: employee-storage

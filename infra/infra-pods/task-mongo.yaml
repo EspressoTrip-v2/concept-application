@@ -1,41 +1,9 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-    name: task-mongo-dpl
-    labels:
-        app: task-mongo
-spec:
-    replicas: 1
-    template:
-        metadata:
-            annotations:
-                config.linkerd.io/proxy-log-level: error
-            name: task-mongo
-            labels:
-                app: task-mongo
-        spec:
-            containers:
-                - name: task-mongo
-                  image: mongo:4.2.18
-                  imagePullPolicy: IfNotPresent
-                  volumeMounts:
-                      - mountPath: /data/db
-                        name: task-mongo-storage
-            volumes:
-                - name: task-mongo-storage
-                  persistentVolumeClaim:
-                      claimName: task-pv-claim
-            restartPolicy: Always
-    selector:
-        matchLabels:
-            app: task-mongo
-
----
 apiVersion: v1
 kind: Service
 metadata:
     name: task-mongo-srv
 spec:
+    clusterIP: None
     selector:
         app: task-mongo
     ports:
@@ -43,32 +11,46 @@ spec:
           targetPort: 27017
           name: task-db
 ---
-apiVersion: v1
-kind: PersistentVolume
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
-    name: task-storage
+    name: task-mongo-ss
+    labels:
+        app: task-mongo
 spec:
-    persistentVolumeReclaimPolicy: Delete
-    claimRef:
-        name: task-pv-claim
-        namespace: default
-    capacity:
-        storage: 1Gi
-    accessModes:
-        - ReadWriteOnce
-    hostPath:
-        type: DirectoryOrCreate
-        path: /data/task
+    serviceName: task-mongo-srv
+    replicas: 1
+    template:
+        metadata:
+            annotations:
+                config.linkerd.io/proxy-log-level: warn
+            name: task-mongo
+            labels:
+                app: task-mongo
+        spec:
+            terminationGracePeriodSeconds: 10
+            containers:
+                - name: task-mongo
+                  image: mongo:4.2.18
+                  imagePullPolicy: IfNotPresent
+                  volumeMounts:
+                      - mountPath: /data/db
+                        name: task-mongo-storage
+            restartPolicy: Always
+    volumeClaimTemplates:
+        - metadata:
+              name: task-mongo-storage
+          spec:
+              accessModes:
+                  - ReadWriteOnce
+              storageClassName: standard
+              resources:
+                  requests:
+                      storage: 250Mi
+    persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Delete
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-    name: task-pv-claim
-spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-            storage: 1Gi
-    volumeName: task-storage
+    selector:
+        matchLabels:
+            app: task-mongo

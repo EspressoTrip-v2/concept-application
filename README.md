@@ -24,8 +24,7 @@ cause the master branch to not run as usually the library required is many versi
 
 
 ***Volume persistence***:  
-The setup below needs to be done on start up of minikube... minikube shuts down all deployment, whether operators or not. The data created in Mongo will persist between restarts.
-Postgres database need a bit more set up, I will get to that eventually. If you ***minikube delete*** all data will be lost. If you would like to persist data on your machine
+The data created in Mongo will persist between restarts. Postgres database need a bit more set up, I will get to that eventually. If you ***minikube delete*** all data will be lost. If you would like to persist data on your machine
 give me a shout I will help you set it up, it unfortunately requires another command to be run and a few adjustments in the deployment files.
 
 ___
