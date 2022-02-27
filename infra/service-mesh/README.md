@@ -3,7 +3,7 @@
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. Ability to add a service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
 ### Note:
-If you have completed the certificate install skip the ***Minikube*** section and start at [Linkerd Install](#linkerd-install).
+If you have completed the certificate install skip the ***Minikube*** section and start at [Linkerd Install](#linkerd-install) section.
 ___
 ### Minikube:
 ```bash
@@ -24,7 +24,7 @@ to get to the service mesh dashboard.
 <MINIKUBE IP> linkerd.acmefast.dev 
 ```
 ___
-###Linkerd Install   
+### Linkerd Install:    
 Install the Linkerd CLI.
 ```bash
 ~$ curl --tlsv1.2 -sSfL https://run.linkerd.io/install | sh
