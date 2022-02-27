@@ -66,7 +66,7 @@ and yaml files that allow for stand-alone deployments of all the Mongo and Rabbi
 ConfigMaps that are using the MongoDB pods. Postgres will still run with the operator, simply because the adjustments required can not be done without changing the source code.
 ___
 
-### Stand Alone Deployments:
+### Stand-Alone Deployments:
 Single deployments for Mongo, Postgres and RabbitMQ
 ```bash
 # Deploys all PV, PVC and pods
