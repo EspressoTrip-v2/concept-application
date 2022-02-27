@@ -34,7 +34,7 @@ All data wil persist on restarts, if you do a ```minikube delete``` everything w
 Versions before that you will have to manually restart all the deployments again as described below... my suggestion is upgrade.
 ___
 ### Note:
-If you have completed any of the optional setup above, please skip ***Minikube*** section and move to the [***Stand Alone Deployments***](#stand-alone-deployments:) section.
+If you have completed any of the optional setup above, please skip ***Minikube*** section and move to the [***Stand Alone Deployments***](#stand-alone-deployments) section.
 ### Minikube:
 ```bash
 ~$ minikube start 
