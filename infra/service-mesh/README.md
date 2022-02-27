@@ -85,7 +85,7 @@ Then run:
 Please use the ```pod-deploy.sh``` to start the deployments. I have not spent the time to ensure the operator namespaces will allow proxy injection, so there are 
 no guarantees it will function correctly.
 
-### Dashboard
+### Dashboard:
 Open your browser on [linkerd.acmefast.dev](https://linkerd.acmefast.dev) (username: admin, password: admin) select the default namespace, alternatively go to [Buoyant Cloud](https://buoyant.cloud). 
 You can see the deployments come online within the dashboard. If you have any issues let me know.
 
