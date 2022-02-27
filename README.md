@@ -182,7 +182,7 @@ Application uses Skaffold for the management of the Kubernetes cluster during de
 Once everything is up and running open your browser and go to http://acmefast.dev. 
 If you have included the message bus domain in your hosts file http://rabbit.acmefast.dev will display the message bus UI. Rabit dashboard username and password is "guest".
 
-If you are on Chrome and you get a warning about certificates, without the ability to ignore. Click anywhere on the webpage and type "thisisunsafe" and enter.
+If you have not setup TLS and Chrome gives you a warning about certificates. Click anywhere on the webpage and type "thisisunsafe" and enter. Unfortunately new versions of Firefox will not allow you to by-pass the security issue.
 
 #### Skaffold Image Handling:
 Every time you shut Skaffold down it removes the created deployments, there is a small issue that sometimes it leaves dangling images that take up space. You might get a low
