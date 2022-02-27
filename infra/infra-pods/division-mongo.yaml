@@ -1,41 +1,9 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-    name: division-mongo-dpl
-    labels:
-        app: division-mongo
-spec:
-    replicas: 1
-    template:
-        metadata:
-            annotations:
-                config.linkerd.io/proxy-log-level: error
-            name: division-mongo
-            labels:
-                app: division-mongo
-        spec:
-            containers:
-                - name: division-mongo
-                  image: mongo:4.2.18
-                  imagePullPolicy: IfNotPresent
-                  volumeMounts:
-                      - mountPath: /data/db
-                        name: division-mongo-storage
-            volumes:
-                - name: division-mongo-storage
-                  persistentVolumeClaim:
-                      claimName: division-pv-claim
-            restartPolicy: Always
-    selector:
-        matchLabels:
-            app: division-mongo
-
----
 apiVersion: v1
 kind: Service
 metadata:
     name: division-mongo-srv
 spec:
+    clusterIP: None
     selector:
         app: division-mongo
     ports:
@@ -43,32 +11,46 @@ spec:
           targetPort: 27017
           name: division-db
 ---
-apiVersion: v1
-kind: PersistentVolume
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
-    name: division-storage
+    name: division-mongo-ss
+    labels:
+        app: division-mongo
 spec:
-    persistentVolumeReclaimPolicy: Delete
-    claimRef:
-        name: division-pv-claim
-        namespace: default
-    capacity:
-        storage: 1Gi
-    accessModes:
-        - ReadWriteOnce
-    hostPath:
-        type: DirectoryOrCreate
-        path: /data/division
+    serviceName: division-mongo-srv
+    replicas: 1
+    template:
+        metadata:
+            annotations:
+                config.linkerd.io/proxy-log-level: warn
+            name: division-mongo
+            labels:
+                app: division-mongo
+        spec:
+            terminationGracePeriodSeconds: 10
+            containers:
+                - name: division-mongo
+                  image: mongo:4.2.18
+                  imagePullPolicy: IfNotPresent
+                  volumeMounts:
+                      - mountPath: /data/db
+                        name: division-mongo-storage
+            restartPolicy: Always
+    volumeClaimTemplates:
+        - metadata:
+              name: division-mongo-storage
+          spec:
+              accessModes:
+                  - ReadWriteOnce
+              storageClassName: standard
+              resources:
+                  requests:
+                      storage: 250Mi
+    persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Delete
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-    name: division-pv-claim
-spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-            storage: 1Gi
-    volumeName: division-storage
+    selector:
+        matchLabels:
+            app: division-mongo

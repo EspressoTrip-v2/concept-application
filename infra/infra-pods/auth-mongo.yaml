@@ -1,41 +1,9 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-    name: auth-mongo-dpl
-    labels:
-        app: auth-mongo
-spec:
-    replicas: 1
-    template:
-        metadata:
-            annotations:
-                config.linkerd.io/proxy-log-level: error
-            name: auth-mongo
-            labels:
-                app: auth-mongo
-        spec:
-            containers:
-                - name: auth-mongo
-                  image: mongo:4.2.18
-                  imagePullPolicy: IfNotPresent
-                  volumeMounts:
-                      - mountPath: /data/db
-                        name: auth-mongo-storage
-            volumes:
-                - name: auth-mongo-storage
-                  persistentVolumeClaim:
-                      claimName: auth-pv-claim
-            restartPolicy: Always
-    selector:
-        matchLabels:
-            app: auth-mongo
-
----
 apiVersion: v1
 kind: Service
 metadata:
     name: auth-mongo-srv
 spec:
+    clusterIP: None
     selector:
         app: auth-mongo
     ports:
@@ -43,32 +11,47 @@ spec:
           targetPort: 27017
           name: auth-db
 ---
-apiVersion: v1
-kind: PersistentVolume
-metadata:
-    name: auth-storage
-spec:
-    persistentVolumeReclaimPolicy: Delete
-    claimRef:
-        name: auth-pv-claim
-        namespace: default
-    capacity:
-        storage: 1Gi
-    accessModes:
-        - ReadWriteOnce
-    hostPath:
-        type: DirectoryOrCreate
-        path: /data/auth
 
----
-apiVersion: v1
-kind: PersistentVolumeClaim
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
-    name: auth-pv-claim
+    name: auth-mongo-ss
+    labels:
+        app: auth-mongo
 spec:
-    accessModes:
-        - ReadWriteOnce
-    resources:
-        requests:
-            storage: 1Gi
-    volumeName: auth-storage
+    serviceName: auth-mongo-srv
+    replicas: 1
+    template:
+        metadata:
+            annotations:
+                config.linkerd.io/proxy-log-level: warn
+            name: auth-mongo
+            labels:
+                app: auth-mongo
+        spec:
+            terminationGracePeriodSeconds: 10
+            containers:
+                - name: auth-mongo
+                  image: mongo:4.2.18
+                  imagePullPolicy: IfNotPresent
+                  volumeMounts:
+                      - mountPath: /data/db
+                        name: auth-mongo-storage
+            restartPolicy: Always
+    volumeClaimTemplates:
+        -   metadata:
+                name: auth-mongo-storage
+            spec:
+                accessModes:
+                    -   ReadWriteOnce
+                storageClassName: standard
+                resources:
+                    requests:
+                        storage: 250Mi
+    persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Delete
+
+    selector:
+        matchLabels:
+            app: auth-mongo

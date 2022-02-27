@@ -13,7 +13,7 @@ export class PapertrailProvider extends AbstractLogger<winston.Logger> {
     constructor(logOrigin: string) {
         super();
         this.m_papertrail = new winstonSys.Syslog({
-            host: process.env.PAPER_TRAIL_HOST,
+            host: process.env.PAPER_TRAIL_SERVICE,
             port: parseInt(process.env.PAPER_TRAIL_PORT!),
             protocol: "tls4",
             localhost: logOrigin,

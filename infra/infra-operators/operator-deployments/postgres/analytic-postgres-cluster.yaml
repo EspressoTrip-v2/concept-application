@@ -6,7 +6,8 @@ metadata:
 spec:
     teamId: "acid"
     volume:
-        size: 1Gi
+        size: 250Mi
+        storageClass: standard
     numberOfInstances: 1
     users:
         root: # database owner

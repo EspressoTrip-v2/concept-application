@@ -21,7 +21,7 @@ spec:
     template:
         metadata:
             annotations:
-              config.linkerd.io/proxy-log-level: error
+              config.linkerd.io/proxy-log-level: warn
             name: employee-service
             labels:
                 app: employee-service
