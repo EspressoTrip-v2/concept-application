@@ -49,7 +49,7 @@ You can run ```linkerd check``` or alternatively.
 ### Viz Dashboard:
 Install the dashboard and on cluster metric stack.
 ```bash
-`$ linkerd viz install | kubectl apply -f -
+~$ linkerd viz install | kubectl apply -f -
 ```
 You can run ```linkerd check``` or alternatively.
 ```bash
