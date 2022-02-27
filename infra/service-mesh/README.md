@@ -3,7 +3,7 @@
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs. Ability to add a service mesh like Linkerd or Istio if required. UI to be built with micro-frontends.
 ### Note:
-If you have completed the certificate install skip the ***Minikube*** section and start at ***Linkerd Install***
+If you have completed the certificate install skip the ***Minikube*** section and start at [Linkerd Install](#linkerd-install).
 ___
 ### Minikube:
 ```bash
