@@ -117,7 +117,7 @@ This will give you the base64 encrypted password and user, ignore the user as it
 }
 
 ```
-In the infra/secrets.yaml paste the password into the relevant services Postgres password key.
+In the infra/infra-dev/secrets.yaml paste the password into the relevant services Postgres password key.
 
 #### Connecting to a Kubernetes Mongo Database:
 ```bash
