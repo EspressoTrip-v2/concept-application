@@ -3,7 +3,7 @@
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs.
 
-## SSL Certificates:  
+## TLS Certificates:  
 This will assist you in setting up a local Certificate Authority for development and the annoyance of security blocks from the browser. 
 ___
 #### File Changes:

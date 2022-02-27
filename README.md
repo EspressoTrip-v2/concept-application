@@ -10,8 +10,8 @@ ___
 [kubectl](https://kubernetes.io/docs/tasks/tools/)
 
 ___
-#### Certificates Setup (Optional):  
-Click here:  [SSL Certificate Setup](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/certs) before moving on.
+#### TLS Certificates Setup (Optional):  
+Click here:  [TLS Certificate Setup](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/certs) before moving on.
 ___
 #### Service Mesh Setup (Optional):
 Click here: [Linkerd Service Mesh Setup](https://github.com/EspressoTrip-v2/concept-application/tree/master/infra/service-mesh) before moving on.
