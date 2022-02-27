@@ -24,10 +24,10 @@ metadata:
     nginx.ingress.kubernetes.io/auth-realm: 'Authentication Required'
 spec:
   # This section needs to be uncommented to use TLS
-  tls:
-    - hosts:
-        - linkerd.acmefast.dev
-      secretName: mkcert
+#  tls:
+#    - hosts:
+#        - linkerd.acmefast.dev
+#      secretName: mkcert
   # #########################################
   ingressClassName: nginx
   rules:

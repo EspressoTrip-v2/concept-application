@@ -7,10 +7,10 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: 'true'
 spec:
   # This section needs to be uncommented to use TLS
-  tls:
-    - hosts:
-        - rabbit.acmefast.dev
-      secretName: mkcert
+#  tls:
+#    - hosts:
+#        - rabbit.acmefast.dev
+#      secretName: mkcert
     # #########################################
   rules:
     - host: rabbit.acmefast.dev
