@@ -8,7 +8,7 @@ import { EmployeeId } from "./proto/employeePackage/EmployeeId";
 import { GrpcEmployeeAttributes } from "./proto/employeePackage/GrpcEmployeeAttributes";
 import { Employee } from "../models";
 import { GrpcResponsePayload } from "./proto/employeePackage/GrpcResponsePayload";
-import { DeleteEmployeePublisher } from "../events";
+import { CreateEmployeePublisher, DeleteEmployeePublisher, UpdateEmployeePublisher } from "../events";
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/employee.proto";
@@ -48,11 +48,11 @@ export class GrpcServer extends AbstractGrpcServer {
                         details: "Could not create new employee, employee save failed",
                     };
                     this.m_logger.publish(LogCodes.ERROR, "Employee save failed", "CreateEmployee()", `email: ${employee.email}, id: ${employee.id}`);
-
                     return callback(serverError);
                 }
             });
             this.m_logger.publish(LogCodes.CREATED, "Employee created", "CreateEmployee()", `email: ${employee.email}, id: ${employee.id}`);
+            new CreateEmployeePublisher(this.m_rabbitConnection!).publish({ ...Employee.convertToGrpcMessage(employee), password: call.request.password! });
             callback(null, {
                 status: 200,
                 data: employee,
@@ -126,6 +126,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 }
             });
             this.m_logger.publish(LogCodes.ERROR, "Employee updated", "UpdateEmployee()", `email: ${employee.email}, id: ${employee.id}`);
+            new UpdateEmployeePublisher(this.m_rabbitConnection!).publish({ ...Employee.convertToGrpcMessage(employee), password: call.request.password! });
             return callback(null, {
                 status: 200,
                 data: employee,

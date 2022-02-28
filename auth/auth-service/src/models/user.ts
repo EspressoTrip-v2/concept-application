@@ -1,10 +1,8 @@
 import mongoose from "mongoose";
 import { UserAttrs, UserDoc, UserModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { EmployeeMsg, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Password } from "../utils";
-import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
-import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
 
 /**
  * User model that uses update-if-current version incrementation
@@ -39,7 +37,7 @@ const userSchema = new mongoose.Schema(
                 delete ret._id;
             },
         },
-    },
+    }
 );
 
 /** Replace the __v with version  && use the update-if-current plugin*/
@@ -47,7 +45,7 @@ userSchema.set("versionKey", "version");
 userSchema.plugin(updateIfCurrentPlugin);
 
 /** Encrypt the password on save */
-userSchema.pre("save", async function(done) {
+userSchema.pre("save", async function (done) {
     const password = this.get("password");
     if (password && this.isModified("password")) {
         const hashed = await Password.toHash(this.get("password"));
@@ -60,90 +58,17 @@ userSchema.pre("save", async function(done) {
  * Static function to build product
  * @param attributes
  */
-userSchema.statics.build = function(attributes: UserAttrs): UserDoc {
+userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
     return new User(attributes);
 };
 
 /**
- * Creates a user attributes object from GitHub profile
- * @param profile {GoogleGrpcUser}
- * @return {UserAttrs}
+ * Finds user of employee by previous version to update
+ * @param employee {EmployeeMsg}
  */
-// userSchema.statics.buildUserFromGitHub = function (profile: GitHubGrpcUser): UserAttrs {
-//     const nameArray = profile.name?.split(" ") || [];
-//     const firstName = nameArray[0] || "No GitHub first name supplied";
-//     const lastName = nameArray.length > 1 ? nameArray[nameArray.length - 1] : "No GitHub last name supplied";
-//     return {
-//         // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
-//         firstName,
-//         lastName,
-//         branchName: "",
-//         country: "",
-//         gender: "",
-//         race: "",
-//         phoneNUmber: "",
-//         position: "",
-//         region: "",
-//         shiftPreference: "",
-//         startDate: new Date().toISOString(),
-//         userRole: UserRoles.ADMIN,
-//         password: "",
-//         providerId: profile.id!.toString()!,
-//         signInType: SignInTypes.GITHUB,
-//         email: profile.email!,
-//     };
-// };
-
-/**
- * Creates a user attributes object from Google profile
- * @param profile {GoogleGrpcUser}
- */
-// userSchema.statics.buildUserFromGoogle = function (profile: GoogleGrpcUser): UserAttrs {
-//     return {
-//         // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
-//         firstName: profile.name!,
-//         lastName: profile.given_name!,
-//         branchName: "",
-//         country: "",
-//         gender: "",
-//         race: "",
-//         phoneNUmber: "",
-//         position: "",
-//         region: "",
-//         shiftPreference: "",
-//         startDate: new Date().toISOString(),
-//         userRole: UserRoles.ADMIN,
-//         password: "",
-//         providerId: profile.sub,
-//         signInType: SignInTypes.GOOGLE,
-//         email: profile.email!,
-//     };
-// };
-
-/**
- * Creates a user attributes object from Local profile
- * @param profile {LocalGrpcUser}
- */
-// userSchema.statics.buildUserFromLocal = function (profile: LocalGrpcUser): UserAttrs {
-//     return {
-//         // TODO: THIS IS TEMPORARY AS WE ARE NO LONGER CREATING USERS FROM THE API
-//         firstName: "",
-//         lastName: "",
-//         branchName: "",
-//         country: "",
-//         gender: "",
-//         race: "",
-//         phoneNUmber: "",
-//         position: "",
-//         region: "",
-//         shiftPreference: "",
-//         startDate: new Date().toISOString(),
-//         userRole: UserRoles.ADMIN,
-//         email: profile.email!,
-//         password: profile.password,
-//         signInType: SignInTypes.LOCAL,
-//     };
-// };
+userSchema.statics.findByVersion = async function (employee: EmployeeMsg): Promise<UserDoc | null> {
+    return User.findOne({ email: employee.email, version: employee.version! - 1 });
+};
 
 /** Create model from schema */
 const User = mongoose.model<UserDoc, UserModel>("User", userSchema);

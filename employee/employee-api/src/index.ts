@@ -9,7 +9,7 @@ async function main(): Promise<void> {
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
+        await rabbitClient.connect(process.env.RABBIT_URI!, `[employee-api:rabbitmq]: Connected successfully`);
 
         /** Shut down process */
         process.on("SIGTERM", async () => {
@@ -20,7 +20,7 @@ async function main(): Promise<void> {
         });
     } catch (error) {
         const msg = error as Error;
-        console.log(`[auth-api:error]: Service start up error -> ${msg}`);
+        console.log(`[employee-api:error]: Service start up error -> ${msg}`);
         await LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.EMPLOYEE_API, "employee-api:startup").publish(
             LogCodes.ERROR,
             msg.message || "Service Error",
@@ -31,7 +31,7 @@ async function main(): Promise<void> {
 }
 
 app.listen(PORT, async () => {
-    console.log(`[auth-api:express-service]: Listening port ${PORT}`);
+    console.log(`[employee-api:express-service]: Listening port ${PORT}`);
 });
 
 main();

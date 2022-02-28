@@ -22,7 +22,7 @@ export class UpdateEmployeeSigninConsumer extends AbstractConsumer<UpdateEmploye
     }
 
     async onMessage(data: UpdateEmployeeEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
-        const existingUser = await User.findOne({ email: data.email, userRole: data.userRole });
+        const existingUser = await User.findByVersion(data);
         if (!existingUser) {
             this.m_logger.publish(LogCodes.ERROR, `Sign-in user not found`, `UpdateEmployeeSigninConsumer`, `email: ${data.email}, userRole: ${data.userRole}`);
             throw new Error("Sign-in user not found.");

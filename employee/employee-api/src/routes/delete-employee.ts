@@ -4,7 +4,7 @@ import { employeeGrpcClient } from "../services";
 
 const router = express.Router();
 
-router.delete("/api/employee/:employeeId", validateCurrentUser, requireAuth, async (req: Request, res: Response) => {
+router.delete("/api/employee/:employeeId", requireAuth, async (req: Request, res: Response) => {
     const id = <string>req.query.employeeId;
     const grpcResponse = await employeeGrpcClient.deleteEmployee(id);
     if (isGRPCStatus(grpcResponse)) throw grpcErrorTranslator(grpcResponse);

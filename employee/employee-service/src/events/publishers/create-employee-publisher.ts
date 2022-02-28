@@ -7,7 +7,7 @@ export class CreateEmployeePublisher extends AbstractPublisher<CreateEmployeeEve
     m_queue: QueueInfo.CREATE_EMPLOYEE = QueueInfo.CREATE_EMPLOYEE;
 
     constructor(rabbitConnection: amqp.Connection) {
-        super(rabbitConnection, "delete-employee");
+        super(rabbitConnection, "create-employee");
     }
 
     async publish(data: CreateEmployeeEvent["data"]): Promise<void> {

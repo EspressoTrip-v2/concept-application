@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { EmployeeMsg, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
 import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
 import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
@@ -27,9 +27,7 @@ export interface UserAttrs {
 /** Static build method to model */
 export interface UserModel extends mongoose.Model<UserDoc> {
     build(attributes: UserAttrs): UserDoc;
-    buildUserFromGitHub(profile: GitHubGrpcUser): UserAttrs;
-    buildUserFromGoogle(profile: GoogleGrpcUser): UserAttrs;
-    buildUserFromLocal(profile: LocalGrpcUser): UserAttrs;
+    findByVersion(employee: EmployeeMsg): UserDoc | null;
 }
 
 /** Extend mongoose document with product document values */

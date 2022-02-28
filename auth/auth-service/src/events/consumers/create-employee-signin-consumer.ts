@@ -30,6 +30,7 @@ export class CreateEmployeeSigninConsumer extends AbstractConsumer<CreateEmploye
                 `CreateEmployeeSigninConsumer`,
                 `email: ${existingEmployee.email}, id: ${existingEmployee.id}`
             );
+            this.acknowledge(message);
             throw new Error("CreateEmployeeSignIn: Employee sign-in already exists.");
         }
 

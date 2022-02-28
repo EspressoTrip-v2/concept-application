@@ -3,7 +3,6 @@ import { EmployeeAttrs, EmployeeDoc, EmployeeModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { EmployeeMsg, GenderType, MicroServiceNames, RaceTypes, ShiftPreference, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Password } from "../utils";
-import { GrpcEmployee } from "../services/proto/employeePackage/GrpcEmployee";
 
 /**
  * User model that uses update-if-current version incrementation
