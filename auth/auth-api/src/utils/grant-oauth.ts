@@ -3,7 +3,7 @@ import { GrantConfig } from "grant";
 export function grantConfig(): GrantConfig {
     return {
         defaults: {
-            origin: "https://concept.dev",
+            origin: "https://acmefast.dev",
             transport: "session",
             prefix: "/api/auth/connect",
         },
