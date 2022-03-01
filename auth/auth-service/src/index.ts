@@ -1,7 +1,8 @@
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
-import { CreateEmployeeSigninConsumer, UpdateEmployeeSigninConsumer } from "./events";
-import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { CreateUserConsumer, UpdateUserConsumer } from "./events";
+import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
     try {
@@ -15,16 +16,18 @@ async function main(): Promise<void> {
         await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-service:rabbitmq]: Connected successfully`);
 
         // /** Create Mongoose connection */
-        await mongoose.connect(process.env.MONGO_URI!, { dbName: process.env.MONGO_DBNAME!});
+        await mongoose.connect(process.env.MONGO_URI!, { dbName: process.env.MONGO_DBNAME! });
         console.log(`[auth-service:mongo]: Connected successfully`);
 
         /** Create gRPC server */
         const gRPC = grpcServer(rabbitClient.connection).listen(`[auth-service:gRPC-server]: Listening on ${process.env.GRPC_SERVER_PORT}`);
 
         /** Create RabbitMQ consumers */
-        await new UpdateEmployeeSigninConsumer(rabbitClient.connection).listen();
-        await new CreateEmployeeSigninConsumer(rabbitClient.connection).listen();
+        await new UpdateUserConsumer(rabbitClient.connection).listen();
+        await new CreateUserConsumer(rabbitClient.connection).listen();
 
+        /** Start Logger */
+        LocalLogger.start(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE);
         /** Shut down process */
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
@@ -39,12 +42,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        await LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE, "auth-service:startup").publish(
-            LogCodes.ERROR,
-            msg.message || "Service Error",
-            "main()",
-            msg.stack! || "No stack trace"
-        );
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "main()", msg.stack! || "No stack trace");
     }
 }
 

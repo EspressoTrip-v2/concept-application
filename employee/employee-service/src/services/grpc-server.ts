@@ -1,6 +1,6 @@
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
-import { AbstractGrpcServer, LogCodes, LogPublisher, MicroServiceNames } from "@espressotrip-org/concept-common";
+import { AbstractGrpcServer, LogCodes } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { ProtoGrpcType } from "./proto/employee";
 import { EmployeeServiceHandlers } from "./proto/employeePackage/EmployeeService";
@@ -8,7 +8,8 @@ import { EmployeeId } from "./proto/employeePackage/EmployeeId";
 import { GrpcEmployeeAttributes } from "./proto/employeePackage/GrpcEmployeeAttributes";
 import { Employee } from "../models";
 import { GrpcResponsePayload } from "./proto/employeePackage/GrpcResponsePayload";
-import { DeleteEmployeePublisher } from "../events";
+import { CreateEmployeePublisher, DeleteEmployeePublisher, UpdateEmployeePublisher } from "../events";
+import { LocalLogger } from "../utils";
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/employee.proto";
@@ -20,62 +21,59 @@ export class GrpcServer extends AbstractGrpcServer {
 
     readonly m_server = new grpc.Server();
 
-    /** Event Logger */
-    private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, MicroServiceNames.EMPLOYEE_SERVICE, "employee-service:gRPC-server");
-
     private m_rpcMethods: EmployeeServiceHandlers = {
         CreateEmployee: async (call: grpc.ServerUnaryCall<GrpcEmployeeAttributes, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
-            const data: GrpcEmployeeAttributes = call.request;
-            const employee = Employee.build({
-                firstName: data.firstName!,
-                lastName: data.lastName!,
-                email: data.email!,
-                gender: data.gender!,
-                race: data.race!,
-                password: data.password!,
-                position: data.position!,
-                startDate: data.startDate!,
-                shiftPreference: data.shiftPreference!,
-                branchName: data.branchName!,
-                region: data.region!,
-                country: data.country!,
-                phoneNumber: data.phoneNumber!,
-            });
-            await employee.save().catch(error => {
-                if (error) {
-                    const serverError: Partial<grpc.StatusObject> = {
-                        code: grpc.status.INTERNAL,
-                        details: "Could not create new employee, employee save failed",
-                    };
-                    this.m_logger.publish(LogCodes.ERROR, "Employee save failed", "CreateEmployee()", `email: ${employee.email}, id: ${employee.id}`);
+            try {
+                const data: GrpcEmployeeAttributes = call.request;
+                const employee = Employee.build({
+                    firstName: data.firstName!,
+                    lastName: data.lastName!,
+                    email: data.email!,
+                    gender: data.gender!,
+                    race: data.race!,
+                    password: data.password!,
+                    position: data.position!,
+                    startDate: data.startDate!,
+                    shiftPreference: data.shiftPreference!,
+                    branchName: data.branchName!,
+                    region: data.region!,
+                    country: data.country!,
+                    phoneNumber: data.phoneNumber!,
+                });
+                await employee.save();
+                LocalLogger.log(LogCodes.CREATED, "Employee created", "CreateEmployee", `email: ${employee.email}, id: ${employee.id}`);
+                const employeeMsg = {
+                    ...Employee.convertToGrpcMessageForAuth(employee),
+                    password: call.request.password!,
+                };
 
-                    return callback(serverError);
-                }
-            });
-            this.m_logger.publish(LogCodes.CREATED, "Employee created", "CreateEmployee()", `email: ${employee.email}, id: ${employee.id}`);
-            callback(null, {
-                status: 200,
-                data: employee,
-            });
+                new CreateEmployeePublisher(this.m_rabbitConnection!).publish(employeeMsg);
+                callback(null, {
+                    status: 200,
+                    data: employee,
+                });
+            } catch (error) {
+                const serverError: Partial<grpc.StatusObject> = {
+                    code: grpc.status.INTERNAL,
+                    details: "Could not create new employee, employee save failed",
+                };
+                LocalLogger.log(LogCodes.ERROR, "Employee create error", "CreateEmployee", `error: ${(error as Error).message}`);
+                return callback(serverError);
+            }
         },
 
         DeleteEmployee: async (call: grpc.ServerUnaryCall<EmployeeId, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
             const { id }: EmployeeId = call.request;
             const deletedEmployee = await Employee.findByIdAndDelete(id);
             if (!deletedEmployee) {
-                this.m_logger.publish(LogCodes.ERROR, "Employee not found", "DeleteEmployee()", `Employee id: ${id} does not exist`);
+                LocalLogger.log(LogCodes.ERROR, "Employee not found", "DeleteEmployee", `Employee id: ${id} does not exist`);
                 return callback({
                     code: grpc.status.NOT_FOUND,
                     details: "Employee not found.",
                 });
             }
-            this.m_logger.publish(
-                LogCodes.DELETED,
-                "Employee deleted successfully",
-                "DeleteEmployee()",
-                `email: ${deletedEmployee.email}, id: ${deletedEmployee.id}`
-            );
-            new DeleteEmployeePublisher(this.m_rabbitConnection!).publish(Employee.convertToGrpcMessage(deletedEmployee));
+            LocalLogger.log(LogCodes.DELETED, "Employee deleted successfully", "DeleteEmployee", `email: ${deletedEmployee.email}, id: ${deletedEmployee.id}`);
+            new DeleteEmployeePublisher(this.m_rabbitConnection!).publish(Employee.convertToGrpcMessageForAuth(deletedEmployee));
             return callback(null, {
                 status: 200,
                 data: deletedEmployee,
@@ -86,7 +84,7 @@ export class GrpcServer extends AbstractGrpcServer {
             const { id }: EmployeeId = call.request;
             const employee = await Employee.findById(id);
             if (!employee) {
-                this.m_logger.publish(LogCodes.ERROR, "Employee not found", "DeleteEmployee()", `Employee id: ${id} does not exist`);
+                LocalLogger.log(LogCodes.ERROR, "Employee not found", "DeleteEmployee", `Employee id: ${id} does not exist`);
                 return callback({
                     code: grpc.status.NOT_FOUND,
                     details: "Employee not found.",
@@ -98,38 +96,38 @@ export class GrpcServer extends AbstractGrpcServer {
             });
         },
         UpdateEmployee: async (call: grpc.ServerUnaryCall<GrpcEmployeeAttributes, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
-            const employeeUpdate: GrpcEmployeeAttributes = call.request;
-            const { id } = employeeUpdate;
-            delete employeeUpdate.id;
+            try {
+                const employeeUpdate: GrpcEmployeeAttributes = call.request;
+                const { id } = employeeUpdate;
+                delete employeeUpdate.id;
 
-            const employee = await Employee.findById(id);
-            if (!employee) {
-                this.m_logger.publish(LogCodes.ERROR, "Employee not found", "UpdateEmployee()", `email: ${employeeUpdate.email}, id: ${id}`);
-                return callback({
-                    code: grpc.status.NOT_FOUND,
-                    details: "Employee not found",
-                });
-            }
-            employee.set({ ...employeeUpdate });
-            employee.save().catch(error => {
-                if (error) {
-                    this.m_logger.publish(
-                        LogCodes.ERROR,
-                        "Could not update employee, employee save failed",
-                        "LoginGitHubUser",
-                        `email: ${employee.email}, id: ${employee.id}`
-                    );
+                const employee = await Employee.findById(id);
+                if (!employee) {
+                    LocalLogger.log(LogCodes.ERROR, "Employee not found", "UpdateEmployee", `email: ${employeeUpdate.email}, id: ${id}`);
                     return callback({
-                        code: grpc.status.INTERNAL,
-                        details: "Could not update employee, employee save failed",
+                        code: grpc.status.NOT_FOUND,
+                        details: "Employee not found",
                     });
                 }
-            });
-            this.m_logger.publish(LogCodes.ERROR, "Employee updated", "UpdateEmployee()", `email: ${employee.email}, id: ${employee.id}`);
-            return callback(null, {
-                status: 200,
-                data: employee,
-            });
+                employee.set({ ...employeeUpdate });
+                employee.save();
+                LocalLogger.log(LogCodes.UPDATED, "Employee updated", "UpdateEmployee", `email: ${employee.email}, id: ${employee.id}`);
+                new UpdateEmployeePublisher(this.m_rabbitConnection!).publish({
+                    ...Employee.convertToGrpcMessageForAuth(employee),
+                    password: call.request.password!,
+                });
+                return callback(null, {
+                    status: 200,
+                    data: employee,
+                });
+            } catch (error) {
+                const serverError: Partial<grpc.StatusObject> = {
+                    code: grpc.status.INTERNAL,
+                    details: "Could not create new employee, employee save failed",
+                };
+                LocalLogger.log(LogCodes.ERROR, "Employee update error", "UpdateEmployee", `error: ${(error as Error).message}`);
+                return callback(serverError);
+            }
         },
     };
 

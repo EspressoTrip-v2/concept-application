@@ -1,5 +1,6 @@
 import { app } from "./app";
-import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LocalLogger } from "./utils";
 
 const PORT = process.env.PORT || 3000;
 
@@ -11,6 +12,9 @@ async function main(): Promise<void> {
         /** Create RabbitMQ connection */
         await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
 
+        /** Start logger */
+        LocalLogger.start(rabbitClient.connection, MicroServiceNames.ANALYTIC_API);
+
         /** Shut down process */
         process.on("SIGTERM", async () => {
             await rabbitClient.connection.close();
@@ -21,12 +25,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[analytic-api:error]: Service start up error -> ${msg}`);
-        await LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.ANALYTIC_API, "analytic-api:startup").publish(
-            LogCodes.ERROR,
-            msg.message || "Service Error",
-            "main()",
-            msg.stack! || "No stack trace"
-        );
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "main()", msg.stack! || "No stack trace");
     }
 }
 

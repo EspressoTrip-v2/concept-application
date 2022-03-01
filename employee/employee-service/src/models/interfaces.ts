@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import { EmployeeMsg, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { GrpcEmployee } from "../services/proto/employeePackage/GrpcEmployee";
+import { PersonMsg, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 
 /** User Interface */
 export interface EmployeeAttrs {
@@ -13,6 +12,8 @@ export interface EmployeeAttrs {
     shiftPreference: string;
     branchName: string;
     region: string;
+    registeredEmployee?: boolean;
+    authId?: string;
     country: string;
     phoneNumber: string;
     email: string;
@@ -25,7 +26,10 @@ export interface EmployeeAttrs {
 /** Static build method to model */
 export interface EmployeeModel extends mongoose.Model<EmployeeDoc> {
     build(attributes: EmployeeAttrs): EmployeeDoc;
-    convertToGrpcMessage(document: EmployeeDoc): EmployeeMsg;
+
+    convertToGrpcMessageForAuth(document: EmployeeDoc): PersonMsg;
+
+    updateByEvent(employee: PersonMsg): Promise<EmployeeDoc | null>;
 }
 
 /** Extend mongoose document with product document values */
@@ -40,6 +44,8 @@ export interface EmployeeDoc extends mongoose.Document {
     shiftPreference: string;
     branchName: string;
     region: string;
+    registeredEmployee: boolean;
+    authId: string;
     country: string;
     phoneNumber: string;
     email: string;

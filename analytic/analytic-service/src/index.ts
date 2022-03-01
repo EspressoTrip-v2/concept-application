@@ -1,5 +1,6 @@
 import { grpcServer, postgresClient } from "./services";
-import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
     try {
@@ -20,6 +21,9 @@ async function main(): Promise<void> {
         /** Create gRPC server */
         const gRPC = grpcServer(rabbitClient.connection).listen(`[analytic-service:gRPC-server]: Listening port ${process.env.GRPC_SERVER_PORT}`);
 
+        /** Start logger */
+        LocalLogger.start(rabbitClient.connection, MicroServiceNames.ANALYTIC_SERVICE);
+
         /** Shut down process */
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
@@ -36,12 +40,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        await LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.ANALYTIC_SERVICE, "analytic-service:startup").publish(
-            LogCodes.ERROR,
-            msg.message || "Service Error",
-            "main()",
-            msg.stack! || "No stack trace"
-        );
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "main()", msg.stack! || "No stack trace");
     }
 }
 

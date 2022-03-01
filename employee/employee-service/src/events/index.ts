@@ -1,2 +1,2 @@
-export * from "./consumers";
 export * from "./publishers";
+export * from "./consumers";

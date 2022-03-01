@@ -1,1 +1,2 @@
-export * from './grant-oauth'
+export * from "./grant-oauth";
+export * from "./local-logger";

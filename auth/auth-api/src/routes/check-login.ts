@@ -4,7 +4,10 @@ import { requireAuth, validateCurrentUser } from "@espressotrip-org/concept-comm
 const router = express.Router();
 
 router.get("/api/auth/login-success", validateCurrentUser, async (req: Request, res: Response) => {
-    if (!req.currentUser) return res.send({ session: null });
+    if (!req.currentUser) {
+        req.session = null;
+        return res.send({ session: null });
+    }
     res.send({ session: req.get("cookie") });
 });
 

@@ -1,7 +1,7 @@
 // Original file: src/services/proto/user.proto
 
 
-export interface grpcUser {
+export interface GrpcUser {
   'id'?: (string);
   'firstName'?: (string);
   'lastName'?: (string);
@@ -20,9 +20,10 @@ export interface grpcUser {
   'providerId'?: (string);
   'password'?: (string);
   'userRole'?: (string);
+  'registeredEmployee'?: (string);
 }
 
-export interface grpcUser__Output {
+export interface GrpcUser__Output {
   'id': (string);
   'firstName': (string);
   'lastName': (string);
@@ -41,4 +42,5 @@ export interface grpcUser__Output {
   'providerId': (string);
   'password': (string);
   'userRole': (string);
+  'registeredEmployee': (string);
 }

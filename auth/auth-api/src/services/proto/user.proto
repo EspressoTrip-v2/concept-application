@@ -20,9 +20,10 @@ message ServerStreamUserResponse {
     string signInType = 15;
     string providerId = 16;
     string userRole = 17;
+    string registeredEmployee = 18;
 }
 
-message grpcUser {
+message GrpcUser {
     string id = 1;
     string firstName = 2;
     string lastName = 3;
@@ -41,6 +42,7 @@ message grpcUser {
     string providerId = 16;
     string password = 17;
     string userRole = 18;
+    string registeredEmployee = 19;
 }
 
 message AllGrpcUsers {
@@ -101,7 +103,7 @@ message LocalGrpcUser{
 message GrpcResponsePayload{
     int32 status = 1;
     string jwt = 2;
-    grpcUser data = 3;
+    GrpcUser data = 3;
 }
 
 service UserService {

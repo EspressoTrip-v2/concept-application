@@ -7,11 +7,11 @@ metadata:
         nginx.ingress.kubernetes.io/use-regex: "true"
         nginx.ingress.kubernetes.io/service-upstream: "true"
 spec:
-  # This section needs to be uncommented to use TLS
-#    tls:
-#        - hosts:
-#              - acmefast.dev
-#          secretName: mkcert
+    # This section needs to be uncommented to use TLS
+    tls:
+        - hosts:
+              - acmefast.dev
+          secretName: mkcert
         # #########################################
     rules:
         - host: acmefast.dev

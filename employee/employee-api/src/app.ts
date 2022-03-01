@@ -1,6 +1,6 @@
 import express from "express";
 import "express-async-errors";
-import { errorHandler, NotFoundError } from "@espressotrip-org/concept-common";
+import { errorHandler, NotFoundError, validateCurrentUser } from "@espressotrip-org/concept-common";
 import * as Routers from "./routes";
 import cookieSession from "cookie-session";
 
@@ -16,6 +16,9 @@ app.use(
         secure: process.env.NODE_ENV === "production",
     })
 );
+
+/** User validation Middleware */
+app.use(validateCurrentUser);
 
 /** Routes */
 app.use(Routers.createEmployeeRouter);

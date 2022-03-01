@@ -1,9 +1,8 @@
 import mongoose from "mongoose";
 import { EmployeeAttrs, EmployeeDoc, EmployeeModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { EmployeeMsg, GenderType, MicroServiceNames, RaceTypes, ShiftPreference, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { PersonMsg, GenderType, MicroServiceNames, RaceTypes, ShiftPreference, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Password } from "../utils";
-import { GrpcEmployee } from "../services/proto/employeePackage/GrpcEmployee";
 
 /**
  * User model that uses update-if-current version incrementation
@@ -19,8 +18,10 @@ const employeeSchema = new mongoose.Schema(
         shiftPreference: { type: String, required: true },
         branchName: { type: String, required: true },
         region: { type: String, required: true },
+        registeredEmployee: { type: Boolean, default: true },
+        authId: { type: String, default: "" },
         country: { type: String, required: true },
-        phoneNUmber: { type: String, required: true },
+        phoneNumber: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         signInType: { type: String, required: true, default: SignInTypes.UNKNOWN },
         userRole: {
@@ -63,7 +64,11 @@ employeeSchema.statics.build = function (attributes: EmployeeAttrs): EmployeeDoc
     return new Employee(attributes);
 };
 
-employeeSchema.statics.convertToGrpcMessage = function (document: EmployeeDoc): EmployeeMsg {
+/**
+ * Converts employee document to employee message object to create a auth user
+ * @param document {EmployeeDoc}
+ */
+employeeSchema.statics.convertToGrpcMessageForAuth = function (document: EmployeeDoc): PersonMsg {
     return {
         id: document.id,
         country: document.country,
@@ -74,16 +79,21 @@ employeeSchema.statics.convertToGrpcMessage = function (document: EmployeeDoc): 
         password: document.password,
         race: document.race as RaceTypes,
         region: document.region,
+        registeredEmployee: document.registeredEmployee,
         position: document.position,
         providerId: document.providerId,
         shiftPreference: document.shiftPreference as ShiftPreference,
         startDate: document.startDate,
         signInType: document.signInType,
         userRole: document.userRole as UserRoles,
-        version: document.version,
         firstName: document.firstName,
         phoneNumber: document.phoneNumber,
     };
+};
+
+employeeSchema.statics.updateByEvent = async function (employee: PersonMsg): Promise<EmployeeDoc | null> {
+    if (!employee.version) return Employee.findOneAndUpdate({ email: employee.email }, employee);
+    return Employee.findOneAndUpdate({ email: employee.email, version: employee.version }, employee);
 };
 /** Create model from schema */
 const Employee = mongoose.model<EmployeeDoc, EmployeeModel>("Employee", employeeSchema);

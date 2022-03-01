@@ -1,5 +1,6 @@
 import { app } from "./app";
-import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LocalLogger } from "./utils";
 
 const PORT = process.env.PORT || 3000;
 
@@ -9,7 +10,10 @@ async function main(): Promise<void> {
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
+        await rabbitClient.connect(process.env.RABBIT_URI!, `[employee-api:rabbitmq]: Connected successfully`);
+
+        /** Start logger */
+        LocalLogger.start(rabbitClient.connection, MicroServiceNames.EMPLOYEE_API);
 
         /** Shut down process */
         process.on("SIGTERM", async () => {
@@ -20,8 +24,8 @@ async function main(): Promise<void> {
         });
     } catch (error) {
         const msg = error as Error;
-        console.log(`[auth-api:error]: Service start up error -> ${msg}`);
-        await LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.EMPLOYEE_API, "employee-api:startup").publish(
+        console.log(`[employee-api:error]: Service start up error -> ${msg}`);
+        LocalLogger.log(
             LogCodes.ERROR,
             msg.message || "Service Error",
             "main()",
@@ -31,7 +35,7 @@ async function main(): Promise<void> {
 }
 
 app.listen(PORT, async () => {
-    console.log(`[auth-api:express-service]: Listening port ${PORT}`);
+    console.log(`[employee-api:express-service]: Listening port ${PORT}`);
 });
 
 main();

@@ -13,10 +13,10 @@ export interface ProtoGrpcType {
     GitHubGrpcUser: MessageTypeDefinition
     GoogleGrpcUser: MessageTypeDefinition
     GrpcResponsePayload: MessageTypeDefinition
+    GrpcUser: MessageTypeDefinition
     LocalGrpcUser: MessageTypeDefinition
     ServerStreamUserResponse: MessageTypeDefinition
     UserService: SubtypeConstructor<typeof grpc.Client, _userPackage_UserServiceClient> & { service: _userPackage_UserServiceDefinition }
-    grpcUser: MessageTypeDefinition
   }
 }
 
