@@ -1,7 +1,8 @@
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
-import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 import { UpdateEmployeeConsumer, UserSaveFailureConsumer } from "./events";
+import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
     try {
@@ -23,6 +24,10 @@ async function main(): Promise<void> {
         /** Rabbit Consumers */
         await new UserSaveFailureConsumer(rabbitClient.connection).listen();
         await new UpdateEmployeeConsumer(rabbitClient.connection).listen();
+
+        /** Start logger */
+        LocalLogger.start(rabbitClient.connection, MicroServiceNames.EMPLOYEE_SERVICE);
+
         /** Shut down process */
         process.on("SIGINT", async () => {
             await rabbitClient.connection.close();
@@ -37,12 +42,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[employee-service:error]: Service start up error -> ${msg}`);
-        await LogPublisher.getPublisher(rabbitClient.connection, MicroServiceNames.EMPLOYEE_SERVICE, "employee-service:startup").publish(
-            LogCodes.ERROR,
-            msg.message || "Service Error",
-            "main()",
-            msg.stack! || "No stack trace"
-        );
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "main()", msg.stack! || "No stack trace");
     }
 }
 

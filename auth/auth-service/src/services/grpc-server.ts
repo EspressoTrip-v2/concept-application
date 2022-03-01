@@ -3,8 +3,8 @@ import { ServerWritableStream } from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { User, UserDoc } from "../models";
-import { AbstractGrpcServer, LogCodes, LogPublisher, MicroServiceNames, SignInTypes } from "@espressotrip-org/concept-common";
-import { generateJwt, Password } from "../utils";
+import { AbstractGrpcServer, LogCodes, SignInTypes } from "@espressotrip-org/concept-common";
+import { generateJwt, LocalLogger, Password } from "../utils";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
@@ -25,7 +25,6 @@ export class GrpcServer extends AbstractGrpcServer {
 
     readonly m_server = new grpc.Server();
 
-    private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, MicroServiceNames.AUTH_SERVICE, "auth-service:gRPC-server");
     private m_rpcMethods: UserServiceHandlers = {
         GetAllUsers: async (call: ServerWritableStream<AllGrpcUsers, GrpcUser>) => {
             User.find({})
@@ -48,7 +47,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "Sign-in user not found.",
                     };
-                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
+                    LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
                     return callback(serverError);
                 }
 
@@ -56,7 +55,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     case SignInTypes.GITHUB:
                     case SignInTypes.LOCAL:
                         serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType} account` };
-                        this.m_logger.publish(
+                        LocalLogger.log(
                             LogCodes.ERROR,
                             serverError.details!,
                             "LoginGoogleUser",
@@ -67,7 +66,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         googleUser.set({ signInType: SignInTypes.GOOGLE, providerId: call.request.sub });
                         await googleUser.save();
                         if (googleUser.registeredEmployee) new UpdateEmployeePublisher(this.m_rabbitConnection!).publish(User.convertToGrpcMessage(googleUser));
-                        this.m_logger.publish(
+                        LocalLogger.log(
                             LogCodes.UPDATED,
                             "Sign-in user registered",
                             "LoginGoogleUser",
@@ -91,7 +90,7 @@ export class GrpcServer extends AbstractGrpcServer {
                                 code: grpc.status.PERMISSION_DENIED,
                                 details: "Invalid credentials",
                             };
-                            this.m_logger.publish(
+                            LocalLogger.log(
                                 LogCodes.ERROR,
                                 serverError.details!,
                                 "LoginGoogleUser",
@@ -105,7 +104,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.NOT_FOUND,
                             details: "User not found",
                         };
-                        this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
+                        LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
                         callback(serverError);
                 }
             } catch (error) {
@@ -113,7 +112,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.INTERNAL,
                     details: `Google login error: ${(error as Error).message}`,
                 };
-                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `Unknown server error.`);
+                LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `Unknown server error.`);
                 return callback(serverError);
             }
         },
@@ -131,7 +130,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "User not found",
                     };
-                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
+                    LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
 
                     return callback(serverError);
                 }
@@ -139,7 +138,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     case SignInTypes.GOOGLE:
                     case SignInTypes.LOCAL:
                         serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType} account` };
-                        this.m_logger.publish(
+                        LocalLogger.log(
                             LogCodes.ERROR,
                             serverError.details!,
                             "LoginGitHubUser",
@@ -151,7 +150,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         gitHubUser.set({ signInType: SignInTypes.GITHUB, providerId: call.request.id!.toString() });
                         await gitHubUser.save();
                         if (gitHubUser.registeredEmployee) new UpdateEmployeePublisher(this.m_rabbitConnection!).publish(User.convertToGrpcMessage(gitHubUser));
-                        this.m_logger.publish(
+                        LocalLogger.log(
                             LogCodes.UPDATED,
                             "Sign-in user registered",
                             "LoginGitHubUser",
@@ -175,7 +174,7 @@ export class GrpcServer extends AbstractGrpcServer {
                                 code: grpc.status.PERMISSION_DENIED,
                                 details: "Invalid credentials",
                             };
-                            this.m_logger.publish(
+                            LocalLogger.log(
                                 LogCodes.ERROR,
                                 serverError.details!,
                                 "LoginGitHubUser",
@@ -189,7 +188,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.NOT_FOUND,
                             details: "User not found",
                         };
-                        this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
+                        LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
 
                         callback(serverError);
                 }
@@ -198,7 +197,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.INTERNAL,
                     details: `GitHub login error: ${(error as Error).message}`,
                 };
-                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `Unknown server error`);
+                LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `Unknown server error`);
                 return callback(serverError);
             }
         },
@@ -214,7 +213,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "User does not exists.",
                     };
-                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `email: ${call.request.email}`);
+                    LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `email: ${call.request.email}`);
 
                     return callback(serverError);
                 }
@@ -223,7 +222,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     case SignInTypes.GOOGLE:
                     case SignInTypes.GITHUB:
                         serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType} account` };
-                        this.m_logger.publish(
+                        LocalLogger.log(
                             LogCodes.ERROR,
                             serverError.details!,
                             "LoginLocalUser",
@@ -235,7 +234,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         localUser.set({ signInType: SignInTypes.LOCAL });
                         await localUser.save();
                         if (localUser.registeredEmployee) new UpdateEmployeePublisher(this.m_rabbitConnection!).publish(User.convertToGrpcMessage(localUser));
-                        this.m_logger.publish(
+                        LocalLogger.log(
                             LogCodes.UPDATED,
                             "Sign-in user registered",
                             "LoginLocalUser",
@@ -259,7 +258,7 @@ export class GrpcServer extends AbstractGrpcServer {
                                 code: grpc.status.PERMISSION_DENIED,
                                 details: "Invalid credentials",
                             };
-                            this.m_logger.publish(
+                            LocalLogger.log(
                                 LogCodes.ERROR,
                                 serverError.details!,
                                 "LoginLocalUser",
@@ -273,7 +272,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.NOT_FOUND,
                             details: "Undefined error",
                         };
-                        this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", "Undefined error");
+                        LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginLocalUser", "Undefined error");
 
                         callback(serverError);
                 }
@@ -282,7 +281,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.INTERNAL,
                     details: `Local login error: ${(error as Error).message}`,
                 };
-                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `Unknown server error.`);
+                LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `Unknown server error.`);
                 return callback(serverError);
             }
         },

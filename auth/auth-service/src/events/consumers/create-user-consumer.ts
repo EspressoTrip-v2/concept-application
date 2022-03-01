@@ -1,25 +1,13 @@
-import {
-    AbstractConsumer,
-    CreateEmployeeEvent,
-    PersonMsg,
-    ExchangeNames,
-    ExchangeTypes,
-    LogCodes,
-    LogPublisher,
-    MicroServiceNames,
-    QueueInfo,
-    rabbitClient,
-    UserRoles, CreateUserEvent,
-} from "@espressotrip-org/concept-common";
+import { AbstractConsumer, CreateUserEvent, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, rabbitClient, UserRoles } from "@espressotrip-org/concept-common";
 import * as amqp from "amqplib";
 import { User } from "../../models";
 import { UpdateEmployeePublisher, UserSaveFailurePublisher } from "../publishers";
+import { LocalLogger } from "../../utils";
 
 export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.CREATE_EMPLOYEE = QueueInfo.CREATE_EMPLOYEE;
-    private m_logger = LogPublisher.getPublisher(this.m_connection, MicroServiceNames.AUTH_SERVICE, "create-user:consumer");
+    m_queue: QueueInfo.CREATE_USER = QueueInfo.CREATE_USER;
 
     constructor(rabbitConnection: amqp.Connection) {
         super(rabbitConnection, "create-employee");
@@ -30,11 +18,11 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
         try {
             const existingUser = await User.findOne({ email: employeeData.email });
             if (existingUser && existingUser.userRole === UserRoles.EMPLOYEE) {
-                this.m_logger.publish(
+                LocalLogger.log(
                     LogCodes.ERROR,
                     `Employee sign-in already exists`,
                     `CreateUserConsumer`,
-                    `email: ${existingUser.email}, id: ${existingUser.id}`
+                    `email: ${existingUser.email}, id: ${existingUser.id}`,
                 );
                 return this.acknowledge(message);
             } else if (existingUser && existingUser.userRole === UserRoles.ADMIN) {
@@ -44,11 +32,11 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                     signInType: existingUser.signInType,
                     authId: existingUser.id,
                 });
-                this.m_logger.publish(
+                LocalLogger.log(
                     LogCodes.INFO,
                     `Employee is admin user`,
                     `CreateUserConsumer`,
-                    `email: ${existingUser.email}, id: ${existingUser.id}`
+                    `email: ${existingUser.email}, id: ${existingUser.id}`,
                 );
                 return this.acknowledge(message);
             }
@@ -79,16 +67,16 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                 authId: user.id,
             });
 
-            this.m_logger.publish(
+            LocalLogger.log(
                 LogCodes.CREATED,
                 `Employee saved as new user sign-in created`,
                 `CreateUserConsumer`,
-                `email: ${user.email}, id: ${user.id}`
+                `email: ${user.email}, id: ${user.id}`,
             );
 
             return this.acknowledge(message);
         } catch (error) {
-            this.m_logger.publish(LogCodes.ERROR, "Consumer Error", "CreateUserConsumer", `error: ${(error as Error).message}`);
+            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "CreateUserConsumer", `error: ${(error as Error).message}`);
             new UserSaveFailurePublisher(rabbitClient.connection).publish(employeeData);
             this.acknowledge(message);
         }

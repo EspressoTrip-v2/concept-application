@@ -6,17 +6,10 @@ import { GrpcEmployeeAttributes } from "../services/proto/employeePackage/GrpcEm
 
 const router = express.Router();
 
-router.post(
-    "/api/employee",
-    requireAuth,
-    requiredRoles(UserRoles.ADMIN),
-    payloadValidation(createEmployeeSchema),
-    async (req: Request, res: Response) => {
-        const employeeAttributes: GrpcEmployeeAttributes = req.body;
-        const grpcResponse = await employeeGrpcClient.createEmployee(employeeAttributes);
-
-        res.send(grpcResponse);
-    },
-);
+router.post("/api/employee", requireAuth, requiredRoles(UserRoles.ADMIN), payloadValidation(createEmployeeSchema), async (req: Request, res: Response) => {
+    const employeeAttributes: GrpcEmployeeAttributes = req.body;
+    const grpcResponse = await employeeGrpcClient.createEmployee(employeeAttributes);
+    res.send(grpcResponse);
+});
 
 export { router as createEmployeeRouter };

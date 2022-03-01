@@ -1,16 +1,7 @@
-import {
-    AbstractConsumer,
-    PersonMsg,
-    ExchangeNames,
-    ExchangeTypes,
-    LogCodes,
-    LogPublisher,
-    MicroServiceNames,
-    QueueInfo,
-    SaveUserFailEvent,
-} from "@espressotrip-org/concept-common";
+import { AbstractConsumer, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, SaveUserFailEvent } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { Employee } from "../../models";
+import { LocalLogger } from "../../utils";
 
 export class UserSaveFailureConsumer extends AbstractConsumer<SaveUserFailEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
@@ -26,28 +17,13 @@ export class UserSaveFailureConsumer extends AbstractConsumer<SaveUserFailEvent>
         try {
             const employee = await Employee.findByIdAndDelete(employeeData.id);
             if (!employee) {
-                LogPublisher.getPublisher(this.m_connection, MicroServiceNames.EMPLOYEE_SERVICE, "user-save-failure:consumer").publish(
-                    LogCodes.ERROR,
-                    "Employee not found",
-                    "EmployeeSaveFailureListener",
-                    `email: ${employeeData.email}, id: ${employeeData.id}`
-                );
+                LocalLogger.log(LogCodes.ERROR, "Employee not found", "EmployeeSaveFailureListener", `email: ${employeeData.email}, id: ${employeeData.id}`);
                 return this.acknowledge(message);
             }
-            LogPublisher.getPublisher(this.m_connection, MicroServiceNames.EMPLOYEE_SERVICE, "user-save-failure:consumer").publish(
-                LogCodes.DELETED,
-                "Employee delete",
-                "UserSaveFailureConsumer",
-                `email: ${employee.email}, id: ${employee.id}`
-            );
+            LocalLogger.log(LogCodes.DELETED, "Employee delete", "UserSaveFailureConsumer", `email: ${employee.email}, id: ${employee.id}`);
             this.acknowledge(message);
         } catch (error) {
-            LogPublisher.getPublisher(this.m_connection, MicroServiceNames.EMPLOYEE_SERVICE, "user-save-failure:consumer").publish(
-                LogCodes.ERROR,
-                "Consumer Error",
-                "UserSaveFailureConsumer",
-                `error: ${(error as Error).message}`
-            );
+            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "UserSaveFailureConsumer", `error: ${(error as Error).message}`);
         }
     }
 }

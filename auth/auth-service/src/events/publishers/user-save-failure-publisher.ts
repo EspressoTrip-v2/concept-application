@@ -2,7 +2,7 @@ import { AbstractPublisher, ExchangeNames, ExchangeTypes, QueueInfo, SaveUserFai
 import amqp from "amqplib";
 
 export class UserSaveFailurePublisher extends AbstractPublisher<SaveUserFailEvent>{
-    m_exchangeName: ExchangeNames.EMPLOYEE = ExchangeNames.EMPLOYEE;
+    m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
     m_queue: QueueInfo.AUTH_ERROR = QueueInfo.AUTH_ERROR;
 

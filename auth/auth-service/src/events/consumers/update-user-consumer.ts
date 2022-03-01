@@ -1,22 +1,12 @@
-import {
-    AbstractConsumer,
-    PersonMsg,
-    ExchangeNames,
-    ExchangeTypes,
-    LogCodes,
-    LogPublisher,
-    MicroServiceNames,
-    QueueInfo,
-    UpdateEmployeeEvent, UpdateUserEvent,
-} from "@espressotrip-org/concept-common";
+import { AbstractConsumer, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, UpdateUserEvent } from "@espressotrip-org/concept-common";
 import * as amqp from "amqplib";
 import { User } from "../../models";
+import { LocalLogger } from "../../utils";
 
 export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.UPDATE_EMPLOYEE = QueueInfo.UPDATE_EMPLOYEE;
-    private m_logger = LogPublisher.getPublisher(this.m_connection, MicroServiceNames.AUTH_SERVICE, "update-user:consumer");
+    m_queue: QueueInfo.UPDATE_USER = QueueInfo.UPDATE_USER;
 
     constructor(rabbitConnection: amqp.Connection) {
         super(rabbitConnection, "update-employee");
@@ -27,25 +17,25 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
         try {
             const existingUser = await User.findOne({ email: employeeData.email });
             if (!existingUser) {
-                this.m_logger.publish(
+                LocalLogger.log(
                     LogCodes.ERROR,
                     `Sign-in user not found`,
                     `UpdateUserConsumer`,
-                    `email: ${employeeData.email}, userRole: ${employeeData.userRole}`
+                    `email: ${employeeData.email}, userRole: ${employeeData.userRole}`,
                 );
                 throw new Error("Sign-in user not found.");
             }
             existingUser.set(employeeData);
             await existingUser.save();
-            LogPublisher.getPublisher(this.m_connection, MicroServiceNames.AUTH_SERVICE, "update-employee-sigin:consumer").publish(
+            LocalLogger.log(
                 LogCodes.UPDATED,
                 "User updated",
                 "UpdateUserConsumer",
-                `email: ${existingUser.email}, id: ${existingUser.id}`
+                `email: ${existingUser.email}, id: ${existingUser.id}`,
             );
             this.acknowledge(message);
         } catch (error) {
-            this.m_logger.publish(LogCodes.ERROR, "Consumer Error", "UpdateUserConsumer", `error: ${(error as Error).message}`);
+            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "UpdateUserConsumer", `error: ${(error as Error).message}`);
         }
     }
 }
