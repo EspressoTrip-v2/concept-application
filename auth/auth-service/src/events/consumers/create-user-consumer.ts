@@ -22,12 +22,14 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                     LogCodes.ERROR,
                     `Employee sign-in already exists`,
                     `CreateUserConsumer`,
-                    `email: ${existingUser.email}, id: ${existingUser.id}`,
+                    `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
                 );
                 return this.acknowledge(message);
             } else if (existingUser && existingUser.userRole === UserRoles.ADMIN) {
+                /** If the employee is an admin the admin info will over-write the employee doc.
+                 * You will have to update the employee to change the user info for admin  */
                 new UpdateEmployeePublisher(this.m_connection).publish({
-                    ...employeeData,
+                    ...User.convertToGrpcMessage(existingUser),
                     userRole: UserRoles.ADMIN,
                     signInType: existingUser.signInType,
                     authId: existingUser.id,
@@ -36,7 +38,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                     LogCodes.INFO,
                     `Employee is admin user`,
                     `CreateUserConsumer`,
-                    `email: ${existingUser.email}, id: ${existingUser.id}`,
+                    `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
                 );
                 return this.acknowledge(message);
             }
@@ -55,7 +57,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                 phoneNumber: employeeData.phoneNumber,
                 registeredEmployee: employeeData.registeredEmployee,
                 email: employeeData.email,
-                signInType: employeeData.signInType,
+                signInType: employeeData.signInType!,
                 userRole: employeeData.userRole,
                 password: employeeData.password,
                 providerId: employeeData.providerId,
@@ -71,7 +73,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                 LogCodes.CREATED,
                 `Employee saved as new user sign-in created`,
                 `CreateUserConsumer`,
-                `email: ${user.email}, id: ${user.id}`,
+                `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`,
             );
 
             return this.acknowledge(message);

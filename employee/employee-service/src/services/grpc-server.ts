@@ -8,7 +8,7 @@ import { EmployeeId } from "./proto/employeePackage/EmployeeId";
 import { GrpcEmployeeAttributes } from "./proto/employeePackage/GrpcEmployeeAttributes";
 import { Employee } from "../models";
 import { GrpcResponsePayload } from "./proto/employeePackage/GrpcResponsePayload";
-import { CreateEmployeePublisher, DeleteEmployeePublisher, UpdateEmployeePublisher } from "../events";
+import { CreateEmployeePublisher, DeleteEmployeePublisher, UpdateUserPublisher } from "../events";
 import { LocalLogger } from "../utils";
 
 export class GrpcServer extends AbstractGrpcServer {
@@ -41,16 +41,17 @@ export class GrpcServer extends AbstractGrpcServer {
                     phoneNumber: data.phoneNumber!,
                 });
                 await employee.save();
-                LocalLogger.log(LogCodes.CREATED, "Employee created", "CreateEmployee", `email: ${employee.email}, id: ${employee.id}`);
+                LocalLogger.log(LogCodes.CREATED, "Employee created", "CreateEmployee", `email: ${employee.email}, employeeId: ${employee.id}`);
                 const employeeMsg = {
                     ...Employee.convertToGrpcMessageForAuth(employee),
                     password: call.request.password!,
                 };
 
                 new CreateEmployeePublisher(this.m_rabbitConnection!).publish(employeeMsg);
+
                 callback(null, {
                     status: 200,
-                    data: employee,
+                    data: Employee.convertToReturnPayload(employee),
                 });
             } catch (error) {
                 const serverError: Partial<grpc.StatusObject> = {
@@ -66,17 +67,22 @@ export class GrpcServer extends AbstractGrpcServer {
             const { id }: EmployeeId = call.request;
             const deletedEmployee = await Employee.findByIdAndDelete(id);
             if (!deletedEmployee) {
-                LocalLogger.log(LogCodes.ERROR, "Employee not found", "DeleteEmployee", `Employee id: ${id} does not exist`);
+                LocalLogger.log(LogCodes.ERROR, "Employee not found", "DeleteEmployee", `Employee: ${id} does not exist`);
                 return callback({
                     code: grpc.status.NOT_FOUND,
                     details: "Employee not found.",
                 });
             }
-            LocalLogger.log(LogCodes.DELETED, "Employee deleted successfully", "DeleteEmployee", `email: ${deletedEmployee.email}, id: ${deletedEmployee.id}`);
+            LocalLogger.log(
+                LogCodes.DELETED,
+                "Employee deleted successfully",
+                "DeleteEmployee",
+                `email: ${deletedEmployee.email}, employeeId: ${deletedEmployee.id}`,
+            );
             new DeleteEmployeePublisher(this.m_rabbitConnection!).publish(Employee.convertToGrpcMessageForAuth(deletedEmployee));
             return callback(null, {
                 status: 200,
-                data: deletedEmployee,
+                data: Employee.convertToReturnPayload(deletedEmployee),
             });
         },
 
@@ -84,7 +90,7 @@ export class GrpcServer extends AbstractGrpcServer {
             const { id }: EmployeeId = call.request;
             const employee = await Employee.findById(id);
             if (!employee) {
-                LocalLogger.log(LogCodes.ERROR, "Employee not found", "DeleteEmployee", `Employee id: ${id} does not exist`);
+                LocalLogger.log(LogCodes.ERROR, "Employee not found", "DeleteEmployee", `Employee: ${id} does not exist`);
                 return callback({
                     code: grpc.status.NOT_FOUND,
                     details: "Employee not found.",
@@ -103,22 +109,22 @@ export class GrpcServer extends AbstractGrpcServer {
 
                 const employee = await Employee.findById(id);
                 if (!employee) {
-                    LocalLogger.log(LogCodes.ERROR, "Employee not found", "UpdateEmployee", `email: ${employeeUpdate.email}, id: ${id}`);
+                    LocalLogger.log(LogCodes.ERROR, "Employee not found", "UpdateEmployee", `email: ${employeeUpdate.email}, employeeId: ${id}`);
                     return callback({
                         code: grpc.status.NOT_FOUND,
                         details: "Employee not found",
                     });
                 }
                 employee.set({ ...employeeUpdate });
-                employee.save();
-                LocalLogger.log(LogCodes.UPDATED, "Employee updated", "UpdateEmployee", `email: ${employee.email}, id: ${employee.id}`);
-                new UpdateEmployeePublisher(this.m_rabbitConnection!).publish({
+                await employee.save();
+                LocalLogger.log(LogCodes.UPDATED, "Employee updated", "UpdateEmployee", `email: ${employee.email}, employeeId: ${employee.id}`);
+                new UpdateUserPublisher(this.m_rabbitConnection!).publish({
                     ...Employee.convertToGrpcMessageForAuth(employee),
                     password: call.request.password!,
                 });
                 return callback(null, {
                     status: 200,
-                    data: employee,
+                    data: Employee.convertToReturnPayload(employee),
                 });
             } catch (error) {
                 const serverError: Partial<grpc.StatusObject> = {

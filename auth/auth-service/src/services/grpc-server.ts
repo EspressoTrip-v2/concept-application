@@ -70,7 +70,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             LogCodes.UPDATED,
                             "Sign-in user registered",
                             "LoginGoogleUser",
-                            `email: ${call.request.email},  id: ${googleUser.id}`,
+                            `email: ${call.request.email},  UserId: ${googleUser.id}`,
                         );
 
                         return callback(null, {
@@ -94,7 +94,7 @@ export class GrpcServer extends AbstractGrpcServer {
                                 LogCodes.ERROR,
                                 serverError.details!,
                                 "LoginGoogleUser",
-                                `email: ${call.request.email},  id: ${call.request.sub}`,
+                                `email: ${call.request.email},  UserId: ${call.request.sub}`,
                             );
 
                             return callback(serverError);
@@ -154,7 +154,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             LogCodes.UPDATED,
                             "Sign-in user registered",
                             "LoginGitHubUser",
-                            `email: ${gitHubUser.email},  id:  ${gitHubUser.id}`,
+                            `email: ${gitHubUser.email},  UserId:  ${gitHubUser.id}`,
                         );
 
                         return callback(null, {
@@ -178,7 +178,7 @@ export class GrpcServer extends AbstractGrpcServer {
                                 LogCodes.ERROR,
                                 serverError.details!,
                                 "LoginGitHubUser",
-                                `email: ${call.request.email},  id: ${call.request.id}`,
+                                `email: ${call.request.email},  UserId: ${call.request.id}`,
                             );
 
                             return callback(serverError);
@@ -238,7 +238,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             LogCodes.UPDATED,
                             "Sign-in user registered",
                             "LoginLocalUser",
-                            `email: ${call.request.email}, id: ${localUser.id}`,
+                            `email: ${call.request.email}, UserId: ${localUser.id}`,
                         );
 
                         return callback(null, {

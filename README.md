@@ -254,4 +254,4 @@ Using the -a flag will wipe all images and Skaffold will have to rebuild them al
 
 ### Architectural Model:
 
-![acme-fast-foods](https://user-images.githubusercontent.com/9296659/154967637-29999ee6-9fd4-40da-b96a-dc3612477aa0.png)
+![acme-fast-foods](https://user-images.githubusercontent.com/9296659/156255276-422bcf05-6605-4815-98e9-6c125087c0d8.png)
