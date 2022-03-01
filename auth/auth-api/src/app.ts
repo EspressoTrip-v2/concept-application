@@ -5,9 +5,13 @@ import * as Routers from "./routes";
 import cookieSession from "cookie-session";
 import grant from "grant";
 import { grantConfig } from "./utils";
+import * as path from "path";
 
 const app = express();
 app.set("trust proxy", true);
+app.set('views', path.join(__dirname, '/views'));
+app.set('view engine', 'ejs');
+
 
 /** Middleware */
 app.use(express.json());

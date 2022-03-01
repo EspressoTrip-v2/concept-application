@@ -91,6 +91,31 @@ employeeSchema.statics.convertToGrpcMessageForAuth = function (document: Employe
     };
 };
 
+/**
+ * Creates a return payload removing the user roles and sign in type
+ * @param document {EmployeeDoc}
+ */
+employeeSchema.statics.convertToReturnPayload = function (document: EmployeeDoc): PersonMsg {
+    return {
+        id: document.id,
+        country: document.country,
+        email: document.email,
+        gender: document.gender as GenderType,
+        branchName: document.branchName,
+        lastName: document.lastName,
+        password: document.password,
+        race: document.race as RaceTypes,
+        region: document.region,
+        registeredEmployee: document.registeredEmployee,
+        position: document.position,
+        providerId: document.providerId,
+        shiftPreference: document.shiftPreference as ShiftPreference,
+        startDate: document.startDate,
+        firstName: document.firstName,
+        phoneNumber: document.phoneNumber,
+    };
+};
+
 employeeSchema.statics.updateByEvent = async function (employee: PersonMsg): Promise<EmployeeDoc | null> {
     if (!employee.version) return Employee.findOneAndUpdate({ email: employee.email }, employee);
     return Employee.findOneAndUpdate({ email: employee.email, version: employee.version }, employee);

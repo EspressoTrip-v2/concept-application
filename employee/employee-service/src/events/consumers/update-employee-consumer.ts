@@ -21,6 +21,7 @@ export class UpdateEmployeeConsumer extends AbstractConsumer<UpdateEmployeeEvent
                 return this.acknowledge(message);
             } else {
                 LocalLogger.log(LogCodes.ERROR, "Employee not found", "UpdateEmployeeConsumer", `email: ${employeeData.email}, authId: ${employeeData.authId}`);
+                return this.acknowledge(message);
             }
         } catch (error) {
             LocalLogger.log(LogCodes.ERROR, "Consumer Error", "UpdateEmployeeConsumer", `error: ${(error as Error).message}`);

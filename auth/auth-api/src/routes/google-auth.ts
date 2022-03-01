@@ -4,12 +4,9 @@ import { userGrpcClient } from "../services";
 import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
 import { LocalLogger } from "../utils";
 
-const BASE_URI = process.env.DEV_UI_REDIRECT || process.env.BASE_URI!;
 const router = express.Router();
-
 router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
     const googleUser: GoogleGrpcUser = req.session?.grant.response.profile;
-    if (!googleUser) throw new NotFoundError("Google user not found");
 
     /** Make the request to the gRPC auth-service server */
     const rpcResponse = await userGrpcClient.loginGoogleUser(googleUser);
@@ -23,7 +20,8 @@ router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
     };
 
     /** Redirect to home page */
-    res.redirect(301, BASE_URI);
+    res.render('redirect')
 });
+
 
 export { router as googleAuthRouter };

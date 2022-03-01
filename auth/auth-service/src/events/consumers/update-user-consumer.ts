@@ -1,4 +1,4 @@
-import { AbstractConsumer, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, UpdateUserEvent } from "@espressotrip-org/concept-common";
+import { AbstractConsumer, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, UpdateUserEvent, UserRoles } from "@espressotrip-org/concept-common";
 import * as amqp from "amqplib";
 import { User } from "../../models";
 import { LocalLogger } from "../../utils";
@@ -21,17 +21,22 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                     LogCodes.ERROR,
                     `Sign-in user not found`,
                     `UpdateUserConsumer`,
-                    `email: ${employeeData.email}, userRole: ${employeeData.userRole}`,
+                    `email: ${employeeData.email}, userRole: ${employeeData.userRole}`
                 );
+                this.acknowledge(message);
                 throw new Error("Sign-in user not found.");
             }
+
+            /** Maintain user role status but update the rest */
+            if (existingUser.userRole === UserRoles.ADMIN) employeeData.userRole = UserRoles.ADMIN;
+
             existingUser.set(employeeData);
             await existingUser.save();
             LocalLogger.log(
                 LogCodes.UPDATED,
                 "User updated",
                 "UpdateUserConsumer",
-                `email: ${existingUser.email}, id: ${existingUser.id}`,
+                `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`
             );
             this.acknowledge(message);
         } catch (error) {
