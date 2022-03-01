@@ -80,9 +80,9 @@ build:
                   - src: "src/**/*.ts"
                     dest: .
 
-        # Auth-Web service
+        # Web UI
         - image: espressotrip/concept-auth-web
-          context: auth/auth-web
+          context: web-ui
           docker:
               dockerfile: Dockerfile
           sync:
