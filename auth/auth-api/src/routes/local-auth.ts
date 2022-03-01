@@ -1,13 +1,5 @@
 import express, { Request, Response } from "express";
-import {
-    grpcErrorTranslator,
-    isGRPCStatus,
-    LogCodes,
-    LogPublisher,
-    MicroServiceNames,
-    payloadValidation,
-    rabbitClient,
-} from "@espressotrip-org/concept-common";
+import { LogCodes, LogPublisher, MicroServiceNames, payloadValidation, rabbitClient } from "@espressotrip-org/concept-common";
 import { userGrpcClient } from "../services";
 import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
 import { localUserSchema } from "../payload-schemas";
@@ -20,7 +12,6 @@ router.post("/api/auth/local", payloadValidation(localUserSchema), async (req: R
 
     /** Make the request to the gRPC auth-service server */
     const rpcResponse = await userGrpcClient.loginLocalUser(localUser);
-    if (isGRPCStatus(rpcResponse)) throw grpcErrorTranslator(rpcResponse);
 
     /** Log Event */
     logger.publish(LogCodes.INFO, `Local SignIn`, "/api/auth/local", `email: ${localUser.email}`);

@@ -1,6 +1,6 @@
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
-import { CreateEmployeeSigninConsumer, UpdateEmployeeSigninConsumer } from "./events";
+import { CreateUserConsumer, UpdateUserConsumer } from "./events";
 import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 
 async function main(): Promise<void> {
@@ -22,8 +22,8 @@ async function main(): Promise<void> {
         const gRPC = grpcServer(rabbitClient.connection).listen(`[auth-service:gRPC-server]: Listening on ${process.env.GRPC_SERVER_PORT}`);
 
         /** Create RabbitMQ consumers */
-        await new UpdateEmployeeSigninConsumer(rabbitClient.connection).listen();
-        await new CreateEmployeeSigninConsumer(rabbitClient.connection).listen();
+        await new UpdateUserConsumer(rabbitClient.connection).listen();
+        await new CreateUserConsumer(rabbitClient.connection).listen();
 
         /** Shut down process */
         process.on("SIGINT", async () => {

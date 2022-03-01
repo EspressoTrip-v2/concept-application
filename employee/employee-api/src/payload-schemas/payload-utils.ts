@@ -1,8 +1,8 @@
-import moment from "moment/moment";
+import dayjs from "dayjs";
 
-export function isValidStartDate(dateString: string): Date {
-    const date = moment(dateString, "YYYY-MM-DD", true).startOf("day").toDate();
-    const validDate = moment.isDate(date);
+export function isValidStartDate(dateString: string): string {
+    const date = dayjs(dateString, "YYYY-MM-DD", true).startOf("day");
+    const validDate = date.isValid();
     if (!validDate) throw new Error("Invalid export from date string");
-    return date;
+    return date.toISOString();
 }

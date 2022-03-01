@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { grpcErrorTranslator, isGRPCStatus, LogCodes, LogPublisher, MicroServiceNames, NotFoundError, rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, LogPublisher, MicroServiceNames, NotFoundError, rabbitClient } from "@espressotrip-org/concept-common";
 import { userGrpcClient } from "../services";
 import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
 
@@ -13,7 +13,6 @@ router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
 
     /** Make the request to the gRPC auth-service server */
     const rpcResponse = await userGrpcClient.loginGitHubUser(gitHubUser);
-    if (isGRPCStatus(rpcResponse)) throw grpcErrorTranslator(rpcResponse);
 
     /** Log Event */
     logger.publish(LogCodes.INFO, `GitHUb SignIn`, "/api/auth/github/redirect", `email: ${gitHubUser.email}`);

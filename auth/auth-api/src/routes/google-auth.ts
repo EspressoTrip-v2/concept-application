@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { grpcErrorTranslator, isGRPCStatus, LogCodes, LogPublisher, MicroServiceNames, NotFoundError, rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, LogPublisher, MicroServiceNames, NotFoundError, rabbitClient } from "@espressotrip-org/concept-common";
 import { userGrpcClient } from "../services";
 import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
 
@@ -13,7 +13,6 @@ router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
 
     /** Make the request to the gRPC auth-service server */
     const rpcResponse = await userGrpcClient.loginGoogleUser(googleUser);
-    if (isGRPCStatus(rpcResponse)) throw grpcErrorTranslator(rpcResponse);
 
     /** Log Event */
     logger.publish(LogCodes.INFO, `Google SignIn`, "/api/auth/google/redirect", `email: ${googleUser.email}`);

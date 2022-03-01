@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { UserAttrs, UserDoc, UserModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { EmployeeMsg, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { PersonMsg, SignInTypes, UserRoles, GenderType, RaceTypes, ShiftPreference } from "@espressotrip-org/concept-common";
 import { Password } from "../utils";
 
 /**
@@ -18,8 +18,9 @@ const userSchema = new mongoose.Schema(
         shiftPreference: { type: String, required: true },
         branchName: { type: String, required: true },
         region: { type: String, required: true },
+        registeredEmployee: { type: Boolean, default: false },
         country: { type: String, required: true },
-        phoneNUmber: { type: String, required: true },
+        phoneNumber: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         signInType: { type: String, required: true, default: SignInTypes.UNKNOWN },
         userRole: {
@@ -62,12 +63,28 @@ userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
     return new User(attributes);
 };
 
-/**
- * Finds user of employee by previous version to update
- * @param employee {EmployeeMsg}
- */
-userSchema.statics.findByVersion = async function (employee: EmployeeMsg): Promise<UserDoc | null> {
-    return User.findOne({ email: employee.email, version: employee.version! - 1 });
+userSchema.statics.convertToGrpcMessage = function (document: UserDoc): PersonMsg {
+    return {
+        id: document.id,
+        country: document.country,
+        email: document.email,
+        gender: document.gender as GenderType,
+        branchName: document.branchName,
+        lastName: document.lastName,
+        password: document.password,
+        race: document.race as RaceTypes,
+        region: document.region,
+        registeredEmployee: document.registeredEmployee,
+        position: document.position,
+        providerId: document.providerId,
+        shiftPreference: document.shiftPreference as ShiftPreference,
+        startDate: document.startDate,
+        signInType: document.signInType,
+        authId: document.id,
+        userRole: document.userRole as UserRoles,
+        firstName: document.firstName,
+        phoneNumber: document.phoneNumber,
+    };
 };
 
 /** Create model from schema */

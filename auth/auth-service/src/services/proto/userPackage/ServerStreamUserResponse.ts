@@ -19,6 +19,7 @@ export interface ServerStreamUserResponse {
   'signInType'?: (string);
   'providerId'?: (string);
   'userRole'?: (string);
+  'registeredEmployee'?: (string);
 }
 
 export interface ServerStreamUserResponse__Output {
@@ -39,4 +40,5 @@ export interface ServerStreamUserResponse__Output {
   'signInType': (string);
   'providerId': (string);
   'userRole': (string);
+  'registeredEmployee': (string);
 }

@@ -1,7 +1,7 @@
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
-import { AbstractGrpcClient, GrpcServicePorts } from "@espressotrip-org/concept-common";
+import { AbstractGrpcClient, grpcErrorTranslator, GrpcServicePortDns } from "@espressotrip-org/concept-common";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
@@ -9,7 +9,7 @@ import { GrpcResponsePayload } from "./proto/userPackage/GrpcResponsePayload";
 
 export class GrpcUserClient extends AbstractGrpcClient {
     readonly m_protoPath = __dirname + "/proto/user.proto";
-    readonly m_port = GrpcServicePorts.AUTH_SERVICE;
+    readonly m_port = GrpcServicePortDns.AUTH_SERVICE_DNS;
 
     readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
@@ -23,11 +23,11 @@ export class GrpcUserClient extends AbstractGrpcClient {
      * Save a Google user
      * @param user {GoogleGrpcUser}
      */
-    loginGoogleUser(user: GoogleGrpcUser): Promise<grpc.ServiceError | GrpcResponsePayload> {
+    loginGoogleUser(user: GoogleGrpcUser): Promise<GrpcResponsePayload> {
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
         return new Promise(async (resolve, reject) => {
             client.LoginGoogleUser(user, (error: grpc.ServiceError | null, createUserInfo?: GrpcResponsePayload) => {
-                if (error) return reject(error);
+                if (error) return reject(grpcErrorTranslator(error));
                 return resolve(createUserInfo!);
             });
         });
@@ -37,11 +37,11 @@ export class GrpcUserClient extends AbstractGrpcClient {
      * Save a GitHub user
      * @param user {GitHubGrpcUser}
      */
-    loginGitHubUser(user: GitHubGrpcUser): Promise<grpc.ServiceError | GrpcResponsePayload> {
+    loginGitHubUser(user: GitHubGrpcUser): Promise<GrpcResponsePayload> {
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
         return new Promise((resolve, reject) => {
             client.LoginGitHubUser(user, (error: grpc.ServiceError | null, createUserInfo?: GrpcResponsePayload) => {
-                if (error) return reject(error);
+                if (error) return reject(grpcErrorTranslator(error));
                 return resolve(createUserInfo!);
             });
         });
@@ -51,11 +51,11 @@ export class GrpcUserClient extends AbstractGrpcClient {
      * Save a local user
      * @param user {LocalGrpcUser}
      */
-    loginLocalUser(user: LocalGrpcUser): Promise<grpc.ServiceError | GrpcResponsePayload> {
+    loginLocalUser(user: LocalGrpcUser): Promise<GrpcResponsePayload> {
         const client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
         return new Promise((resolve, reject) => {
             client.LoginLocalUser(user, (error: grpc.ServiceError | null, createUserInfo?: GrpcResponsePayload) => {
-                if (error) return reject(error);
+                if (error) return reject(grpcErrorTranslator(error));
                 return resolve(createUserInfo!);
             });
         });

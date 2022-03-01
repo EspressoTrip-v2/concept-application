@@ -1,13 +1,5 @@
 import express, { Request, Response } from "express";
-import {
-    grpcErrorTranslator,
-    isGRPCStatus,
-    payloadValidation,
-    requireAuth,
-    requiredRoles,
-    UserRoles,
-    validateCurrentUser,
-} from "@espressotrip-org/concept-common";
+import { payloadValidation, requireAuth, requiredRoles, UserRoles } from "@espressotrip-org/concept-common";
 import { updateEmployeeSchema } from "../payload-schemas";
 import { GrpcEmployeeAttributes } from "../services/proto/employeePackage/GrpcEmployeeAttributes";
 import { employeeGrpcClient } from "../services";
@@ -22,10 +14,8 @@ router.patch(
     async (req: Request, res: Response) => {
         const employeeAttributes: GrpcEmployeeAttributes = req.body;
         const grpcResponse = await employeeGrpcClient.updateEmployee(employeeAttributes);
-        if (isGRPCStatus(grpcResponse)) throw grpcErrorTranslator(grpcResponse);
-
         res.send(grpcResponse);
-    }
+    },
 );
 
 export { router as updateEmployeeRouter };

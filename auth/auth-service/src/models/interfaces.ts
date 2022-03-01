@@ -1,8 +1,5 @@
 import mongoose from "mongoose";
-import { EmployeeMsg, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
-import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
-import { LocalGrpcUser } from "../services/proto/userPackage/LocalGrpcUser";
+import { PersonMsg, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 
 /** User Interface */
 export interface UserAttrs {
@@ -15,6 +12,7 @@ export interface UserAttrs {
     shiftPreference: string;
     branchName: string;
     region: string;
+    registeredEmployee?: boolean;
     country: string;
     phoneNumber: string;
     email: string;
@@ -27,7 +25,7 @@ export interface UserAttrs {
 /** Static build method to model */
 export interface UserModel extends mongoose.Model<UserDoc> {
     build(attributes: UserAttrs): UserDoc;
-    findByVersion(employee: EmployeeMsg): UserDoc | null;
+    convertToGrpcMessage(document: UserDoc): PersonMsg;
 }
 
 /** Extend mongoose document with product document values */
@@ -42,6 +40,7 @@ export interface UserDoc extends mongoose.Document {
     shiftPreference: string;
     branchName: string;
     region: string;
+    registeredEmployee: boolean;
     country: string;
     phoneNumber: string;
     email: string;

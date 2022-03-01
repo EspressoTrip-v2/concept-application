@@ -3,6 +3,7 @@ import { GenderType, RaceTypes, ShiftPreference } from "@espressotrip-org/concep
 import { isValidStartDate } from "./payload-utils";
 
 export const updateEmployeeSchema = Joi.object({
+    id: Joi.string().required(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
     email: Joi.string().required(),

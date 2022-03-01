@@ -5,7 +5,6 @@ import { ProtoGrpcType } from "./proto/user";
 import { User, UserDoc } from "../models";
 import { AbstractGrpcServer, LogCodes, LogPublisher, MicroServiceNames, SignInTypes } from "@espressotrip-org/concept-common";
 import { generateJwt, Password } from "../utils";
-import { grpcUser } from "./proto/userPackage/grpcUser";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
@@ -13,6 +12,8 @@ import { UserServiceHandlers } from "./proto/userPackage/UserService";
 import { AllGrpcUsers } from "./proto/userPackage/AllGrpcUsers";
 import amqp from "amqplib";
 import { GrpcResponsePayload } from "./proto/userPackage/GrpcResponsePayload";
+import { UpdateEmployeePublisher } from "../events";
+import { GrpcUser } from "./proto/userPackage/GrpcUser";
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/user.proto";
@@ -26,7 +27,7 @@ export class GrpcServer extends AbstractGrpcServer {
 
     private m_logger = LogPublisher.getPublisher(this.m_rabbitConnection!, MicroServiceNames.AUTH_SERVICE, "auth-service:gRPC-server");
     private m_rpcMethods: UserServiceHandlers = {
-        GetAllUsers: async (call: ServerWritableStream<AllGrpcUsers, grpcUser>) => {
+        GetAllUsers: async (call: ServerWritableStream<AllGrpcUsers, GrpcUser>) => {
             User.find({})
                 .cursor()
                 .on("data", user => {
@@ -37,229 +38,252 @@ export class GrpcServer extends AbstractGrpcServer {
                 });
         },
         LoginGoogleUser: async (call: grpc.ServerUnaryCall<GoogleGrpcUser, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
-            let googleUser: UserDoc | null;
-            let serverError: Partial<grpc.StatusObject>;
-            googleUser = await User.findOne({ email: call.request.email });
+            try {
+                let googleUser: UserDoc | null;
+                let serverError: Partial<grpc.StatusObject>;
+                googleUser = await User.findOne({ email: call.request.email });
 
-            if (!googleUser) {
-                serverError = {
-                    code: grpc.status.NOT_FOUND,
-                    details: "Sign-in user not found.",
-                };
-                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
-                return callback(serverError);
-            }
-
-            switch (googleUser.signInType) {
-                case SignInTypes.GITHUB:
-                case SignInTypes.LOCAL:
-                    serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType} account` };
-                    this.m_logger.publish(
-                        LogCodes.ERROR,
-                        serverError.details!,
-                        "LoginGoogleUser",
-                        `email: ${call.request.email}, account: ${googleUser.signInType}`
-                    );
+                if (!googleUser) {
+                    serverError = {
+                        code: grpc.status.NOT_FOUND,
+                        details: "Sign-in user not found.",
+                    };
+                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
                     return callback(serverError);
-                case SignInTypes.UNKNOWN:
-                    googleUser.set({ signInType: SignInTypes.GOOGLE, providerId: call.request.sub });
-                    await googleUser.save().catch(error => {
-                        if (error) {
-                            serverError = {
-                                code: grpc.status.INTERNAL,
-                                details: "Could not update Google user signInType, user save failed",
-                            };
-                            this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${googleUser?.email}`);
-                            return callback(serverError);
-                        }
-                    });
-                    this.m_logger.publish(LogCodes.UPDATED, "Sign-in user registered", "LoginGoogleUser", `email: ${call.request.email},  id: ${googleUser.id}`);
+                }
 
-                    return callback(null, {
-                        data: googleUser,
-                        jwt: generateJwt(googleUser),
-                        status: 200,
-                    });
-                case SignInTypes.GOOGLE:
-                    if (googleUser.providerId === call.request.sub)
-                        return callback(null, {
-                            data: googleUser,
-                            jwt: generateJwt(googleUser),
-                            status: 200,
-                        });
-                    else {
-                        serverError = {
-                            code: grpc.status.PERMISSION_DENIED,
-                            details: "Invalid credentials",
-                        };
+                switch (googleUser.signInType) {
+                    case SignInTypes.GITHUB:
+                    case SignInTypes.LOCAL:
+                        serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${googleUser.signInType} account` };
                         this.m_logger.publish(
                             LogCodes.ERROR,
                             serverError.details!,
                             "LoginGoogleUser",
-                            `email: ${call.request.email},  id: ${call.request.sub}`
+                            `email: ${call.request.email}, account: ${googleUser.signInType}`,
+                        );
+                        return callback(serverError);
+                    case SignInTypes.UNKNOWN:
+                        googleUser.set({ signInType: SignInTypes.GOOGLE, providerId: call.request.sub });
+                        await googleUser.save();
+                        if (googleUser.registeredEmployee) new UpdateEmployeePublisher(this.m_rabbitConnection!).publish(User.convertToGrpcMessage(googleUser));
+                        this.m_logger.publish(
+                            LogCodes.UPDATED,
+                            "Sign-in user registered",
+                            "LoginGoogleUser",
+                            `email: ${call.request.email},  id: ${googleUser.id}`,
                         );
 
-                        return callback(serverError);
-                    }
-                default:
-                    serverError = {
-                        code: grpc.status.NOT_FOUND,
-                        details: "User not found",
-                    };
-                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
-                    callback(serverError);
+                        return callback(null, {
+                            data: googleUser as unknown as GrpcUser,
+                            jwt: generateJwt(googleUser),
+                            status: 200,
+                        });
+                    case SignInTypes.GOOGLE:
+                        if (googleUser.providerId === call.request.sub)
+                            return callback(null, {
+                                data: googleUser as unknown as GrpcUser,
+                                jwt: generateJwt(googleUser),
+                                status: 200,
+                            });
+                        else {
+                            serverError = {
+                                code: grpc.status.PERMISSION_DENIED,
+                                details: "Invalid credentials",
+                            };
+                            this.m_logger.publish(
+                                LogCodes.ERROR,
+                                serverError.details!,
+                                "LoginGoogleUser",
+                                `email: ${call.request.email},  id: ${call.request.sub}`,
+                            );
+
+                            return callback(serverError);
+                        }
+                    default:
+                        serverError = {
+                            code: grpc.status.NOT_FOUND,
+                            details: "User not found",
+                        };
+                        this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
+                        callback(serverError);
+                }
+            } catch (error) {
+                const serverError = {
+                    code: grpc.status.INTERNAL,
+                    details: `Google login error: ${(error as Error).message}`,
+                };
+                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `Unknown server error.`);
+                return callback(serverError);
             }
         },
         LoginGitHubUser: async (
             call: grpc.ServerUnaryCall<GitHubGrpcUser, GrpcResponsePayload>,
-            callback: grpc.sendUnaryData<GrpcResponsePayload>
+            callback: grpc.sendUnaryData<GrpcResponsePayload>,
         ): Promise<void> => {
-            let gitHubUser: UserDoc | null;
-            let serverError: Partial<grpc.StatusObject>;
-            gitHubUser = await User.findOne({ email: call.request.email });
+            try {
+                let gitHubUser: UserDoc | null;
+                let serverError: Partial<grpc.StatusObject>;
+                gitHubUser = await User.findOne({ email: call.request.email });
 
-            if (!gitHubUser) {
-                serverError = {
-                    code: grpc.status.NOT_FOUND,
-                    details: "User not found",
-                };
-                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
-
-                return callback(serverError);
-            }
-            switch (gitHubUser.signInType) {
-                case SignInTypes.GOOGLE:
-                case SignInTypes.LOCAL:
-                    serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType} account` };
-                    this.m_logger.publish(
-                        LogCodes.ERROR,
-                        serverError.details!,
-                        "LoginGitHubUser",
-                        `email: ${call.request.email}, account: ${gitHubUser.signInType}`
-                    );
-
-                    return callback(serverError);
-                case SignInTypes.UNKNOWN:
-                    gitHubUser.set({ signInType: SignInTypes.GITHUB, providerId: call.request.id!.toString() });
-                    await gitHubUser.save().catch(error => {
-                        if (error) {
-                            serverError = {
-                                code: grpc.status.INTERNAL,
-                                details: "Could not update GitHub user signInType, user save failed",
-                            };
-                            this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${gitHubUser?.email}`);
-                            return callback(serverError);
-                        }
-                    });
-                    this.m_logger.publish(LogCodes.UPDATED, "Sign-in user registered", "LoginGitHubUser", `email: ${gitHubUser.email},  id:  ${gitHubUser.id}`);
-
-                    return callback(null, {
-                        data: gitHubUser,
-                        jwt: generateJwt(gitHubUser),
-                        status: 200,
-                    });
-                case SignInTypes.GITHUB:
-                    if (gitHubUser.providerId === call.request.id!.toString())
-                        return callback(null, {
-                            data: gitHubUser,
-                            jwt: generateJwt(gitHubUser),
-                            status: 200,
-                        });
-                    else {
-                        serverError = {
-                            code: grpc.status.PERMISSION_DENIED,
-                            details: "Invalid credentials",
-                        };
-                        this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email},  id: ${call.request.id}`);
-
-                        return callback(serverError);
-                    }
-                default:
+                if (!gitHubUser) {
                     serverError = {
                         code: grpc.status.NOT_FOUND,
                         details: "User not found",
                     };
                     this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
 
-                    callback(serverError);
+                    return callback(serverError);
+                }
+                switch (gitHubUser.signInType) {
+                    case SignInTypes.GOOGLE:
+                    case SignInTypes.LOCAL:
+                        serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${gitHubUser.signInType} account` };
+                        this.m_logger.publish(
+                            LogCodes.ERROR,
+                            serverError.details!,
+                            "LoginGitHubUser",
+                            `email: ${call.request.email}, account: ${gitHubUser.signInType}`,
+                        );
+
+                        return callback(serverError);
+                    case SignInTypes.UNKNOWN:
+                        gitHubUser.set({ signInType: SignInTypes.GITHUB, providerId: call.request.id!.toString() });
+                        await gitHubUser.save();
+                        if (gitHubUser.registeredEmployee) new UpdateEmployeePublisher(this.m_rabbitConnection!).publish(User.convertToGrpcMessage(gitHubUser));
+                        this.m_logger.publish(
+                            LogCodes.UPDATED,
+                            "Sign-in user registered",
+                            "LoginGitHubUser",
+                            `email: ${gitHubUser.email},  id:  ${gitHubUser.id}`,
+                        );
+
+                        return callback(null, {
+                            data: gitHubUser as unknown as GrpcUser,
+                            jwt: generateJwt(gitHubUser),
+                            status: 200,
+                        });
+                    case SignInTypes.GITHUB:
+                        if (gitHubUser.providerId === call.request.id!.toString())
+                            return callback(null, {
+                                data: gitHubUser as unknown as GrpcUser,
+                                jwt: generateJwt(gitHubUser),
+                                status: 200,
+                            });
+                        else {
+                            serverError = {
+                                code: grpc.status.PERMISSION_DENIED,
+                                details: "Invalid credentials",
+                            };
+                            this.m_logger.publish(
+                                LogCodes.ERROR,
+                                serverError.details!,
+                                "LoginGitHubUser",
+                                `email: ${call.request.email},  id: ${call.request.id}`,
+                            );
+
+                            return callback(serverError);
+                        }
+                    default:
+                        serverError = {
+                            code: grpc.status.NOT_FOUND,
+                            details: "User not found",
+                        };
+                        this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
+
+                        callback(serverError);
+                }
+            } catch (error) {
+                const serverError = {
+                    code: grpc.status.INTERNAL,
+                    details: `GitHub login error: ${(error as Error).message}`,
+                };
+                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `Unknown server error`);
+                return callback(serverError);
             }
         },
         LoginLocalUser: async (call: grpc.ServerUnaryCall<LocalGrpcUser, GrpcResponsePayload>, callback: grpc.sendUnaryData<GrpcResponsePayload>) => {
-            let localUser: UserDoc | null;
-            let serverError: Partial<grpc.StatusObject>;
+            try {
+                let localUser: UserDoc | null;
+                let serverError: Partial<grpc.StatusObject>;
 
-            /** See if user exists */
-            localUser = await User.findOne({ email: call.request.email });
-            if (!localUser) {
-                serverError = {
-                    code: grpc.status.NOT_FOUND,
-                    details: "User does not exists.",
-                };
-                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `email: ${call.request.email}`);
-
-                return callback(serverError);
-            }
-
-            switch (localUser.signInType) {
-                case SignInTypes.GOOGLE:
-                case SignInTypes.GITHUB:
-                    serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType} account` };
-                    this.m_logger.publish(
-                        LogCodes.ERROR,
-                        serverError.details!,
-                        "LoginLocalUser",
-                        `email: ${call.request.email}, account: ${localUser.signInType}`
-                    );
+                /** See if user exists */
+                localUser = await User.findOne({ email: call.request.email });
+                if (!localUser) {
+                    serverError = {
+                        code: grpc.status.NOT_FOUND,
+                        details: "User does not exists.",
+                    };
+                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `email: ${call.request.email}`);
 
                     return callback(serverError);
-                case SignInTypes.UNKNOWN:
-                    localUser.set({ signInType: SignInTypes.LOCAL });
-                    await localUser.save().catch(error => {
-                        if (error) {
-                            serverError = {
-                                code: grpc.status.INTERNAL,
-                                details: "Could not update Local user signInType, user save failed",
-                            };
-                            this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `email: ${localUser?.email}`);
-                            return callback(serverError);
-                        }
-                    });
-                    this.m_logger.publish(LogCodes.UPDATED, "Sign-in user registered", "LoginLocalUser", `email: ${call.request.email}, id: ${localUser.id}`);
+                }
 
-                    return callback(null, {
-                        data: localUser,
-                        jwt: generateJwt(localUser),
-                        status: 200,
-                    });
-                case SignInTypes.LOCAL:
-                    if (await Password.compare(localUser.password, call.request.password!))
-                        return callback(null, {
-                            data: localUser,
-                            jwt: generateJwt(localUser),
-                            status: 200,
-                        });
-                    else {
-                        serverError = {
-                            code: grpc.status.PERMISSION_DENIED,
-                            details: "Invalid credentials",
-                        };
+                switch (localUser.signInType) {
+                    case SignInTypes.GOOGLE:
+                    case SignInTypes.GITHUB:
+                        serverError = { code: grpc.status.ALREADY_EXISTS, details: `Please sign in with your ${localUser.signInType} account` };
                         this.m_logger.publish(
                             LogCodes.ERROR,
                             serverError.details!,
                             "LoginLocalUser",
-                            `email: ${call.request.email}, password: ${call.request.password}`
+                            `email: ${call.request.email}, account: ${localUser.signInType}`,
                         );
 
                         return callback(serverError);
-                    }
-                default:
-                    serverError = {
-                        code: grpc.status.NOT_FOUND,
-                        details: "Undefined error",
-                    };
-                    this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", "Undefined error");
+                    case SignInTypes.UNKNOWN:
+                        localUser.set({ signInType: SignInTypes.LOCAL });
+                        await localUser.save();
+                        if (localUser.registeredEmployee) new UpdateEmployeePublisher(this.m_rabbitConnection!).publish(User.convertToGrpcMessage(localUser));
+                        this.m_logger.publish(
+                            LogCodes.UPDATED,
+                            "Sign-in user registered",
+                            "LoginLocalUser",
+                            `email: ${call.request.email}, id: ${localUser.id}`,
+                        );
 
-                    callback(serverError);
+                        return callback(null, {
+                            data: localUser as unknown as GrpcUser,
+                            jwt: generateJwt(localUser),
+                            status: 200,
+                        });
+                    case SignInTypes.LOCAL:
+                        if (await Password.compare(localUser.password, call.request.password!))
+                            return callback(null, {
+                                data: localUser as unknown as GrpcUser,
+                                jwt: generateJwt(localUser),
+                                status: 200,
+                            });
+                        else {
+                            serverError = {
+                                code: grpc.status.PERMISSION_DENIED,
+                                details: "Invalid credentials",
+                            };
+                            this.m_logger.publish(
+                                LogCodes.ERROR,
+                                serverError.details!,
+                                "LoginLocalUser",
+                                `email: ${call.request.email}, password: ${call.request.password}`,
+                            );
+
+                            return callback(serverError);
+                        }
+                    default:
+                        serverError = {
+                            code: grpc.status.NOT_FOUND,
+                            details: "Undefined error",
+                        };
+                        this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", "Undefined error");
+
+                        callback(serverError);
+                }
+            } catch (error) {
+                const serverError = {
+                    code: grpc.status.INTERNAL,
+                    details: `Local login error: ${(error as Error).message}`,
+                };
+                this.m_logger.publish(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `Unknown server error.`);
+                return callback(serverError);
             }
         },
     };
