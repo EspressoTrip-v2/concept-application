@@ -28,17 +28,7 @@ async function main(): Promise<void> {
 
         /** Start Logger */
         LocalLogger.start(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE);
-        /** Shut down process */
-        process.on("SIGINT", async () => {
-            await rabbitClient.connection.close();
-            await mongoose.connection.close();
-            gRPC.m_server.forceShutdown();
-        });
-        process.on("SIGTERM", async () => {
-            await rabbitClient.connection.close();
-            await mongoose.connection.close();
-            gRPC.m_server.forceShutdown();
-        });
+
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);

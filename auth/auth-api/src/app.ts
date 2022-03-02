@@ -9,8 +9,8 @@ import * as path from "path";
 
 const app = express();
 app.set("trust proxy", true);
-app.set('views', path.join(__dirname, '/views'));
-app.set('view engine', 'ejs');
+app.set("views", path.join(__dirname, "/views"));
+app.set("view engine", "ejs");
 
 
 /** Middleware */
@@ -20,7 +20,7 @@ app.use(
     cookieSession({
         signed: false,
         secure: process.env.NODE_ENV === "production",
-    })
+    }),
 );
 
 /** OAuth route */

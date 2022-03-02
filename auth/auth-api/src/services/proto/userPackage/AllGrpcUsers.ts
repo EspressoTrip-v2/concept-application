@@ -2,9 +2,9 @@
 
 
 export interface AllGrpcUsers {
-  'serviceName'?: (string);
+    "serviceName"?: (string);
 }
 
 export interface AllGrpcUsers__Output {
-  'serviceName': (string);
+    "serviceName": (string);
 }

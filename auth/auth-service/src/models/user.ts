@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { UserAttrs, UserDoc, UserModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { PersonMsg, SignInTypes, UserRoles, GenderType, RaceTypes, ShiftPreference } from "@espressotrip-org/concept-common";
+import { GenderType, PersonMsg, RaceTypes, ShiftPreference, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Password } from "../utils";
 
 /**
@@ -38,7 +38,7 @@ const userSchema = new mongoose.Schema(
                 delete ret._id;
             },
         },
-    }
+    },
 );
 
 /** Replace the __v with version  && use the update-if-current plugin*/
@@ -46,7 +46,7 @@ userSchema.set("versionKey", "version");
 userSchema.plugin(updateIfCurrentPlugin);
 
 /** Encrypt the password on save */
-userSchema.pre("save", async function (done) {
+userSchema.pre("save", async function(done) {
     const password = this.get("password");
     if (password && this.isModified("password")) {
         const hashed = await Password.toHash(this.get("password"));
@@ -59,11 +59,11 @@ userSchema.pre("save", async function (done) {
  * Static function to build product
  * @param attributes
  */
-userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
+userSchema.statics.build = function(attributes: UserAttrs): UserDoc {
     return new User(attributes);
 };
 
-userSchema.statics.convertToGrpcMessage = function (document: UserDoc): PersonMsg {
+userSchema.statics.convertToGrpcMessage = function(document: UserDoc): PersonMsg {
     return {
         id: document.id,
         country: document.country,

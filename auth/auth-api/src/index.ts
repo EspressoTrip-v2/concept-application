@@ -6,7 +6,6 @@ const PORT = process.env.PORT || 3000;
 
 async function main(): Promise<void> {
     try {
-
         /** RabbitMQ */
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
         /** Google */
@@ -24,13 +23,6 @@ async function main(): Promise<void> {
 
         /** Start logger */
         LocalLogger.start(rabbitClient.connection, MicroServiceNames.AUTH_API);
-        /** Shut down process */
-        process.on("SIGTERM", async () => {
-            await rabbitClient.connection.close();
-        });
-        process.on("SIGINT", async () => {
-            await rabbitClient.connection.close();
-        });
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-api:error]: Service start up error -> ${msg}`);

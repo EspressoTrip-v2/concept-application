@@ -15,13 +15,6 @@ async function main(): Promise<void> {
         /** Start logger */
         LocalLogger.start(rabbitClient.connection, MicroServiceNames.ANALYTIC_API);
 
-        /** Shut down process */
-        process.on("SIGTERM", async () => {
-            await rabbitClient.connection.close();
-        });
-        process.on("SIGINT", async () => {
-            await rabbitClient.connection.close();
-        });
     } catch (error) {
         const msg = error as Error;
         console.log(`[analytic-api:error]: Service start up error -> ${msg}`);
