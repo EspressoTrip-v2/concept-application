@@ -108,7 +108,6 @@ employeeSchema.statics.convertToReturnPayload = function (document: EmployeeDoc)
         region: document.region,
         registeredEmployee: document.registeredEmployee,
         position: document.position,
-        providerId: document.providerId,
         shiftPreference: document.shiftPreference as ShiftPreference,
         startDate: document.startDate,
         firstName: document.firstName,
