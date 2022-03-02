@@ -251,7 +251,9 @@ This should stop the warnings.
 Using the -a flag will wipe all images and Skaffold will have to rebuild them all at start.
 
 ---
-
+### Postman API:
+You can see and use the API here: [ACME Fast Food API]( https://www.postman.com/cloudy-crater-370854/workspace/acme-fast-foods/collection/17320608-dd78a46c-8c0e-4f69-806e-46f05cf907e7)
+___
 ### Architectural Model:
 
 ![acme-fast-foods](https://user-images.githubusercontent.com/9296659/156255276-422bcf05-6605-4815-98e9-6c125087c0d8.png)

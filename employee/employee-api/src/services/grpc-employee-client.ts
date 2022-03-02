@@ -10,7 +10,7 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
     readonly m_protoPath = __dirname + "/proto/employee.proto";
     readonly m_port = GrpcServicePortDns.EMPLOYEE_SERVICE_DNS;
 
-    readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { defaults: true, longs: String, enums: String, keepCase: true });
+    readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { longs: String, enums: String, keepCase: true });
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
     readonly m_package = this.m_grpcObject.employeePackage;
 
