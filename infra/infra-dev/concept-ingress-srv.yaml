@@ -34,15 +34,6 @@ spec:
                             port:
                                 number: 3000
 
-                  # Analytics-Web UI
-                  - path: /analytic/?(.*)
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: auth-web-srv
-                            port:
-                                number: 3000
-
                   # Employee API
                   - path: /api/employee/?(.*)
                     pathType: Prefix
@@ -52,20 +43,11 @@ spec:
                             port:
                                 number: 3000
 
-                  # Employee-Web UI
-                  - path: /employee/?(.*)
-                    pathType: Prefix
-                    backend:
-                        service:
-                            name: employee-web-srv
-                            port:
-                                number: 3000
-
                   # Auth-Web UI
                   - path: /?(.*)
                     pathType: Prefix
                     backend:
                         service:
-                            name: auth-web-srv
+                            name: web-ui-srv
                             port:
                                 number: 3000

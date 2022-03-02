@@ -28,17 +28,6 @@ async function main(): Promise<void> {
         /** Start logger */
         LocalLogger.start(rabbitClient.connection, MicroServiceNames.EMPLOYEE_SERVICE);
 
-        /** Shut down process */
-        process.on("SIGINT", async () => {
-            await rabbitClient.connection.close();
-            await mongoose.connection.close();
-            gRPC.m_server.forceShutdown();
-        });
-        process.on("SIGTERM", async () => {
-            await rabbitClient.connection.close();
-            await mongoose.connection.close();
-            gRPC.m_server.forceShutdown();
-        });
     } catch (error) {
         const msg = error as Error;
         console.log(`[employee-service:error]: Service start up error -> ${msg}`);

@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "",
     "scripts": {
-        "start": "ts-node-dev src/index.ts --poll",
+        "start": "tsc-watch --onSuccess 'node ./src/index.js'",
         "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/services/proto/ src/services/proto/*.proto"
     },
     "author": "",
@@ -16,9 +16,11 @@
         "amqplib": "^0.8.0",
         "mongoose": "^6.2.4",
         "mongoose-update-if-current": "^1.4.0",
-        "ts-node-dev": "^1.1.8",
         "tslib": "^2.3.1",
         "typescript": "^4.6.2"
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "@types/tsc-watch": "^4.2.0",
+        "tsc-watch": "^4.6.0"
+    }
 }

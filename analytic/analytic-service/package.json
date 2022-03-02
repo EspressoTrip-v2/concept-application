@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "description": "Auth service",
     "scripts": {
-        "start": "ts-node-dev src/index.ts --poll",
+        "start": "tsc-watch --onSuccess 'node ./src/index.js'",
         "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/clients/proto/ src/services/proto/*.proto",
         "common": "npm update @espressotrip-org/concept-common"
     },
@@ -24,9 +24,11 @@
         "pg": "^8.7.3",
         "pg-hstore": "^2.3.4",
         "sequelize": "^6.16.2",
-        "ts-node-dev": "^1.1.8",
         "tslib": "^2.3.1",
         "typescript": "^4.5.5"
     },
-    "devDependencies": {}
+    "devDependencies": {
+        "@types/tsc-watch": "^4.2.0",
+        "tsc-watch": "^4.6.0"
+    }
 }

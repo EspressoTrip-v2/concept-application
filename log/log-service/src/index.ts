@@ -12,13 +12,6 @@ async function main(): Promise<void> {
         /** Create RabbitMQ consumers */
         await new LogsConsumer(rabbitClient.connection).listen();
 
-        /** Shut down process */
-        process.on("SIGINT", async () => {
-            await rabbitClient.connection.close();
-        });
-        process.on("SIGTERM", async () => {
-            await rabbitClient.connection.close();
-        });
     } catch (error) {
         const msg = error as Error;
         console.log(`[log-service:error]: Service start up error -> ${msg}`);

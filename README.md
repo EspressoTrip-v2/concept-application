@@ -26,7 +26,7 @@ Click here: [Linkerd Service Mesh Setup](https://github.com/EspressoTrip-v2/conc
 
 #### Developer Notes:
 
-Always make sure the mongo connection strings are set to the correct deployment and that the postgres password is changed to your required in the secrets.yaml file before running the newly pulled repo.
+Always make sure the mongo connection strings are set to the correct deployment and that the postgres password is changed to your required in the secrets.yaml file before running the newly pulled repo. The application is built on Node 16, so use Node 16.
 
 ##### Repo changes:
 
@@ -221,14 +221,14 @@ Email values need to be unique: Password is **_12345_**
 
 ### Skaffold:
 
-Application uses Skaffold for the management of the Kubernetes cluster during development. Node can be buggy sometimes, so you might have to stop and restart Skaffold after making changes.
+Application uses Skaffold for the management of the Kubernetes cluster during development. 
 
 ```bash
 ~$ skaffold dev
 ```
 
 Once everything is up and running open your browser and go to http://acmefast.dev.
-If you have included the message bus domain in your hosts file http://rabbit.acmefast.dev will display the message bus UI. Rabit dashboard username and password is "guest".
+If you have included the message bus domain in your hosts file http://rabbit.acmefast.dev will display the message bus UI. Rabbit dashboard username and password is "guest".
 
 If you have not setup TLS and Chrome gives you a warning about certificates. Click anywhere on the webpage and type "thisisunsafe". Unfortunately new versions of Firefox will not allow you to by-pass the missing certificate.
 

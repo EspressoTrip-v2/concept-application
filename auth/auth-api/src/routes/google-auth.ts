@@ -1,10 +1,11 @@
 import express, { Request, Response } from "express";
-import { LogCodes, NotFoundError } from "@espressotrip-org/concept-common";
+import { LogCodes } from "@espressotrip-org/concept-common";
 import { userGrpcClient } from "../services";
 import { GoogleGrpcUser } from "../services/proto/userPackage/GoogleGrpcUser";
 import { LocalLogger } from "../utils";
 
 const router = express.Router();
+
 router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
     const googleUser: GoogleGrpcUser = req.session?.grant.response.profile;
 
@@ -19,8 +20,7 @@ router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
         payload: rpcResponse.jwt,
     };
 
-    /** Redirect to home page */
-    res.render('redirect')
+    res.render("redirect");
 });
 
 

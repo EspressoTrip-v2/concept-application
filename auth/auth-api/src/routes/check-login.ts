@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { requireAuth, validateCurrentUser } from "@espressotrip-org/concept-common";
+import { validateCurrentUser } from "@espressotrip-org/concept-common";
 
 const router = express.Router();
 

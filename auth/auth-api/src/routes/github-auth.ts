@@ -1,10 +1,9 @@
 import express, { Request, Response } from "express";
-import { LogCodes, NotFoundError } from "@espressotrip-org/concept-common";
+import { LogCodes } from "@espressotrip-org/concept-common";
 import { userGrpcClient } from "../services";
 import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
 import { LocalLogger } from "../utils";
 
-const BASE_URI = process.env.BASE_URI!;
 const router = express.Router();
 
 router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
@@ -14,16 +13,14 @@ router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
     const rpcResponse = await userGrpcClient.loginGitHubUser(gitHubUser);
 
     /** Log Event */
-    LocalLogger.log(LogCodes.INFO, `GitHUb SignIn`, "/api/auth/github/redirect", `email: ${gitHubUser.email}`);
+    LocalLogger.log(LogCodes.INFO, `GitHub SignIn`, "/api/auth/github/redirect", `email: ${gitHubUser.email}`);
 
     /** Add to the session */
     req.session = {
         payload: rpcResponse.jwt,
     };
 
-    /** Redirect to home page */
-    res.redirect(301, BASE_URI);
-
+    res.render("redirect");
 });
 
 export { router as gitHubAuthRouter };

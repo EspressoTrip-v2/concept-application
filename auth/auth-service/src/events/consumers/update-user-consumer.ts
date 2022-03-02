@@ -21,7 +21,7 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                     LogCodes.ERROR,
                     `Sign-in user not found`,
                     `UpdateUserConsumer`,
-                    `email: ${employeeData.email}, userRole: ${employeeData.userRole}`
+                    `email: ${employeeData.email}, userRole: ${employeeData.userRole}`,
                 );
                 this.acknowledge(message);
                 throw new Error("Sign-in user not found.");
@@ -36,7 +36,7 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                 LogCodes.UPDATED,
                 "User updated",
                 "UpdateUserConsumer",
-                `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`
+                `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
             );
             this.acknowledge(message);
         } catch (error) {
