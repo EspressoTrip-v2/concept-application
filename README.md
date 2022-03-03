@@ -64,11 +64,10 @@ You will need to add the domain to your OS hosts file.
 ~$ minikube ip
 ```
 
-Add the minikube ip with the domain of the application into the hosts file,
-the rabbit.acmefast.dev is to access the message bus from your browser.
+Add the minikube ip with the domains of the application into the hosts file,
 
 ```text
-<MINIKUBE IP> acmefast.dev
+<MINIKUBE IP> acmefast.dev 
 <MINIKUBE IP> rabbit.acmefast.dev
 ```
 

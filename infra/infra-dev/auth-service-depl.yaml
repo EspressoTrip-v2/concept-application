@@ -30,6 +30,11 @@ spec:
                 - name: auth-service
                   image: espressotrip/concept-auth-service
                   imagePullPolicy: IfNotPresent
+                  env:
+                      - name: POD_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: auth-service-config

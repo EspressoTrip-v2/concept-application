@@ -21,7 +21,7 @@ spec:
     template:
         metadata:
             annotations:
-              config.linkerd.io/proxy-log-level: warn
+                config.linkerd.io/proxy-log-level: warn
             name: employee-service
             labels:
                 app: employee-service
@@ -31,6 +31,11 @@ spec:
                 - name: employee-service
                   image: espressotrip/concept-employee-service
                   imagePullPolicy: IfNotPresent
+                  env:
+                      - name: POD_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: employee-service-config

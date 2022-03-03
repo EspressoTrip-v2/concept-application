@@ -59,15 +59,16 @@ You will need to add the domain to your OS hosts file.
 # Get the ip of your running minikube
 ~$ minikube ip
 ```
-Add the minikube ip with the domain of the application into the hosts file, rabbit.acmefast.dev is to access the message bus from your browser. linkerd.acme.dev is
+Add the minikube ip with the domains of the application into the hosts file.
 to get to the service mesh dashboard.
 ```text
 <MINIKUBE IP> acmefast.dev
 <MINIKUBE IP> rabbit.acmefast.dev
 <MINIKUBE IP> linkerd.acmefast.dev ** Add this if you are also going to install the service mesh **
+<MINIKUBE IP> jaeger.acmefast.dev ** This is for distributed tracing that gets deployed with the service mesh **
 ```
 
-Please have a look at the installation instructions for you OS, binaries can be downloaded [here](https://github.com/FiloSottile/mkcert/releases).
+You will need mkcert, have a look at the installation instructions for you OS [here](https://github.com/FiloSottile/mkcert), binaries can be downloaded [here](https://github.com/FiloSottile/mkcert/releases).
 Minikube can use ```mkcert``` to insert a SSL certificate into the ingress addon, you will first need to generate the root certificate and key.
 ```bash
 ~$ mkcert -install
@@ -75,7 +76,7 @@ Minikube can use ```mkcert``` to insert a SSL certificate into the ingress addon
 You will then need to add the certificates for the ```acmefast``` domain:
 ```bash
 #  Replace <MINIKUBE IP> with the correct ip address of your Minikube instance
-~$ mkcert acmefast.dev rabbit.acmefast.dev linkerd.acmefast.dev <MINIKUBE IP>
+~$ mkcert acmefast.dev rabbit.acmefast.dev linkerd.acmefast.dev jaeger.acmefast.dev <MINIKUBE IP>
 ```
 You will get an output that looks like this:
 ```
@@ -83,6 +84,7 @@ Created a new certificate valid for the following names 📜
  - "acmefast.dev"
  - "rabbit.acmefast.dev"
  - "linkerd.acmefast.dev"
+ - "jaeger.acmefast.dev"
  - "192.168.49.2"
 
 Reminder: X.509 wildcards only go one level deep, so this won't match a.b.acmefast.dev ℹ️

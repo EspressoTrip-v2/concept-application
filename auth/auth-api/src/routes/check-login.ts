@@ -1,9 +1,10 @@
 import express, { Request, Response } from "express";
-import { validateCurrentUser } from "@espressotrip-org/concept-common";
+import { requireAuth, requiredRoles, UserRoles, validateCurrentUser } from "@espressotrip-org/concept-common";
 
 const router = express.Router();
 
-router.get("/api/auth/login-success", validateCurrentUser, async (req: Request, res: Response) => {
+router.get("/api/auth/login-success", validateCurrentUser, requireAuth, requiredRoles(UserRoles.ADMIN), async (req: Request, res: Response) => {
+    // res.send({ status: 200, data: req.currentUser });
     if (!req.currentUser) {
         req.session = null;
         return res.send({ session: null });

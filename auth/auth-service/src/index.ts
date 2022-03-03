@@ -1,7 +1,8 @@
+import { LogCodes, MicroServiceNames, rabbitClient, ServiceTracerMongoDB } from "@espressotrip-org/concept-common";
+ServiceTracerMongoDB(MicroServiceNames.AUTH_SERVICE);
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
 import { CreateUserConsumer, UpdateUserConsumer } from "./events";
-import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
@@ -28,7 +29,6 @@ async function main(): Promise<void> {
 
         /** Start Logger */
         LocalLogger.start(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE);
-
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
