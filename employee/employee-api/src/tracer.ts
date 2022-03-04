@@ -4,9 +4,10 @@ import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions"
 import { Resource } from "@opentelemetry/resources";
 import { SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
-import { ExpressLayerType } from "@opentelemetry/instrumentation-express";
 import { MicroServiceNames } from "@espressotrip-org/concept-common";
+import { HttpInstrumentation } from "@opentelemetry/instrumentation-http";
+import { ExpressInstrumentation, ExpressLayerType } from "@opentelemetry/instrumentation-express";
+import { GrpcInstrumentation } from "@opentelemetry/instrumentation-grpc";
 
 const exporter = new JaegerExporter({
     host: "jaeger",
@@ -20,14 +21,15 @@ provider.register();
 registerInstrumentations({
     tracerProvider: provider,
     instrumentations: [
-        getNodeAutoInstrumentations({
-            "@opentelemetry/instrumentation-express": {
-                enabled: true,
-                ignoreLayersType: [ExpressLayerType.MIDDLEWARE, ExpressLayerType.ROUTER],
-            },
-            "@opentelemetry/instrumentation-grpc": {
-                enabled: true,
-            },
+        new HttpInstrumentation({
+            enabled: true,
+        }),
+        new ExpressInstrumentation({
+            enabled: true,
+            ignoreLayersType: [ExpressLayerType.ROUTER, ExpressLayerType.MIDDLEWARE],
+        }),
+        new GrpcInstrumentation({
+            enabled: true,
         }),
     ],
 });

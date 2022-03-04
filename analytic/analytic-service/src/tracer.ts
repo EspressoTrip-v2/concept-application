@@ -4,8 +4,9 @@ import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions"
 import { Resource } from "@opentelemetry/resources";
 import { SimpleSpanProcessor } from "@opentelemetry/sdk-trace-base";
 import { registerInstrumentations } from "@opentelemetry/instrumentation";
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
 import { MicroServiceNames } from "@espressotrip-org/concept-common";
+import { GrpcInstrumentation } from "@opentelemetry/instrumentation-grpc";
+import { PgInstrumentation } from "@opentelemetry/instrumentation-pg";
 
 const exporter = new JaegerExporter({
     host: "jaeger",
@@ -18,13 +19,12 @@ provider.register();
 registerInstrumentations({
     tracerProvider: provider,
     instrumentations: [
-        getNodeAutoInstrumentations({
-            "@opentelemetry/instrumentation-pg": {
-                enabled: true,
-            },
-            "@opentelemetry/instrumentation-grpc": {
-                enabled: true,
-            },
+        new GrpcInstrumentation({
+            enabled: true,
+        }),
+        new PgInstrumentation({
+            enabled: true,
+            enhancedDatabaseReporting: true,
         }),
     ],
 });
