@@ -7,20 +7,24 @@ import { LocalLogger } from "../utils";
 const router = express.Router();
 
 router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
-    const gitHubUser: GitHubGrpcUser = req.session?.grant.response.profile;
+    try {
+        const gitHubUser: GitHubGrpcUser = req.session?.grant.response.profile;
 
-    /** Make the request to the gRPC auth-service server */
-    const rpcResponse = await userGrpcClient.loginGitHubUser(gitHubUser);
+        /** Make the request to the gRPC auth-service server */
+        const rpcResponse = await userGrpcClient.loginGitHubUser(gitHubUser);
 
-    /** Log Event */
-    LocalLogger.log(LogCodes.INFO, `GitHub SignIn`, "/api/auth/github/redirect", `email: ${gitHubUser.email}`);
+        /** Log Event */
+        LocalLogger.log(LogCodes.INFO, `GitHub SignIn`, "/api/auth/github/redirect", `email: ${gitHubUser.email}`);
 
-    /** Add to the session */
-    req.session = {
-        payload: rpcResponse.jwt,
-    };
+        /** Add to the session */
+        req.session = {
+            payload: rpcResponse.jwt,
+        };
 
-    res.render("redirect");
+        res.render("redirect");
+    } catch (error) {
+        res.render("error");
+    }
 });
 
 export { router as gitHubAuthRouter };

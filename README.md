@@ -7,6 +7,7 @@ Event driven microservice concept application using RabbitMQ, gRPC and Nodejs.
 - [https://rabbit.acmefast.dev](https://rabbit.acmefast.dev) -> RabbitMQ dashboard
 - [https://linkerd.acmefast.dev](https://linkerd.acmefast.dev) -> Linkerd service mesh dashboard. ** If enabled **
 - [https://jaeger.acmefast.dev](https://jaeger.acmefast.dev) -> Jaeger tracing dashboard. ** This deploys with the service mesh. so it needs to be enabled **
+- Log outputs can be viewed on Papertrail, you will need access. Give me a shout if you want to view it
 ---
 
 #### Prerequisite installations:
