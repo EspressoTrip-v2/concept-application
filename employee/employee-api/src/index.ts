@@ -1,3 +1,4 @@
+import "./tracer";
 import { app } from "./app";
 import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 import { LocalLogger } from "./utils";
@@ -14,16 +15,10 @@ async function main(): Promise<void> {
 
         /** Start logger */
         LocalLogger.start(rabbitClient.connection, MicroServiceNames.EMPLOYEE_API);
-
     } catch (error) {
         const msg = error as Error;
         console.log(`[employee-api:error]: Service start up error -> ${msg}`);
-        LocalLogger.log(
-            LogCodes.ERROR,
-            msg.message || "Service Error",
-            "main()",
-            msg.stack! || "No stack trace"
-        );
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "main()", msg.stack! || "No stack trace");
     }
 }
 

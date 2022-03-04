@@ -19,7 +19,7 @@ spec:
     template:
         metadata:
             annotations:
-              config.linkerd.io/proxy-log-level: warn
+                config.linkerd.io/proxy-log-level: warn
             name: auth-api
             labels:
                 app: auth-api
@@ -29,6 +29,11 @@ spec:
                 - name: auth-api
                   image: espressotrip/concept-auth-api
                   imagePullPolicy: IfNotPresent
+                  env:
+                      - name: POD_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: auth-api-config

@@ -17,11 +17,12 @@ You will need to add the domain to your OS hosts file.
 # Get the ip of your running minikube
 ~$ minikube ip
 ```
-Add the minikube ip with the domain of the application into the hosts file, rabbit.acmefast.dev is to access the message bus from your browser. linkerd.acme.dev is to get to the service mesh dashboard.
+Add the minikube ip with the domains of the application into the hosts file.
 ```text
 <MINIKUBE IP> acmefast.dev
 <MINIKUBE IP> rabbit.acmefast.dev
 <MINIKUBE IP> linkerd.acmefast.dev 
+<MINIKUBE IP> jaeger.acmefast.dev 
 ```
 ___
 ### Linkerd Install:    
@@ -72,8 +73,10 @@ You can access the dashboard by going to [https://buoyant.cloud](https://buoyant
 ~$ linkerd buoyant dashboard &
 ```
 
-### Proxy Injection: 
+### Proxy Injection & Distributed Tracing: 
 Once everything is up and running, run the ```linkerd-setup.sh``` script to setup the ingress for the Viz dashboard and also all the annotations for the sidecar proxy injection.
+This will also create a [Jaeger](https://www.jaegertracing.io/) deployment for tracing.
+
 
 Then run:
 ```bash

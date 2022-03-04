@@ -14,8 +14,8 @@ export class GrpcServer extends AbstractGrpcServer {
 
     readonly m_server = new grpc.Server();
 
-    constructor(rabbitConnection: amqp.Connection){
-        super(rabbitConnection)
+    constructor(rabbitConnection: amqp.Connection) {
+        super(rabbitConnection);
     }
 
     // TODO: NEED TO CREATE SERVICE RPC CALLS HERE

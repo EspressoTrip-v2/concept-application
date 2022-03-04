@@ -1,3 +1,4 @@
+import "./tracer";
 import { app } from "./app";
 import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 import { LocalLogger } from "./utils";
@@ -14,7 +15,6 @@ async function main(): Promise<void> {
 
         /** Start logger */
         LocalLogger.start(rabbitClient.connection, MicroServiceNames.ANALYTIC_API);
-
     } catch (error) {
         const msg = error as Error;
         console.log(`[analytic-api:error]: Service start up error -> ${msg}`);
