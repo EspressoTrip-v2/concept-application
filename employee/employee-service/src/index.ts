@@ -1,3 +1,4 @@
+import "./tracer";
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
 import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
@@ -27,7 +28,6 @@ async function main(): Promise<void> {
 
         /** Start logger */
         LocalLogger.start(rabbitClient.connection, MicroServiceNames.EMPLOYEE_SERVICE);
-
     } catch (error) {
         const msg = error as Error;
         console.log(`[employee-service:error]: Service start up error -> ${msg}`);

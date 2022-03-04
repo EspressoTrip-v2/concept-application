@@ -39,5 +39,5 @@ message grpcOrder {}
 message grpcService {}
 
 service AnalyticService {
-	rpc GetProductAnalysis (Empty) returns (grpcProductAnalysis) {}
+	rpc GetProductAnalysis(Empty) returns (grpcProductAnalysis) {}
 }

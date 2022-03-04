@@ -7,7 +7,7 @@ export class PostgresClient extends AbstractPostgresClient {
             process.env.ANALYTIC_POSTGRES_PASSWORD!,
             process.env.POSTGRES_USERNAME!,
             "analytic",
-            parseInt(process.env.POSTGRES_PORT!)
+            parseInt(process.env.POSTGRES_PORT!),
         );
     }
 }

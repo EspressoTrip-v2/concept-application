@@ -1,5 +1,5 @@
-import { LogCodes, MicroServiceNames, rabbitClient, ServiceTracerMongoDB } from "@espressotrip-org/concept-common";
-ServiceTracerMongoDB(MicroServiceNames.AUTH_SERVICE);
+import "./tracer";
+import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
 import { CreateUserConsumer, UpdateUserConsumer } from "./events";

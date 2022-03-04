@@ -2,6 +2,11 @@
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs.
 
+### Reference to URL:
+- [https://acmefast.dev](https://acmefast.dev) -> Main Application
+- [https://rabbit.acmefast.dev](https://rabbit.acmefast.dev) -> RabbitMQ dashboard
+- [https://linkerd.acmefast.dev](https://linkerd.acmefast.dev) -> Linkerd service mesh dashboard. (If enabled)
+- [https://jaeger.acmefast.dev](https://jaeger.acmefast.dev) -> Jaeger tracing dashboard. (If service mesh is implemented)
 ---
 
 #### Prerequisite installations:

@@ -1,9 +1,10 @@
-import { LogCodes, LogPublisher, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, LogPublisher, MicroServiceNames } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 
 export class LocalLogger {
-    m_logger: LogPublisher;
     static m_instance: LocalLogger;
+    m_logger: LogPublisher;
+
     private constructor(rabbitConnection: amqp.Connection, microserviceName: MicroServiceNames) {
         this.m_logger = new LogPublisher(rabbitConnection, microserviceName);
     }

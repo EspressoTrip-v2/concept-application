@@ -1,5 +1,4 @@
-import { ApiTracerGrpcStandard, errorHandler, MicroServiceNames, NotFoundError } from "@espressotrip-org/concept-common";
-ApiTracerGrpcStandard(MicroServiceNames.AUTH_API);
+import { errorHandler, NotFoundError } from "@espressotrip-org/concept-common";
 import express from "express";
 import "express-async-errors";
 import * as Routers from "./routes";
