@@ -1,66 +1,63 @@
-import { toast } from 'react-toastify';
-import { useStoreState } from 'easy-peasy';
-import { useEffect } from 'react';
+import { useStoreState, useStoreActions } from 'easy-peasy';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-const Home = () => {
-  const navigate = useNavigate();
-  const userSessionCookie = useStoreState((state) => state.userSessionCookie);
-  useEffect(() => {
-    if (userSessionCookie === null) {
-      toast.error('Please Login to Continue', {
-        position: 'top-right',
-        autoClose: 1000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: false,
-        draggable: false,
-        progress: undefined,
-      });
+import getUser from '../helpers';
 
+const Home = () => {
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const setUserAuthorised = useStoreActions(
+    (actions) => actions.setUserAuthorised
+  );
+  const userAuthorised = useStoreState((state) => state.userAuthorised);
+
+  const setUser = useStoreActions((actions) => actions.setUser);
+  const user = useStoreState((state) => state.user);
+
+  const userStatus = async () => {
+    const result = await getUser();
+    await setUserAuthorised(result.status);
+    await setUser(result.data.data);
+    return result;
+  };
+
+  useLayoutEffect(() => {
+    setLoading(true);
+    userStatus();
+    if (!userAuthorised) {
       navigate('/login');
     }
-  }, [userSessionCookie, navigate]);
+    setLoading(false);
+  }, [userAuthorised]);
 
-  const copy = () => {
-    navigator.clipboard.writeText(userSessionCookie?.trim());
-    toast.info('Cookie copied', {
-      position: 'top-right',
-      autoClose: 1000,
-      hideProgressBar: true,
-      closeOnClick: false,
-      pauseOnHover: false,
-      draggable: false,
-      progress: undefined,
-    });
-  };
+  useEffect(() => {
+    setLoading(true);
+    userStatus();
+    if (!userAuthorised) {
+      navigate('/login');
+    }
+    setLoading(false);
+  }, []);
+
   return (
-    <div className='home'>
-      <div className='wrapper-home'>
-        <div className='home-container'>
-          {userSessionCookie ? (
-            <div className='home-internal'>
-              <h3>
-                Please copy and paste the below cookie into Postman to simulate
-                request to the other microservices:
-              </h3>
-              <div className='cookie'>
-                <p className='pointer' onClick={() => copy()}>
-                  {userSessionCookie}
-                </p>
-              </div>
-              <button className='loginButton copy' onClick={() => copy()}>
-                Copy Cookie
-              </button>
-            </div>
-          ) : (
-            <div className='home-internal'>
-              <h3>You are unathorized to view this page. Please login</h3>
-              {setTimeout(() => {
-                navigate('/login');
-              }, 2000)}
-            </div>
-          )}
-        </div>
+    <div className='container mt-3'>
+      <div className='row'>
+        {user ? (
+          <div className='col-md-12'>
+            <h1>User Details</h1>
+            <ul>
+              {Object.keys(user).map((key) => (
+                <li key={key}>
+                  <b>{key}</b>: {user[key]}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className='col-md-12'>
+            <h1>Loading...</h1>
+          </div>
+        )}
       </div>
     </div>
   );
