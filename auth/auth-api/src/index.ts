@@ -1,5 +1,6 @@
-import { app } from "./app";
+import "./tracer";
 import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { app } from "./app";
 import { LocalLogger } from "./utils";
 
 const PORT = process.env.PORT || 3000;

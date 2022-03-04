@@ -17,7 +17,7 @@ spec:
     template:
         metadata:
             annotations:
-              config.linkerd.io/proxy-log-level: warn
+                config.linkerd.io/proxy-log-level: warn
             name: analytic-api
             labels:
                 app: analytic-api
@@ -27,6 +27,11 @@ spec:
                 - name: analytic-api
                   image: espressotrip/concept-analytic-api
                   imagePullPolicy: IfNotPresent
+                  env:
+                      - name: POD_NAME
+                        valueFrom:
+                            fieldRef:
+                                fieldPath: metadata.name
                   envFrom:
                       - configMapRef:
                             name: analytic-api-config

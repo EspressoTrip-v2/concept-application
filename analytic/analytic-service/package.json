@@ -1,34 +1,43 @@
 {
-    "name": "analytics",
-    "version": "1.0.0",
-    "description": "Auth service",
-    "scripts": {
-        "start": "tsc-watch --onSuccess 'node ./src/index.js'",
-        "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/clients/proto/ src/services/proto/*.proto",
-        "common": "npm update @espressotrip-org/concept-common"
-    },
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-        "@espressotrip-org/concept-common": "^1.2.12",
-        "@grpc/grpc-js": "^1.5.4",
-        "@grpc/proto-loader": "^0.6.9",
-        "@types/amqplib": "^0.8.2",
-        "@types/cookie-session": "^2.0.44",
-        "@types/express": "^4.17.13",
-        "@types/jsonwebtoken": "^8.5.8",
-        "amqplib": "^0.8.0",
-        "express": "^4.17.2",
-        "express-async-errors": "^3.1.1",
-        "jsonwebtoken": "^8.5.1",
-        "pg": "^8.7.3",
-        "pg-hstore": "^2.3.4",
-        "sequelize": "^6.16.2",
-        "tslib": "^2.3.1",
-        "typescript": "^4.5.5"
-    },
-    "devDependencies": {
-        "@types/tsc-watch": "^4.2.0",
-        "tsc-watch": "^4.6.0"
-    }
+  "name": "analytics",
+  "version": "1.0.0",
+  "description": "Auth service",
+  "scripts": {
+    "start": "tsc-watch --onSuccess 'node ./src/index.js'",
+    "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/clients/proto/ src/services/proto/*.proto",
+    "common": "npm update @espressotrip-org/concept-common"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@espressotrip-org/concept-common": "^1.2.15",
+    "@grpc/grpc-js": "^1.5.4",
+    "@grpc/proto-loader": "^0.6.9",
+    "@types/amqplib": "^0.8.2",
+    "@types/cookie-session": "^2.0.44",
+    "@types/express": "^4.17.13",
+    "@types/jsonwebtoken": "^8.5.8",
+    "amqplib": "^0.8.0",
+    "express": "^4.17.2",
+    "express-async-errors": "^3.1.1",
+    "jsonwebtoken": "^8.5.1",
+    "pg": "^8.7.3",
+    "pg-hstore": "^2.3.4",
+    "sequelize": "^6.16.2",
+    "tslib": "^2.3.1",
+    "typescript": "^4.5.5",
+    "@opentelemetry/api": "^1.0.4",
+    "@opentelemetry/auto-instrumentations-node": "^0.27.3",
+    "@opentelemetry/exporter-jaeger": "^1.0.1",
+    "@opentelemetry/instrumentation": "^0.27.0",
+    "@opentelemetry/resources": "^1.0.1",
+    "@opentelemetry/sdk-trace-base": "^1.0.1",
+    "@opentelemetry/sdk-trace-node": "^1.0.1",
+    "@opentelemetry/semantic-conventions": "^1.0.1",
+    "opentelemetry-instrumentation-amqplib": "^0.27.0"
+  },
+  "devDependencies": {
+    "@types/tsc-watch": "^4.2.0",
+    "tsc-watch": "^4.6.0"
+  }
 }

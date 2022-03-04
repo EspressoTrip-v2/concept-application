@@ -14,7 +14,7 @@ app.use(
     cookieSession({
         signed: false,
         secure: process.env.NODE_ENV === "production",
-    })
+    }),
 );
 
 /** User Validation */

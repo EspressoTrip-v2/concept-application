@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Add Jaeger Dashboard
+kubectl apply -f jaeger-depl.yaml
+kubectl apply -f jaeger-ingress-srv.yaml
+
 # Add the Linkerd dashboard ingress
 kubectl apply -f linkerd-dashboard-ingress.yaml
 
