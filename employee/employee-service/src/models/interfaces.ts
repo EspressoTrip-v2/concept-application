@@ -26,8 +26,7 @@ export interface EmployeeAttrs {
 /** Static build method to model */
 export interface EmployeeModel extends mongoose.Model<EmployeeDoc> {
     build(attributes: EmployeeAttrs): EmployeeDoc;
-    convertToGrpcMessageForAuth(document: EmployeeDoc): PersonMsg;
-    convertToReturnPayload(document: EmployeeDoc): PersonMsg;
+    convertToMessage(document: EmployeeDoc): PersonMsg;
     updateByEvent(employee: PersonMsg): Promise<EmployeeDoc | null>;
 }
 

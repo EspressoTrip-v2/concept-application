@@ -9,7 +9,7 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
     m_queue: QueueInfo.UPDATE_USER = QueueInfo.UPDATE_USER;
 
     constructor(rabbitConnection: amqp.Connection) {
-        super(rabbitConnection, "update-employee");
+        super(rabbitConnection, "update-user");
     }
 
     async onMessage(data: UpdateUserEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
@@ -26,9 +26,6 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                 this.acknowledge(message);
                 throw new Error("Sign-in user not found.");
             }
-
-            /** Maintain user role status but update the rest */
-            if (existingUser.userRole === UserRoles.ADMIN) employeeData.userRole = UserRoles.ADMIN;
 
             existingUser.set(employeeData);
             await existingUser.save();

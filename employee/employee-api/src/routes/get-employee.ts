@@ -5,7 +5,7 @@ import { employeeGrpcClient } from "../services";
 const router = express.Router();
 
 router.get("/api/employee/:employeeId", requireAuth, async (req: Request, res: Response) => {
-    const id = <string>req.query.employeeId;
+    const id = <string>req.params.employeeId;
     const grpcResponse = await employeeGrpcClient.getEmployee(id);
     res.send(grpcResponse);
 });

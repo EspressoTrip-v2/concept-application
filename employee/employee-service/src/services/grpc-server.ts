@@ -1,6 +1,6 @@
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
-import { AbstractGrpcServer, LogCodes } from "@espressotrip-org/concept-common";
+import { AbstractGrpcServer, LogCodes, UserRoles } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { ProtoGrpcType } from "./proto/employee";
 import { EmployeeServiceHandlers } from "./proto/employeePackage/EmployeeService";
@@ -8,7 +8,7 @@ import { EmployeeId } from "./proto/employeePackage/EmployeeId";
 import { GrpcEmployeeAttributes } from "./proto/employeePackage/GrpcEmployeeAttributes";
 import { Employee } from "../models";
 import { GrpcResponsePayload } from "./proto/employeePackage/GrpcResponsePayload";
-import { CreateEmployeePublisher, DeleteEmployeePublisher, UpdateUserPublisher } from "../events";
+import { CreateUserPublisher, DeleteUserPublisher, UpdateUserPublisher } from "../events";
 import { LocalLogger } from "../utils";
 
 export class GrpcServer extends AbstractGrpcServer {
@@ -39,19 +39,20 @@ export class GrpcServer extends AbstractGrpcServer {
                     region: data.region!,
                     country: data.country!,
                     phoneNumber: data.phoneNumber!,
+                    userRole: data.userRole! as UserRoles,
                 });
                 await employee.save();
                 LocalLogger.log(LogCodes.CREATED, "Employee created", "CreateEmployee", `email: ${employee.email}, employeeId: ${employee.id}`);
                 const employeeMsg = {
-                    ...Employee.convertToGrpcMessageForAuth(employee),
+                    ...Employee.convertToMessage(employee),
                     password: call.request.password!,
                 };
 
-                new CreateEmployeePublisher(this.m_rabbitConnection!).publish(employeeMsg);
+                new CreateUserPublisher(this.m_rabbitConnection!).publish(employeeMsg);
 
                 callback(null, {
                     status: 200,
-                    data: Employee.convertToReturnPayload(employee),
+                    data: Employee.convertToMessage(employee),
                 });
             } catch (error) {
                 const serverError: Partial<grpc.StatusObject> = {
@@ -77,12 +78,12 @@ export class GrpcServer extends AbstractGrpcServer {
                 LogCodes.DELETED,
                 "Employee deleted successfully",
                 "DeleteEmployee",
-                `email: ${deletedEmployee.email}, employeeId: ${deletedEmployee.id}`,
+                `email: ${deletedEmployee.email}, employeeId: ${deletedEmployee.id}`
             );
-            new DeleteEmployeePublisher(this.m_rabbitConnection!).publish(Employee.convertToGrpcMessageForAuth(deletedEmployee));
+            new DeleteUserPublisher(this.m_rabbitConnection!).publish(Employee.convertToMessage(deletedEmployee));
             return callback(null, {
                 status: 200,
-                data: Employee.convertToReturnPayload(deletedEmployee),
+                data: Employee.convertToMessage(deletedEmployee),
             });
         },
 
@@ -119,12 +120,12 @@ export class GrpcServer extends AbstractGrpcServer {
                 await employee.save();
                 LocalLogger.log(LogCodes.UPDATED, "Employee updated", "UpdateEmployee", `email: ${employee.email}, employeeId: ${employee.id}`);
                 new UpdateUserPublisher(this.m_rabbitConnection!).publish({
-                    ...Employee.convertToGrpcMessageForAuth(employee),
+                    ...Employee.convertToMessage(employee),
                     password: call.request.password!,
                 });
                 return callback(null, {
                     status: 200,
-                    data: Employee.convertToReturnPayload(employee),
+                    data: Employee.convertToMessage(employee),
                 });
             } catch (error) {
                 const serverError: Partial<grpc.StatusObject> = {

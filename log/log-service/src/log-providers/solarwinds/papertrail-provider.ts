@@ -38,7 +38,7 @@ export class PapertrailProvider extends AbstractLogger<winston.Logger> {
                 this.m_logger!.error(logData);
                 break;
             case LogCodes.DELETED:
-                this.m_logger!.notice(logData);
+                this.m_logger!.alert(logData);
                 break;
             default:
                 this.m_logger!.info(logData);

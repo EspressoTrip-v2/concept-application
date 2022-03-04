@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 import { EmployeeAttrs, EmployeeDoc, EmployeeModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 import { PersonMsg, GenderType, MicroServiceNames, RaceTypes, ShiftPreference, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
-import { Password } from "../utils";
 
 /**
  * User model that uses update-if-current version incrementation
@@ -24,11 +23,8 @@ const employeeSchema = new mongoose.Schema(
         phoneNumber: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         signInType: { type: String, required: true, default: SignInTypes.UNKNOWN },
-        userRole: {
-            type: String,
-            default: UserRoles.EMPLOYEE,
-        },
-        password: { type: String, default: "" },
+        userRole: { type: String, required: true },
+        password: { type: String, required: true },
         providerId: { type: String, default: "" },
     },
     {
@@ -46,15 +42,6 @@ const employeeSchema = new mongoose.Schema(
 employeeSchema.set("versionKey", "version");
 employeeSchema.plugin(updateIfCurrentPlugin);
 
-/** Encrypt the password on save */
-employeeSchema.pre("save", async function (done) {
-    const password = this.get("password");
-    if (password && this.isModified("password")) {
-        const hashed = await Password.toHash(this.get("password"));
-        this.set("password", hashed);
-    }
-    done();
-});
 /** Static schema functions */
 /**
  * Static function to build product
@@ -68,7 +55,7 @@ employeeSchema.statics.build = function (attributes: EmployeeAttrs): EmployeeDoc
  * Converts employee document to employee message object to create a auth user
  * @param document {EmployeeDoc}
  */
-employeeSchema.statics.convertToGrpcMessageForAuth = function (document: EmployeeDoc): PersonMsg {
+employeeSchema.statics.convertToMessage = function (document: EmployeeDoc): PersonMsg {
     return {
         id: document.id,
         country: document.country,
@@ -91,29 +78,6 @@ employeeSchema.statics.convertToGrpcMessageForAuth = function (document: Employe
     };
 };
 
-/**
- * Creates a return payload removing the user roles and sign in type
- * @param document {EmployeeDoc}
- */
-employeeSchema.statics.convertToReturnPayload = function (document: EmployeeDoc): PersonMsg {
-    return {
-        id: document.id,
-        country: document.country,
-        email: document.email,
-        gender: document.gender as GenderType,
-        branchName: document.branchName,
-        lastName: document.lastName,
-        password: document.password,
-        race: document.race as RaceTypes,
-        region: document.region,
-        registeredEmployee: document.registeredEmployee,
-        position: document.position,
-        shiftPreference: document.shiftPreference as ShiftPreference,
-        startDate: document.startDate,
-        firstName: document.firstName,
-        phoneNumber: document.phoneNumber,
-    };
-};
 
 employeeSchema.statics.updateByEvent = async function (employee: PersonMsg): Promise<EmployeeDoc | null> {
     if (!employee.version) return Employee.findOneAndUpdate({ email: employee.email }, employee);

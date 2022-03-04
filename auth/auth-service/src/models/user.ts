@@ -23,10 +23,7 @@ const userSchema = new mongoose.Schema(
         phoneNumber: { type: String, required: true },
         email: { type: String, required: true, unique: true },
         signInType: { type: String, required: true, default: SignInTypes.UNKNOWN },
-        userRole: {
-            type: String,
-            default: UserRoles.EMPLOYEE,
-        },
+        userRole: { type: String, required: true },
         password: { type: String, default: "" },
         providerId: { type: String, default: "" },
     },
@@ -38,7 +35,7 @@ const userSchema = new mongoose.Schema(
                 delete ret._id;
             },
         },
-    },
+    }
 );
 
 /** Replace the __v with version  && use the update-if-current plugin*/
@@ -46,7 +43,7 @@ userSchema.set("versionKey", "version");
 userSchema.plugin(updateIfCurrentPlugin);
 
 /** Encrypt the password on save */
-userSchema.pre("save", async function(done) {
+userSchema.pre("save", async function (done) {
     const password = this.get("password");
     if (password && this.isModified("password")) {
         const hashed = await Password.toHash(this.get("password"));
@@ -59,11 +56,11 @@ userSchema.pre("save", async function(done) {
  * Static function to build product
  * @param attributes
  */
-userSchema.statics.build = function(attributes: UserAttrs): UserDoc {
+userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
     return new User(attributes);
 };
 
-userSchema.statics.convertToGrpcMessage = function(document: UserDoc): PersonMsg {
+userSchema.statics.convertToGrpcMessage = function (document: UserDoc): PersonMsg {
     return {
         id: document.id,
         country: document.country,

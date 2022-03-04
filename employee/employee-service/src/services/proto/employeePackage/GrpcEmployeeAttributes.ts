@@ -16,6 +16,7 @@ export interface GrpcEmployeeAttributes {
   'email'?: (string);
   'password'?: (string);
   'id'?: (string);
+  'userRole'?: (string);
 }
 
 export interface GrpcEmployeeAttributes__Output {
@@ -33,4 +34,5 @@ export interface GrpcEmployeeAttributes__Output {
   'email': (string);
   'password': (string);
   'id': (string);
+  'userRole': (string);
 }

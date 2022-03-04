@@ -2,7 +2,7 @@ import "./tracer";
 import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
-import { CreateUserConsumer, UpdateUserConsumer } from "./events";
+import { CreateUserConsumer, DeleteUserConsumer, UpdateUserConsumer } from "./events";
 import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
@@ -26,6 +26,7 @@ async function main(): Promise<void> {
         /** Create RabbitMQ consumers */
         await new UpdateUserConsumer(rabbitClient.connection).listen();
         await new CreateUserConsumer(rabbitClient.connection).listen();
+        await new DeleteUserConsumer(rabbitClient.connection).listen();
 
         /** Start Logger */
         LocalLogger.start(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE);

@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { GenderType, RaceTypes, ShiftPreference } from "@espressotrip-org/concept-common";
+import { GenderType, RaceTypes, ShiftPreference, UserRoles } from "@espressotrip-org/concept-common";
 import { isValidStartDate } from "./payload-utils";
 
 export const createEmployeeSchema = Joi.object({
@@ -16,4 +16,6 @@ export const createEmployeeSchema = Joi.object({
     country: Joi.string().required(),
     phoneNumber: Joi.string().required(),
     password: Joi.string().required(),
+    userRole: Joi.string().valid(UserRoles.EMPLOYEE, UserRoles.ADMIN).required(),
+
 });

@@ -10,7 +10,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
     m_queue: QueueInfo.CREATE_USER = QueueInfo.CREATE_USER;
 
     constructor(rabbitConnection: amqp.Connection) {
-        super(rabbitConnection, "create-employee");
+        super(rabbitConnection, "create-user");
     }
 
     async onMessage(data: CreateUserEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
