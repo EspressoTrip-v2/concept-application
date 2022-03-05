@@ -16,14 +16,14 @@ async function main(): Promise<void> {
         /** Create RabbitMQ connection */
         await rabbitClient.connect(process.env.RABBIT_URI!, `[analytic-service:rabbitmq]: Connected successfully`);
 
+        /** Start logger */
+        LocalLogger.start(rabbitClient.connection, MicroServiceNames.ANALYTIC_SERVICE);
+
         /** Create postgres connection */
         await postgresClient.connect(`[analytic-service:postgres]: Connected successfully`);
 
         /** Create gRPC server */
         const gRPC = grpcServer(rabbitClient.connection).listen(`[analytic-service:gRPC-server]: Listening port ${process.env.GRPC_SERVER_PORT}`);
-
-        /** Start logger */
-        LocalLogger.start(rabbitClient.connection, MicroServiceNames.ANALYTIC_SERVICE);
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);

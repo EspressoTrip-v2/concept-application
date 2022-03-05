@@ -15,6 +15,8 @@ async function main(): Promise<void> {
 
         /** Create RabbitMQ connection */
         await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-service:rabbitmq]: Connected successfully`);
+        /** Start Logger */
+        LocalLogger.start(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE);
 
         // /** Create Mongoose connection */
         await mongoose.connect(process.env.MONGO_URI!, { dbName: process.env.MONGO_DBNAME! });
@@ -27,9 +29,6 @@ async function main(): Promise<void> {
         await new UpdateUserConsumer(rabbitClient.connection).listen();
         await new CreateUserConsumer(rabbitClient.connection).listen();
         await new DeleteUserConsumer(rabbitClient.connection).listen();
-
-        /** Start Logger */
-        LocalLogger.start(rabbitClient.connection, MicroServiceNames.AUTH_SERVICE);
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
