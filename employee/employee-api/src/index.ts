@@ -9,6 +9,7 @@ async function main(): Promise<void> {
     try {
         /** RabbitMQ */
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
+        if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
 
         /** Create RabbitMQ connection */
         await rabbitClient.connect(process.env.RABBIT_URI!, `[employee-api:rabbitmq]: Connected successfully`);

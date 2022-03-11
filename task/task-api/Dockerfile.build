@@ -1,0 +1,10 @@
+FROM golang:alpine3.15
+ARG SKAFFOLD_GO_GCFLAGS
+RUN mkdir /app
+WORKDIR /app
+
+COPY . .
+RUN go mod download
+RUN go build -gcflags="${SKAFFOLD_GO_GCFLAGS}" -o . ...
+ENV GOTRACEBACK=single
+CMD ["./task-api"]
