@@ -1,4 +1,6 @@
-github.com/EspressoTrip-v2/concept-go-common v1.0.15 h1:Eyg4oStHvSUJxUqJ47XZYBTxSLcqI+qZl0hQz15YFjU=
-github.com/EspressoTrip-v2/concept-go-common v1.0.15/go.mod h1:pPqcIwosT609yJPqsTiX4r/cSR75R79tvcetnLQV+EM=
+github.com/EspressoTrip-v2/concept-go-common v1.0.19 h1:CrLVD8CSauhbTCsKd3rO1w/JBeJYaRL0CRgyh4vX07A=
+github.com/EspressoTrip-v2/concept-go-common v1.0.19/go.mod h1:pPqcIwosT609yJPqsTiX4r/cSR75R79tvcetnLQV+EM=
+github.com/gorilla/mux v1.8.0 h1:i40aqfkR1h2SlN9hojwV5ZA91wcXFOvkdNIeFDP5koI=
+github.com/gorilla/mux v1.8.0/go.mod h1:DVbg23sWSpFRCP0SfiEN6jmj59UnW/n46BH5rLB71So=
 github.com/streadway/amqp v1.0.0 h1:kuuDrUJFZL1QYL9hUNuCxNObNzB0bV/ZG5jV3RWAQgo=
 github.com/streadway/amqp v1.0.0/go.mod h1:AZpEONHx3DKn8O/DFsRAY58/XVQiIPMTMB1SddzLXVw=

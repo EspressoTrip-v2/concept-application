@@ -43,6 +43,16 @@ spec:
                 port:
                   number: 3000
 
+          # Employee API
+          - path: /api/task/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: task-api-srv
+                port:
+                  number: 3000
+
+
           # Auth-Web UI
           - path: /?(.*)
             pathType: Prefix
