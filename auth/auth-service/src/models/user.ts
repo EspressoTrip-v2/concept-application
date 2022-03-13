@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { UserAttrs, UserDoc, UserModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
+import jwt from "jsonwebtoken";
 import { GenderType, PersonMsg, RaceTypes, ShiftPreference, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 import { Password } from "../utils";
 
@@ -82,6 +83,31 @@ userSchema.statics.convertToGrpcMessage = function (document: UserDoc): PersonMs
         firstName: document.firstName,
         phoneNumber: document.phoneNumber,
     };
+};
+
+userSchema.statics.convertToJWTPayload = function (document: UserDoc): string {
+
+    const msg =  {
+        country: document.country,
+        email: document.email,
+        gender: document.gender as GenderType,
+        branchName: document.branchName,
+        lastName: document.lastName,
+        password: document.password,
+        race: document.race as RaceTypes,
+        region: document.region,
+        registeredEmployee: document.registeredEmployee,
+        position: document.position,
+        providerId: document.providerId,
+        shiftPreference: document.shiftPreference as ShiftPreference,
+        startDate: document.startDate,
+        signInType: document.signInType,
+        authId: document.id,
+        userRole: document.userRole as UserRoles,
+        firstName: document.firstName,
+        phoneNumber: document.phoneNumber,
+    }
+    return jwt.sign(msg, process.env.JWT_KEY!)
 };
 
 /** Create model from schema */

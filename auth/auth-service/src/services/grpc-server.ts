@@ -4,7 +4,7 @@ import * as protoLoader from "@grpc/proto-loader";
 import { ProtoGrpcType } from "./proto/user";
 import { User, UserDoc } from "../models";
 import { AbstractGrpcServer, LogCodes, SignInTypes } from "@espressotrip-org/concept-common";
-import { generateJwt, LocalLogger, Password } from "../utils";
+import { LocalLogger, Password } from "../utils";
 import { GoogleGrpcUser } from "./proto/userPackage/GoogleGrpcUser";
 import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
 import { GitHubGrpcUser } from "./proto/userPackage/GitHubGrpcUser";
@@ -75,16 +75,17 @@ export class GrpcServer extends AbstractGrpcServer {
 
                         return callback(null, {
                             data: googleUser as unknown as GrpcUser,
-                            jwt: generateJwt(googleUser),
+                            jwt: User.convertToJWTPayload(googleUser),
                             status: 200,
                         });
                     case SignInTypes.GOOGLE:
-                        if (googleUser.providerId === call.request.sub)
+                        if (googleUser.providerId === call.request.sub) {
                             return callback(null, {
                                 data: googleUser as unknown as GrpcUser,
-                                jwt: generateJwt(googleUser),
+                                jwt: User.convertToJWTPayload(googleUser),
                                 status: 200,
                             });
+                        }
                         else {
                             serverError = {
                                 code: grpc.status.PERMISSION_DENIED,
@@ -159,14 +160,14 @@ export class GrpcServer extends AbstractGrpcServer {
 
                         return callback(null, {
                             data: gitHubUser as unknown as GrpcUser,
-                            jwt: generateJwt(gitHubUser),
+                            jwt:  User.convertToJWTPayload(gitHubUser),
                             status: 200,
                         });
                     case SignInTypes.GITHUB:
                         if (gitHubUser.providerId === call.request.id!.toString())
                             return callback(null, {
                                 data: gitHubUser as unknown as GrpcUser,
-                                jwt: generateJwt(gitHubUser),
+                                jwt:  User.convertToJWTPayload(gitHubUser),
                                 status: 200,
                             });
                         else {
@@ -243,14 +244,14 @@ export class GrpcServer extends AbstractGrpcServer {
 
                         return callback(null, {
                             data: localUser as unknown as GrpcUser,
-                            jwt: generateJwt(localUser),
+                            jwt:  User.convertToJWTPayload(localUser),
                             status: 200,
                         });
                     case SignInTypes.LOCAL:
                         if (await Password.compare(localUser.password, call.request.password!))
                             return callback(null, {
                                 data: localUser as unknown as GrpcUser,
-                                jwt: generateJwt(localUser),
+                                jwt:  User.convertToJWTPayload(localUser),
                                 status: 200,
                             });
                         else {
