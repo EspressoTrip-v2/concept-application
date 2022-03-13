@@ -26,14 +26,15 @@ func envCheck() {
 
 }
 
-func startServer(route http.Handler) {
+func startServer(route http.Handler, logMsg string) {
 	server := http.Server{
-		Addr:         fmt.Sprintf(":%v",PORT),
+		Addr:         fmt.Sprintf(":%v", PORT),
 		Handler:      route,
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
 
+	fmt.Println(logMsg)
 	err := server.ListenAndServe()
 	if err != nil {
 		fmt.Printf("[task-api:error]: Service start up error -> %v\n", err.Error())
@@ -54,6 +55,6 @@ func main() {
 
 	// get router and start the server
 	router := GetRouter()
-	startServer(router)
+	startServer(router, fmt.Sprintf("[task-api:mux-service]: Listening port %v", PORT))
 
 }

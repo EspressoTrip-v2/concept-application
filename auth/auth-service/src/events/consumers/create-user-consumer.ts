@@ -21,7 +21,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     `Employee sign-in already exists`,
-                    `CreateUserConsumer`,
+                    `auth/auth-service/src/events/consumers/create-user-consumer.ts:21`,
                     `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
                 );
                 return this.acknowledge(message);
@@ -37,7 +37,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                 LocalLogger.log(
                     LogCodes.INFO,
                     `Employee is admin user`,
-                    `CreateUserConsumer`,
+                    `auth/auth-service/src/events/consumers/create-user-consumer.ts:37`,
                     `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
                 );
                 return this.acknowledge(message);
@@ -72,13 +72,13 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
             LocalLogger.log(
                 LogCodes.CREATED,
                 `Employee saved as new user sign-in created`,
-                `CreateUserConsumer`,
+                `auth/auth-service/src/events/consumers/create-user-consumer.ts:75`,
                 `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`,
             );
 
             return this.acknowledge(message);
         } catch (error) {
-            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "CreateUserConsumer", `error: ${(error as Error).message}`);
+            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "auth/auth-service/src/events/consumers/create-user-consumer.ts:81", `error: ${(error as Error).message}`);
             new UserSaveFailurePublisher(rabbitClient.connection).publish(employeeData);
             this.acknowledge(message);
         }

@@ -1,7 +1,6 @@
 package routes
 
 import (
-	"fmt"
 	"github.com/EspressoTrip-v2/concept-go-common/utils"
 	"net/http"
 )

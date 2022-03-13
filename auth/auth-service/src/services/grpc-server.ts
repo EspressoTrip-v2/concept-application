@@ -47,7 +47,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "Sign-in user not found.",
                     };
-                    LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
+                    LocalLogger.log(LogCodes.ERROR, serverError.details!, "auth/auth-service/src/services/grpc-server.ts:50", `email: ${call.request.email}`);
                     return callback(serverError);
                 }
 
@@ -58,7 +58,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         LocalLogger.log(
                             LogCodes.ERROR,
                             serverError.details!,
-                            "LoginGoogleUser",
+                            "auth/auth-service/src/services/grpc-server.ts:58",
                             `email: ${call.request.email}, account: ${googleUser.signInType}`,
                         );
                         return callback(serverError);
@@ -69,7 +69,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         LocalLogger.log(
                             LogCodes.UPDATED,
                             "Sign-in user registered",
-                            "LoginGoogleUser",
+                            "auth/auth-service/src/services/grpc-server.ts:69",
                             `email: ${call.request.email},  UserId: ${googleUser.id}`,
                         );
 
@@ -93,7 +93,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             LocalLogger.log(
                                 LogCodes.ERROR,
                                 serverError.details!,
-                                "LoginGoogleUser",
+                                "auth/auth-service/src/services/grpc-server.ts:93",
                                 `email: ${call.request.email},  UserId: ${call.request.sub}`,
                             );
 
@@ -104,7 +104,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.NOT_FOUND,
                             details: "User not found",
                         };
-                        LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `email: ${call.request.email}`);
+                        LocalLogger.log(LogCodes.ERROR, serverError.details!, "auth/auth-service/src/services/grpc-server.ts:107", `email: ${call.request.email}`);
                         callback(serverError);
                 }
             } catch (error) {
@@ -112,7 +112,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.INTERNAL,
                     details: `Google login error: ${(error as Error).message}`,
                 };
-                LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGoogleUser", `Unknown server error.`);
+                LocalLogger.log(LogCodes.ERROR, serverError.details!, "auth/auth-service/src/services/grpc-server.ts:115", `Unknown server error.`);
                 return callback(serverError);
             }
         },
@@ -130,7 +130,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "User not found",
                     };
-                    LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
+                    LocalLogger.log(LogCodes.ERROR, serverError.details!, "auth/auth-service/src/services/grpc-server.ts:133", `email: ${call.request.email}`);
 
                     return callback(serverError);
                 }
@@ -141,7 +141,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         LocalLogger.log(
                             LogCodes.ERROR,
                             serverError.details!,
-                            "LoginGitHubUser",
+                            "auth/auth-service/src/services/grpc-server.ts:141",
                             `email: ${call.request.email}, account: ${gitHubUser.signInType}`,
                         );
 
@@ -153,7 +153,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         LocalLogger.log(
                             LogCodes.UPDATED,
                             "Sign-in user registered",
-                            "LoginGitHubUser",
+                            "auth/auth-service/src/services/grpc-server.ts:153",
                             `email: ${gitHubUser.email},  UserId:  ${gitHubUser.id}`,
                         );
 
@@ -177,7 +177,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             LocalLogger.log(
                                 LogCodes.ERROR,
                                 serverError.details!,
-                                "LoginGitHubUser",
+                                "auth/auth-service/src/services/grpc-server.ts:177",
                                 `email: ${call.request.email},  UserId: ${call.request.id}`,
                             );
 
@@ -188,7 +188,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.NOT_FOUND,
                             details: "User not found",
                         };
-                        LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `email: ${call.request.email}`);
+                        LocalLogger.log(LogCodes.ERROR, serverError.details!, "auth/auth-service/src/services/grpc-server.ts:191", `email: ${call.request.email}`);
 
                         callback(serverError);
                 }
@@ -197,7 +197,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.INTERNAL,
                     details: `GitHub login error: ${(error as Error).message}`,
                 };
-                LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginGitHubUser", `Unknown server error`);
+                LocalLogger.log(LogCodes.ERROR, serverError.details!, "auth/auth-service/src/services/grpc-server.ts:200", `Unknown server error`);
                 return callback(serverError);
             }
         },
@@ -213,7 +213,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         code: grpc.status.NOT_FOUND,
                         details: "User does not exists.",
                     };
-                    LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `email: ${call.request.email}`);
+                    LocalLogger.log(LogCodes.ERROR, serverError.details!, "auth/auth-service/src/services/grpc-server.ts:216", `email: ${call.request.email}`);
 
                     return callback(serverError);
                 }
@@ -225,7 +225,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         LocalLogger.log(
                             LogCodes.ERROR,
                             serverError.details!,
-                            "LoginLocalUser",
+                            "auth/auth-service/src/services/grpc-server.ts:226",
                             `email: ${call.request.email}, account: ${localUser.signInType}`,
                         );
 
@@ -237,7 +237,7 @@ export class GrpcServer extends AbstractGrpcServer {
                         LocalLogger.log(
                             LogCodes.UPDATED,
                             "Sign-in user registered",
-                            "LoginLocalUser",
+                            "auth/auth-service/src/services/grpc-server.ts:238",
                             `email: ${call.request.email}, UserId: ${localUser.id}`,
                         );
 
@@ -261,7 +261,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             LocalLogger.log(
                                 LogCodes.ERROR,
                                 serverError.details!,
-                                "LoginLocalUser",
+                                "auth/auth-service/src/services/grpc-server.ts:261",
                                 `email: ${call.request.email}, password: ${call.request.password}`,
                             );
 
@@ -272,7 +272,7 @@ export class GrpcServer extends AbstractGrpcServer {
                             code: grpc.status.NOT_FOUND,
                             details: "Undefined error",
                         };
-                        LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginLocalUser", "Undefined error");
+                        LocalLogger.log(LogCodes.ERROR, serverError.details!, "auth/auth-service/src/services/grpc-server.ts:275", "Undefined error");
 
                         callback(serverError);
                 }
@@ -281,7 +281,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.INTERNAL,
                     details: `Local login error: ${(error as Error).message}`,
                 };
-                LocalLogger.log(LogCodes.ERROR, serverError.details!, "LoginLocalUser", `Unknown server error.`);
+                LocalLogger.log(LogCodes.ERROR, serverError.details!, "auth/auth-service/src/services/grpc-server.ts:284", `Unknown server error.`);
                 return callback(serverError);
             }
         },

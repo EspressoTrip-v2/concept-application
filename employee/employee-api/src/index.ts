@@ -19,7 +19,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[employee-api:error]: Service start up error -> ${msg}`);
-        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "main()", msg.stack! || "No stack trace");
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "employee/employee-api/src/index.ts:22", msg.stack! || "No stack trace");
     }
 }
 

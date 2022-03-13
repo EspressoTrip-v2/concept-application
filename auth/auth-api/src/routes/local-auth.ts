@@ -14,7 +14,7 @@ router.post("/api/auth/local", payloadValidation(localUserSchema), async (req: R
     const rpcResponse = await userGrpcClient.loginLocalUser(localUser);
 
     /** Log Event */
-    LocalLogger.log(LogCodes.INFO, `Local SignIn`, "/api/auth/local", `email: ${localUser.email}`);
+    LocalLogger.log(LogCodes.INFO, `Local SignIn`, "auth/auth-api/src/routes/local-auth.ts:17", `email: ${localUser.email}`);
 
     /** Add to the session */
     req.session = {

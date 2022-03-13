@@ -17,13 +17,13 @@ export class UserSaveFailureConsumer extends AbstractConsumer<SaveUserFailEvent>
         try {
             const employee = await Employee.findByIdAndDelete(employeeData.id);
             if (!employee) {
-                LocalLogger.log(LogCodes.ERROR, "Employee not found", "EmployeeSaveFailureListener", `email: ${employeeData.email}, UserId: ${employeeData.id}`);
+                LocalLogger.log(LogCodes.ERROR, "Employee not found", "employee/employee-service/src/events/consumers/user-save-failure-consumer.ts:20", `email: ${employeeData.email}, UserId: ${employeeData.id}`);
                 return this.acknowledge(message);
             }
-            LocalLogger.log(LogCodes.DELETED, "Employee delete", "UserSaveFailureConsumer", `email: ${employee.email}, UserId: ${employee.id}`);
+            LocalLogger.log(LogCodes.DELETED, "Employee delete", "employee/employee-service/src/events/consumers/user-save-failure-consumer.ts:23", `email: ${employee.email}, UserId: ${employee.id}`);
             this.acknowledge(message);
         } catch (error) {
-            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "UserSaveFailureConsumer", `error: ${(error as Error).message}`);
+            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "employee/employee-service/src/events/consumers/user-save-failure-consumer.ts:26", `error: ${(error as Error).message}`);
         }
     }
 }

@@ -14,7 +14,7 @@ router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
         const rpcResponse = await userGrpcClient.loginGitHubUser(gitHubUser);
 
         /** Log Event */
-        LocalLogger.log(LogCodes.INFO, `GitHub SignIn`, "/api/auth/github/redirect", `email: ${gitHubUser.email}`);
+        LocalLogger.log(LogCodes.INFO, `GitHub SignIn`, "auth/auth-api/src/routes/github-auth.ts:17", `email: ${gitHubUser.email}`);
 
         /** Add to the session */
         req.session = {

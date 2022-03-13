@@ -90,6 +90,16 @@ build:
               - src: "**/*.go"
                 dest: .
 
+      # Task-api service
+        - image: espressotrip/concept-task-service
+          context: task/task-service
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "**/*.go"
+                dest: .
+
         # Web UI
         - image: espressotrip/concept-auth-web
           context: web-ui
