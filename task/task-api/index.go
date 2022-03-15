@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/EspressoTrip-v2/concept-go-common/grpcsevices/grpcports"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
 	"github.com/EspressoTrip-v2/concept-go-common/rabbitmq"
@@ -9,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	localLogger "task-api/local-logger"
+	"task-api/services"
 	"time"
 )
 
@@ -44,16 +46,22 @@ func startServer(route http.Handler, logMsg string) {
 
 func main() {
 	envCheck()
-	// start rabbit connection
+
+	// RabbitMQ
 	rabbit, err := rabbitmq.StartRabbitClient(os.Getenv("RABBIT_URI"), "task-api")
 	if err != nil {
 		fmt.Println(err.Message)
 	}
-	// start logger
-	localLogger.Start(rabbit, microserviceNames.TASK_API)
-	localLogger.Log(logcodes.CREATED, "App start up", "task-api", "test message")
 
-	// get router and start the server
+	// Logger
+	localLogger.Start(rabbit, microserviceNames.TASK_API)
+
+	// GRPC
+	client := services.GrpcClient()
+	client.Connect(fmt.Sprintf("[task-api:gRPC-client]: Conneted on %v\n", grpcports.TASK_SERVICE_DNS))
+	defer client.Close()
+
+	// HTTP Server
 	router := GetRouter()
 	startServer(router, fmt.Sprintf("[task-api:mux-service]: Listening port %v", PORT))
 

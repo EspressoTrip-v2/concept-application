@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+package taskPackage;
+
+message Task {
+  string id = 1;
+  string division = 2;
+  string employeeId = 3;
+  string shiftId = 4;
+  string managerId = 5;
+  int64 allocatedTimeMin = 6;
+  string specialRequests = 7;
+  bool completed = 8;
+  string rejectionReason = 9;
+  }
+
+message TaskRequest {
+  string id = 1;
+}
+
+message TaskResponse {
+  Task task = 1;
+}
+
+message AllTaskRequest {}
+
+message AllTaskResponse {
+  repeated Task task = 1;
+}
+
+message ResponsePayload {
+  int32 status = 1;
+  Task data = 3;
+}
+
+message AllTaskResponsePayload {
+  int32 status = 1;
+  Task data = 3;
+}
+
+service TaskService {
+  rpc GetTask(TaskRequest) returns (TaskResponse){};
+  rpc GetAllTasks(AllTaskRequest) returns (AllTaskResponse){}
+  rpc CreateTask (Task) returns (ResponsePayload){}
+  rpc UpdateTask (Task) returns (ResponsePayload){}
+}
