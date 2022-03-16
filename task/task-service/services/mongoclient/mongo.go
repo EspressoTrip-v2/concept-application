@@ -18,11 +18,11 @@ import (
 var mongoClient *MongoClient
 
 type MongoDBCruder interface {
-	InsertOneTask(data *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.InsertOneResult, error)
-	FindOneTask(filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
-	FindOneAndUpdateTask(filter bson.D, update bson.D, options *options.FindOneAndUpdateOptions, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
-	FindOneAndDeleteTask(filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
-	FindTasks(filter bson.D, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.Cursor, error)
+	InsertOneTask(ctx context.Context, data *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.InsertOneResult, error)
+	FindOneTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
+	FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, update bson.D, options *options.FindOneAndUpdateOptions, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
+	FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
+	FindTasks(ctx context.Context, filter bson.D, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.Cursor, error)
 	Disconnect()
 }
 
@@ -37,37 +37,50 @@ func (m MongoClient) Disconnect() {
 	}
 }
 
-func (m MongoClient) InsertOneTask(data *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.InsertOneResult, error) {
+func (m MongoClient) InsertOneTask(ctx context.Context, data *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.InsertOneResult, error) {
 	collection := m.db.Database(string(db)).Collection(string(col))
-	result, err := collection.InsertOne(context.TODO(), data)
+	result, err := collection.InsertOne(ctx, data)
 	if err != nil {
 		return nil, err
 	}
 	return result, nil
 }
 
-func (m MongoClient) FindOneTask(filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
+func (m MongoClient) FindOneTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
 	collection := m.db.Database(string(db)).Collection(string(col))
-	err := collection.FindOne(context.TODO(), filter).Decode(variable)
+	err := collection.FindOne(ctx, filter).Decode(variable)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m MongoClient) FindOneAndUpdateTask(filter bson.D, update bson.D, options *options.FindOneAndUpdateOptions, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
-	//TODO implement me
-	panic("implement me")
+func (m MongoClient) FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, update bson.D, options *options.FindOneAndUpdateOptions, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
+	collection := m.db.Database(string(db)).Collection(string(col))
+	err := collection.FindOneAndUpdate(ctx, filter, update, options).Decode(variable)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (m MongoClient) FindOneAndDeleteTask(filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
-	//TODO implement me
-	panic("implement me")
+func (m MongoClient) FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
+	collection := m.db.Database(string(db)).Collection(string(col))
+	err := collection.FindOneAndDelete(ctx, filter).Decode(variable)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (m MongoClient) FindTasks(filter bson.D, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.Cursor, error) {
-	//TODO implement me
-	panic("implement me")
+func (m MongoClient) FindTasks(ctx context.Context, filter bson.D, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.Cursor, error) {
+	collection := m.db.Database(string(db)).Collection(string(col))
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	return cursor, nil
+
 }
 
 func GetMongoDB() (*MongoClient, *libErrors.CustomError) {
@@ -77,7 +90,7 @@ func GetMongoDB() (*MongoClient, *libErrors.CustomError) {
 	if err != nil {
 		return nil, libErrors.NewDatabaseError(fmt.Sprintf("MongoDB error: %v", err.Error()))
 	}
-	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
+	if err := client.Ping(ctx, readpref.Primary()); err != nil {
 		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/services/mongoClient/mongo.go:81", err.Error())
 	} else {
 		fmt.Println("[task-service:mongo]: Connected successfully")

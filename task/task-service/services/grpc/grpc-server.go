@@ -23,7 +23,6 @@ func NewGrpcServer(port string, microservice microserviceNames.MicroserviceNames
 
 }
 
-// Listen starts the gRPC server and listens on supplied port
 func (g *GrpcServer) Listen(logMsg string) *libErrors.CustomError {
 	// bind port
 	listener, err := net.Listen("tcp", g.port)

@@ -8,12 +8,12 @@ import (
 	"task-api/services/grpc"
 )
 
-func GetTask(w http.ResponseWriter, r *http.Request) {
+func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	taskId := mux.Vars(r)["taskId"]
 	taskRequest := taskPackage.TaskRequest{
 		Id: taskId,
 	}
-	response, err := grpc.GrpcClient().GetTask(&taskRequest)
+	response, err := grpc.GrpcClient().DeleteTask(&taskRequest)
 	if err != nil {
 		utils.WriteResponse(w, err.Status, err.GetErrors())
 	} else {

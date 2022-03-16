@@ -35,4 +35,5 @@ service TaskService {
   rpc GetAllTasks(AllTaskRequest) returns (AllTaskResponsePayload){}
   rpc CreateTask (Task) returns (ResponsePayload){}
   rpc UpdateTask (Task) returns (ResponsePayload){}
+  rpc DeleteTask (TaskRequest) returns (ResponsePayload){}
 }
