@@ -3,7 +3,7 @@ package models
 import taskPackage "task-service/proto"
 
 type TaskItem struct {
-	Id               string `bson:"_id"`
+	Id               string `bson:"_id,omitempty"`
 	Division         string `bson:"division"`
 	EmployeeId       string `bson:"EmployeeId"`
 	ShiftId          string `bson:"shiftId"`

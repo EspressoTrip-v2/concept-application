@@ -13,13 +13,12 @@ import (
 	"os"
 	localLogger "task-service/local-logger"
 	"task-service/models"
-	taskPackage "task-service/proto"
 )
 
 var mongoClient *MongoClient
 
 type MongoDBCruder interface {
-	InsertOneTask(ctx context.Context, data *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.InsertOneResult, error)
+	InsertOneTask(ctx context.Context, data *models.TaskItem, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.InsertOneResult, error)
 	FindOneTask(ctx context.Context, filter bson.D, variable *models.TaskItem, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
 	FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *models.TaskItem, update bson.D, options *options.FindOneAndUpdateOptions, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
 	FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *models.TaskItem, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
@@ -38,7 +37,7 @@ func (m MongoClient) Disconnect() {
 	}
 }
 
-func (m MongoClient) InsertOneTask(ctx context.Context, data *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.InsertOneResult, error) {
+func (m MongoClient) InsertOneTask(ctx context.Context, data *models.TaskItem, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.InsertOneResult, error) {
 	collection := m.db.Database(string(db)).Collection(string(col))
 	result, err := collection.InsertOne(ctx, data)
 	if err != nil {
