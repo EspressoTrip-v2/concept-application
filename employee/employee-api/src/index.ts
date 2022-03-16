@@ -2,12 +2,17 @@ import "./tracer";
 import { app } from "./app";
 import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 import { LocalLogger } from "./utils";
+import { GrpcEmployeeClient } from "./services";
 
 const PORT = process.env.PORT || 3000;
 
 async function main(): Promise<void> {
     try {
+        /** gRPC Client */
+        GrpcEmployeeClient.getClient().connect("[employee-api:gRPC-client]: ");
+
         /** RabbitMQ */
+        if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
 
         /** Create RabbitMQ connection */
@@ -18,7 +23,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[employee-api:error]: Service start up error -> ${msg}`);
-        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "main()", msg.stack! || "No stack trace");
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "employee/employee-api/src/index.ts:22", msg.stack! || "No stack trace");
     }
 }
 

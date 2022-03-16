@@ -42,7 +42,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     userRole: data.userRole! as UserRoles,
                 });
                 await employee.save();
-                LocalLogger.log(LogCodes.CREATED, "Employee created", "CreateEmployee", `email: ${employee.email}, employeeId: ${employee.id}`);
+                LocalLogger.log(LogCodes.CREATED, "Employee created", "employee/employee-service/src/services/grpc-server.ts:45", `email: ${employee.email}, employeeId: ${employee.id}`);
                 const employeeMsg = {
                     ...Employee.convertToMessage(employee),
                     password: call.request.password!,
@@ -59,7 +59,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.INTERNAL,
                     details: "Could not create new employee, employee save failed",
                 };
-                LocalLogger.log(LogCodes.ERROR, "Employee create error", "CreateEmployee", `error: ${(error as Error).message}`);
+                LocalLogger.log(LogCodes.ERROR, "Employee create error", "employee/employee-service/src/services/grpc-server.ts:62", `error: ${(error as Error).message}`);
                 return callback(serverError);
             }
         },
@@ -68,7 +68,7 @@ export class GrpcServer extends AbstractGrpcServer {
             const { id }: EmployeeId = call.request;
             const deletedEmployee = await Employee.findByIdAndDelete(id);
             if (!deletedEmployee) {
-                LocalLogger.log(LogCodes.ERROR, "Employee not found", "DeleteEmployee", `Employee: ${id} does not exist`);
+                LocalLogger.log(LogCodes.ERROR, "Employee not found", "employee/employee-service/src/services/grpc-server.ts:71", `Employee: ${id} does not exist`);
                 return callback({
                     code: grpc.status.NOT_FOUND,
                     details: "Employee not found.",
@@ -77,7 +77,7 @@ export class GrpcServer extends AbstractGrpcServer {
             LocalLogger.log(
                 LogCodes.DELETED,
                 "Employee deleted successfully",
-                "DeleteEmployee",
+                "employee/employee-service/src/services/grpc-server.ts:77",
                 `email: ${deletedEmployee.email}, employeeId: ${deletedEmployee.id}`
             );
             new DeleteUserPublisher(this.m_rabbitConnection!).publish(Employee.convertToMessage(deletedEmployee));
@@ -91,7 +91,7 @@ export class GrpcServer extends AbstractGrpcServer {
             const { id }: EmployeeId = call.request;
             const employee = await Employee.findById(id);
             if (!employee) {
-                LocalLogger.log(LogCodes.ERROR, "Employee not found", "DeleteEmployee", `Employee: ${id} does not exist`);
+                LocalLogger.log(LogCodes.ERROR, "Employee not found", "employee/employee-service/src/services/grpc-server.ts:94", `Employee: ${id} does not exist`);
                 return callback({
                     code: grpc.status.NOT_FOUND,
                     details: "Employee not found.",
@@ -110,7 +110,7 @@ export class GrpcServer extends AbstractGrpcServer {
 
                 const employee = await Employee.findById(id);
                 if (!employee) {
-                    LocalLogger.log(LogCodes.ERROR, "Employee not found", "UpdateEmployee", `email: ${employeeUpdate.email}, employeeId: ${id}`);
+                    LocalLogger.log(LogCodes.ERROR, "Employee not found", "employee/employee-service/src/services/grpc-server.ts:113", `email: ${employeeUpdate.email}, employeeId: ${id}`);
                     return callback({
                         code: grpc.status.NOT_FOUND,
                         details: "Employee not found",
@@ -118,7 +118,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 }
                 employee.set({ ...employeeUpdate });
                 await employee.save();
-                LocalLogger.log(LogCodes.UPDATED, "Employee updated", "UpdateEmployee", `email: ${employee.email}, employeeId: ${employee.id}`);
+                LocalLogger.log(LogCodes.UPDATED, "Employee updated", "employee/employee-service/src/services/grpc-server.ts:121", `email: ${employee.email}, employeeId: ${employee.id}`);
                 new UpdateUserPublisher(this.m_rabbitConnection!).publish({
                     ...Employee.convertToMessage(employee),
                     password: call.request.password!,
@@ -132,7 +132,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     code: grpc.status.INTERNAL,
                     details: "Could not create new employee, employee save failed",
                 };
-                LocalLogger.log(LogCodes.ERROR, "Employee update error", "UpdateEmployee", `error: ${(error as Error).message}`);
+                LocalLogger.log(LogCodes.ERROR, "Employee update error", "employee/employee-service/src/services/grpc-server.ts:135", `error: ${(error as Error).message}`);
                 return callback(serverError);
             }
         },

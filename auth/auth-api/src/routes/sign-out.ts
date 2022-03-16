@@ -7,7 +7,7 @@ const router = express.Router();
 router.post("/api/auth/signout", validateCurrentUser, (req: Request, res: Response) => {
 
     /** Log Event */
-    LocalLogger.log(LogCodes.INFO, `User SignOut`, "/api/auth/signout", `email: ${req.currentUser?.email}`);
+    LocalLogger.log(LogCodes.INFO, `User SignOut`, "auth/auth-api/src/routes/sign-out.ts:10", `email: ${req.currentUser?.email}`);
 
     req.session = null;
     res.send({ cookie: req.session });
