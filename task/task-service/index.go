@@ -9,7 +9,7 @@ import (
 	"os"
 	localLogger "task-service/local-logger"
 	"task-service/services/grpc"
-	mongo "task-service/services/mongo"
+	"task-service/services/mongoclient"
 )
 
 func envCheck() {
@@ -27,23 +27,26 @@ func envCheck() {
 func main() {
 	envCheck()
 	// RabbitMQ
-	_, err := rabbitmq.StartRabbitClient(os.Getenv("RABBIT_URI"), "task-api")
+	rabbit, err := rabbitmq.StartRabbitClient(os.Getenv("RABBIT_URI"), "task-api")
+
+	// Logger
+	localLogger.Start(rabbit, microserviceNames.TASK_SERVICE)
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "RabbitMQ connection failed", "task-service/index.go:32", err.Message)
+		localLogger.Log(logcodes.ERROR, "RabbitMQ connection failed", "task/task-service/index.go:32", err.Message)
 	}
 
 	// MongoDB
-	mongoClient := mongo.GetMongoClient()
-	mongoClient.AddCollections("task", "task")
-	err = mongoClient.Connect()
+	mClient, err := mongoclient.GetMongoDB()
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "Failed to connect to MongoDB", "task-service/index.go:240", "Failed to connect to the Mongo database")
+		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/index.go:32", err.Message)
 	}
+	defer mClient.Disconnect()
 
 	// gRPC Server
-	err = grpc.NewGrpcServer(os.Getenv("GRPC_SERVER_PORT"), microserviceNames.TASK_SERVICE).
+	err = grpc.NewGrpcServer(os.Getenv("GRPC_SERVER_PORT"), microserviceNames.TASK_SERVICE, mClient).
 		Listen(fmt.Sprintf("[task-service:gRPC-server]: Listening on %v\n", os.Getenv("GRPC_SERVER_PORT")))
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "gRPC server failed", "task-service/index.go:31", err.Message)
+		localLogger.Log(logcodes.ERROR, "gRPC server failed", "task/task-service/index.go:56", err.Message)
 	}
+
 }

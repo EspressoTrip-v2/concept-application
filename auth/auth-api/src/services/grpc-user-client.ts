@@ -71,7 +71,7 @@ export class GrpcUserClient extends AbstractGrpcClient {
 
     connect(logMsg: string): void {
         this.m_client = new this.m_package.UserService(this.m_port, grpc.credentials.createInsecure());
-        console.log(logMsg + "Connected");
+        console.log(logMsg + "Connected on " + GrpcServicePortDns.AUTH_SERVICE_DNS);
     }
 
 }

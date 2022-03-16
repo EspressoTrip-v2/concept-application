@@ -54,7 +54,8 @@ If you have completed any of the optional setup above, please skip **_Minikube_*
 ### Minikube:
 
 ```bash
-~$ minikube start
+# The application takes up a lot of space as there are multiple services and volumes that need to be created 
+~$ minikube start --disk-size 50000mb
 ```
 
 ```bash

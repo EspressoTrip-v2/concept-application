@@ -2,22 +2,24 @@ package grpc
 
 import (
 	"fmt"
-	libErrors "github.com/EspressoTrip-v2/concept-go-common/lib-errors"
+	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
 	"google.golang.org/grpc"
 	"net"
 	localLogger "task-service/local-logger"
 	taskPackage "task-service/proto"
+	"task-service/services/mongoclient"
 )
 
 type GrpcServer struct {
 	port         string
 	microservice microserviceNames.MicroserviceNames
+	mongo        *mongoclient.MongoClient
 }
 
-func NewGrpcServer(port string, microservice microserviceNames.MicroserviceNames) *GrpcServer {
-	return &GrpcServer{port: port, microservice: microservice}
+func NewGrpcServer(port string, microservice microserviceNames.MicroserviceNames, mongo *mongoclient.MongoClient) *GrpcServer {
+	return &GrpcServer{port: port, microservice: microservice, mongo: mongo}
 
 }
 
@@ -34,7 +36,7 @@ func (g *GrpcServer) Listen(logMsg string) *libErrors.CustomError {
 	server := grpc.NewServer()
 
 	// register rpc methods
-	taskPackage.RegisterTaskServiceServer(server, &RpcHandlers{})
+	taskPackage.RegisterTaskServiceServer(server, &RpcHandlers{mongo: g.mongo})
 
 	// serve
 	fmt.Println(logMsg)

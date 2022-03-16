@@ -5,6 +5,6 @@ import (
 	"net/http"
 )
 
-func GetAllTasks(w http.ResponseWriter, r *http.Request) {
+func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	utils.WriteResponse(w, http.StatusOK, Sample{Message: "Success"})
 }

@@ -89,7 +89,7 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
     }
     connect(loMsg: string): void {
         this.m_client = new this.m_package.EmployeeService(this.m_port, grpc.credentials.createInsecure());
-        console.log(loMsg + "Connected");
+        console.log(loMsg + "Connected on " + GrpcServicePortDns.EMPLOYEE_SERVICE_DNS);
     }
 
 }

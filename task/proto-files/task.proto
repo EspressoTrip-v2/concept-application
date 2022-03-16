@@ -3,7 +3,7 @@ syntax = "proto3";
 package taskPackage;
 
 message Task {
-  string id = 1;
+  string _id = 1;
   string division = 2;
   string employeeId = 3;
   string shiftId = 4;
@@ -18,15 +18,7 @@ message TaskRequest {
   string id = 1;
 }
 
-message TaskResponse {
-  Task task = 1;
-}
-
 message AllTaskRequest {}
-
-message AllTaskResponse {
-  repeated Task task = 1;
-}
 
 message ResponsePayload {
   int32 status = 1;
@@ -35,12 +27,12 @@ message ResponsePayload {
 
 message AllTaskResponsePayload {
   int32 status = 1;
-  Task data = 3;
+  repeated Task data = 3;
 }
 
 service TaskService {
-  rpc GetTask(TaskRequest) returns (TaskResponse){};
-  rpc GetAllTasks(AllTaskRequest) returns (AllTaskResponse){}
+  rpc GetTask(TaskRequest) returns (ResponsePayload){};
+  rpc GetAllTasks(AllTaskRequest) returns (AllTaskResponsePayload){}
   rpc CreateTask (Task) returns (ResponsePayload){}
   rpc UpdateTask (Task) returns (ResponsePayload){}
 }

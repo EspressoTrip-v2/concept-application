@@ -10,7 +10,7 @@ import (
 	"net/http"
 	"os"
 	localLogger "task-api/local-logger"
-	"task-api/services"
+	"task-api/services/grpc"
 	"time"
 )
 
@@ -46,18 +46,17 @@ func startServer(route http.Handler, logMsg string) {
 
 func main() {
 	envCheck()
-
 	// RabbitMQ
 	rabbit, err := rabbitmq.StartRabbitClient(os.Getenv("RABBIT_URI"), "task-api")
-	if err != nil {
-		fmt.Println(err.Message)
-	}
 
 	// Logger
 	localLogger.Start(rabbit, microserviceNames.TASK_API)
+	if err != nil {
+		localLogger.Log(logcodes.ERROR, "RabbitMQ connection failed", "task-service/index.go:32", err.Message)
+	}
 
 	// GRPC
-	client := services.GrpcClient()
+	client := grpc.GrpcClient()
 	client.Connect(fmt.Sprintf("[task-api:gRPC-client]: Conneted on %v\n", grpcports.TASK_SERVICE_DNS))
 	defer client.Close()
 
