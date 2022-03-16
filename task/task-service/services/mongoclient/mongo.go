@@ -12,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"os"
 	localLogger "task-service/local-logger"
+	"task-service/models"
 	taskPackage "task-service/proto"
 )
 
@@ -19,9 +20,9 @@ var mongoClient *MongoClient
 
 type MongoDBCruder interface {
 	InsertOneTask(ctx context.Context, data *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.InsertOneResult, error)
-	FindOneTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
-	FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, update bson.D, options *options.FindOneAndUpdateOptions, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
-	FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
+	FindOneTask(ctx context.Context, filter bson.D, variable *models.TaskItem, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
+	FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *models.TaskItem, update bson.D, options *options.FindOneAndUpdateOptions, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
+	FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *models.TaskItem, db mongodb.DatabaseNames, col mongodb.CollectionNames) error
 	FindTasks(ctx context.Context, filter bson.D, db mongodb.DatabaseNames, col mongodb.CollectionNames) (*mongo.Cursor, error)
 	Disconnect()
 }
@@ -46,7 +47,7 @@ func (m MongoClient) InsertOneTask(ctx context.Context, data *taskPackage.Task, 
 	return result, nil
 }
 
-func (m MongoClient) FindOneTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
+func (m MongoClient) FindOneTask(ctx context.Context, filter bson.D, variable *models.TaskItem, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
 	collection := m.db.Database(string(db)).Collection(string(col))
 	err := collection.FindOne(ctx, filter).Decode(variable)
 	if err != nil {
@@ -55,7 +56,7 @@ func (m MongoClient) FindOneTask(ctx context.Context, filter bson.D, variable *t
 	return nil
 }
 
-func (m MongoClient) FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, update bson.D, options *options.FindOneAndUpdateOptions, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
+func (m MongoClient) FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *models.TaskItem, update bson.D, options *options.FindOneAndUpdateOptions, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
 	collection := m.db.Database(string(db)).Collection(string(col))
 	err := collection.FindOneAndUpdate(ctx, filter, update, options).Decode(variable)
 	if err != nil {
@@ -64,7 +65,7 @@ func (m MongoClient) FindOneAndUpdateTask(ctx context.Context, filter bson.D, va
 	return nil
 }
 
-func (m MongoClient) FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *taskPackage.Task, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
+func (m MongoClient) FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *models.TaskItem, db mongodb.DatabaseNames, col mongodb.CollectionNames) error {
 	collection := m.db.Database(string(db)).Collection(string(col))
 	err := collection.FindOneAndDelete(ctx, filter).Decode(variable)
 	if err != nil {
