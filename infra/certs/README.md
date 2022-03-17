@@ -51,7 +51,8 @@ ___
 
 ### Minikube:
 ```bash
-~$ minikube start --memory 8000 --cpus 4
+# The application takes up a lot of space as there are multiple services and volumes that need to be created 
+~$ minikube start --memory 8000 --cpus 4 --disk-size 50000mb
 ```
 
 You will need to add the domain to your OS hosts file.

@@ -20,7 +20,7 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     `Sign-in user not found`,
-                    `UpdateUserConsumer`,
+                    `auth/auth-service/src/events/consumers/update-user-consumer.ts:20`,
                     `email: ${employeeData.email}, userRole: ${employeeData.userRole}`,
                 );
                 this.acknowledge(message);
@@ -32,12 +32,12 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
             LocalLogger.log(
                 LogCodes.UPDATED,
                 "User updated",
-                "UpdateUserConsumer",
+                "auth/auth-service/src/events/consumers/update-user-consumer.ts:32",
                 `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
             );
             this.acknowledge(message);
         } catch (error) {
-            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "UpdateUserConsumer", `error: ${(error as Error).message}`);
+            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "auth/auth-service/src/events/consumers/update-user-consumer.ts:40", `error: ${(error as Error).message}`);
         }
     }
 }

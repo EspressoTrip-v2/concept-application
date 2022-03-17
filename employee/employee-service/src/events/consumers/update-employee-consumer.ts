@@ -17,14 +17,14 @@ export class UpdateEmployeeConsumer extends AbstractConsumer<UpdateEmployeeEvent
         try {
             const employee = await Employee.updateByEvent(employeeData);
             if (employee) {
-                LocalLogger.log(LogCodes.UPDATED, "Employee updated", "UpdateEmployeeConsumer", `email: ${employee.email}, authId: ${employee.authId}`);
+                LocalLogger.log(LogCodes.UPDATED, "Employee updated", "employee/employee-service/src/events/consumers/update-employee-consumer.ts:20", `email: ${employee.email}, authId: ${employee.authId}`);
                 return this.acknowledge(message);
             } else {
-                LocalLogger.log(LogCodes.ERROR, "Employee not found", "UpdateEmployeeConsumer", `email: ${employeeData.email}, authId: ${employeeData.authId}`);
+                LocalLogger.log(LogCodes.ERROR, "Employee not found", "employee/employee-service/src/events/consumers/update-employee-consumer.ts:23", `email: ${employeeData.email}, authId: ${employeeData.authId}`);
                 return this.acknowledge(message);
             }
         } catch (error) {
-            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "UpdateEmployeeConsumer", `error: ${(error as Error).message}`);
+            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "employee/employee-service/src/events/consumers/update-employee-consumer.ts:27", `error: ${(error as Error).message}`);
         }
     }
 }

@@ -25,8 +25,8 @@ export interface UserAttrs {
 /** Static build method to model */
 export interface UserModel extends mongoose.Model<UserDoc> {
     build(attributes: UserAttrs): UserDoc;
-
     convertToGrpcMessage(document: UserDoc): PersonMsg;
+    convertToJWTPayload(document: UserDoc): string;
 }
 
 /** Extend mongoose document with product document values */

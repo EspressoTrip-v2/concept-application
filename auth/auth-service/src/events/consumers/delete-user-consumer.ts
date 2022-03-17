@@ -17,13 +17,13 @@ export class DeleteUserConsumer extends AbstractConsumer<DeleteUserEvent> {
         try {
             const user = await User.findOneAndDelete({ email: employeeData.email });
             if (!user) {
-                LocalLogger.log(LogCodes.ERROR, "User not found", "DeleteUserConsumer", `email: ${employeeData.email}, employeeId: ${employeeData.id}`);
+                LocalLogger.log(LogCodes.ERROR, "User not found", "auth/auth-service/src/events/consumers/delete-user-consumer.ts:20", `email: ${employeeData.email}, employeeId: ${employeeData.id}`);
                 return this.acknowledge(message);
             }
-            LocalLogger.log(LogCodes.DELETED, "User deleted", "DeleteUserConsumer", `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`);
+            LocalLogger.log(LogCodes.DELETED, "User deleted", "auth/auth-service/src/events/consumers/delete-user-consumer.ts:23", `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`);
             return this.acknowledge(message);
         } catch (error) {
-            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "DeleteUserConsumer", `error: ${(error as Error).message}`);
+            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "auth/auth-service/src/events/consumers/delete-user-consumer.ts:26", `error: ${(error as Error).message}`);
         }
     }
 }

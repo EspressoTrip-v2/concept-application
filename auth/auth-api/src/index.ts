@@ -2,11 +2,14 @@ import "./tracer";
 import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
 import { app } from "./app";
 import { LocalLogger } from "./utils";
+import { GrpcUserClient } from "./services";
 
 const PORT = process.env.PORT || 3000;
 
 async function main(): Promise<void> {
     try {
+        /** gRPC Client */
+        GrpcUserClient.getClient().connect("[auth-api:gRPC-client]: ")
         /** RabbitMQ */
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
         /** Google */
@@ -27,7 +30,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-api:error]: Service start up error -> ${msg}`);
-        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "main()", msg.stack! || "No stack trace");
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "auth/auth-api/srv/index.ts:27", msg.stack! || "No stack trace");
     }
 }
 
