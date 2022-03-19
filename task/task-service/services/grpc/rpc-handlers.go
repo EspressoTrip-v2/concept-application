@@ -20,7 +20,7 @@ type RpcHandlers struct {
 	mongo *mongoclient.MongoClient
 }
 
-func (r RpcHandlers) DeleteTask(ctx context.Context, request *taskPackage.TaskRequest) (*taskPackage.ResponsePayload, error) {
+func (r *RpcHandlers) DeleteTask(ctx context.Context, request *taskPackage.TaskRequest) (*taskPackage.ResponsePayload, error) {
 	var deletedTask models.TaskItem
 	oid, err := primitive.ObjectIDFromHex(request.GetId())
 	if err != nil {
@@ -40,7 +40,7 @@ func (r RpcHandlers) DeleteTask(ctx context.Context, request *taskPackage.TaskRe
 	return &payload, nil
 }
 
-func (r RpcHandlers) GetTask(ctx context.Context, request *taskPackage.TaskRequest) (*taskPackage.ResponsePayload, error) {
+func (r *RpcHandlers) GetTask(ctx context.Context, request *taskPackage.TaskRequest) (*taskPackage.ResponsePayload, error) {
 	var task models.TaskItem
 	oid, err := primitive.ObjectIDFromHex(request.GetId())
 	if err != nil {
@@ -58,7 +58,7 @@ func (r RpcHandlers) GetTask(ctx context.Context, request *taskPackage.TaskReque
 	return &payload, nil
 }
 
-func (r RpcHandlers) GetAllTasks(ctx context.Context, request *taskPackage.AllTaskRequest) (*taskPackage.AllTaskResponsePayload, error) {
+func (r *RpcHandlers) GetAllTasks(ctx context.Context, request *taskPackage.AllTaskRequest) (*taskPackage.AllTaskResponsePayload, error) {
 	var tasks []*models.TaskItem
 	var msgTasks []*taskPackage.Task
 	cursor, err := r.mongo.FindTasks(ctx, bson.D{}, mongodb.TASK_DB, mongodb.TASK_COL)
@@ -82,7 +82,7 @@ func (r RpcHandlers) GetAllTasks(ctx context.Context, request *taskPackage.AllTa
 	return &payload, nil
 }
 
-func (r RpcHandlers) CreateTask(ctx context.Context, newTask *taskPackage.Task) (*taskPackage.ResponsePayload, error) {
+func (r *RpcHandlers) CreateTask(ctx context.Context, newTask *taskPackage.Task) (*taskPackage.ResponsePayload, error) {
 	nTask := models.TaskItem{
 		Division:         newTask.GetDivision(),
 		EmployeeId:       newTask.GetEmployeeId(),
@@ -115,7 +115,7 @@ func (r RpcHandlers) CreateTask(ctx context.Context, newTask *taskPackage.Task) 
 	return &payload, nil
 }
 
-func (r RpcHandlers) UpdateTask(ctx context.Context, task *taskPackage.Task) (*taskPackage.ResponsePayload, error) {
+func (r *RpcHandlers) UpdateTask(ctx context.Context, task *taskPackage.Task) (*taskPackage.ResponsePayload, error) {
 	var updatedTask models.TaskItem
 	oid, err := primitive.ObjectIDFromHex(task.GetId())
 	if err != nil {

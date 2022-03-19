@@ -30,7 +30,7 @@ func (c *CreateEmployeeConsumer) Listen() {
 	}
 
 	// Declare queue
-	queue, err := c.rabbitChannel.QueueDeclare("", true, false, false, false, nil)
+	queue, err := c.rabbitChannel.QueueDeclare("", false, false, true, false, nil)
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -42,11 +42,12 @@ func main() {
 	}
 
 	// MongoDB
-	if mClient, err := mongoclient.GetMongoDB(); err != nil {
+	mClient, err = mongoclient.GetMongoDB()
+	if err != nil {
 		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/index.go:32", err.Message)
-	} else {
-		defer mClient.Disconnect()
 	}
+	defer mClient.Disconnect()
+
 
 	// Consumers
 	if cecChannel, err := rabbit.AddChannel("cec"); err != nil {

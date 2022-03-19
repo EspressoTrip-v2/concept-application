@@ -1,5 +1,5 @@
 import "./tracer";
-import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
+import { LogCodes, MicroServiceNames, RabbitClient, rabbitClient } from "@espressotrip-org/concept-common";
 import { app } from "./app";
 import { LocalLogger } from "./utils";
 import { GrpcUserClient } from "./services";
@@ -7,9 +7,12 @@ import { GrpcUserClient } from "./services";
 const PORT = process.env.PORT || 3000;
 
 async function main(): Promise<void> {
+    let rabbit: RabbitClient | undefined;
+    let gRPC: GrpcUserClient | undefined;
     try {
         /** gRPC Client */
-        GrpcUserClient.getClient().connect("[auth-api:gRPC-client]: ");
+        gRPC = GrpcUserClient.getClient();
+        gRPC.connect("[auth-api:gRPC-client]: ");
         /** RabbitMQ */
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
         /** Google */
@@ -23,7 +26,7 @@ async function main(): Promise<void> {
         if (!process.env.GITHUB_CALLBACK_URL) throw new Error("GITHUB_CALLBACK must be defined");
 
         /** Create RabbitMQ connection */
-        const rabbit = await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
+        rabbit = await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
 
         /** Start logger */
         const logChannel = await rabbit.addChannel("log");
@@ -32,6 +35,8 @@ async function main(): Promise<void> {
         const msg = error as Error;
         console.log(`[auth-api:error]: Service start up error -> ${msg}`);
         LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "auth/auth-api/srv/index.ts:27", msg.stack! || "No stack trace");
+        if (rabbit) await rabbit.connection.close();
+        if(gRPC) gRPC.m_client.close()
     }
 }
 
