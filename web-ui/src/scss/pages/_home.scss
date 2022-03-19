@@ -1,0 +1,63 @@
+.home {
+    height: 91vh;
+    width: 100%;
+    display: flex;
+
+    &_left {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        text-align: left;
+
+        &-content {
+            padding: 7rem;
+            @include respond(desktop) {
+                padding: 2rem;
+            }
+        }
+    }
+    &_right {
+        width: 100%;
+        position: relative;
+        &-poster {
+            z-index: 2;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("../img/acme-poster.jpeg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            clip-path: polygon(19% 30%, 100% 10%, 100% 88%, 27% 77%);
+            height: 100%;
+        }
+        &-bg {
+            clip-path: polygon(55% 0, 100% 0, 100% 100%, 0 100%, 80% 60%);
+            background-color: $color-tertiary;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            animation: phase 3s ease-in-out infinite;
+        }
+    }
+}
+
+@keyframes phase {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
