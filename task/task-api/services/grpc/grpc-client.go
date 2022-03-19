@@ -85,3 +85,19 @@ func (c GrpcClientInstance) DeleteTask(request *taskPackage.TaskRequest) (*taskP
 	}
 	return response, nil
 }
+
+func (c GrpcClientInstance) GetEmployee(request *taskPackage.EmployeeRequest) (*taskPackage.EmployeeResponsePayload, *libErrors.CustomError) {
+	response, err := c.client.GetEmployee(c.ctx, request)
+	if err != nil {
+		return nil, libErrors.GrpcTranslator(err)
+	}
+	return response, nil
+}
+
+func (c GrpcClientInstance) GetAllEmployees(request *taskPackage.AllEmployeeRequest) (*taskPackage.AllEmployeeResponsePayload, *libErrors.CustomError) {
+	response, err := c.client.GetAllEmployees(c.ctx, request)
+	if err != nil {
+		return nil, libErrors.GrpcTranslator(err)
+	}
+	return response, nil
+}

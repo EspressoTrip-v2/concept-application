@@ -39,6 +39,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                 region: employeeData.region,
                 country: employeeData.country,
                 phoneNumber: employeeData.phoneNumber,
+                division: employeeData.division,
                 registeredEmployee: employeeData.registeredEmployee,
                 email: employeeData.email,
                 signInType: employeeData.signInType!,

@@ -57,7 +57,6 @@ func (c *CreateEmployeeConsumer) createEmployee(data []byte) {
 	if err != nil {
 		c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/create-employee-consumer.go:55")
 	}
-
 	employee := models.EmployeeItem{
 		Id:          employeePayload.Id,
 		Division:    employeePayload.Division,

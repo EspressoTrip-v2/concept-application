@@ -90,7 +90,7 @@ func (m MongoClient) FindTasks(ctx context.Context, filter bson.D) (*mongo.Curso
 }
 
 func (m MongoClient) InsertEmployee(ctx context.Context, data *models.EmployeeItem) (*mongo.InsertOneResult, error) {
-	collection := m.db.Database(string(mongodb.EMPLOYEE_DB)).Collection(string(mongodb.EMPLOYEE_COL))
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	result, err := collection.InsertOne(ctx, data)
 	if err != nil {
 		return nil, err
@@ -99,7 +99,7 @@ func (m MongoClient) InsertEmployee(ctx context.Context, data *models.EmployeeIt
 }
 
 func (m MongoClient) FindOneEmployee(ctx context.Context, filter bson.D, variable *models.EmployeeItem) error {
-	collection := m.db.Database(string(mongodb.EMPLOYEE_DB)).Collection(string(mongodb.EMPLOYEE_COL))
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	err := collection.FindOne(ctx, filter).Decode(variable)
 	if err != nil {
 		return err
@@ -108,7 +108,7 @@ func (m MongoClient) FindOneEmployee(ctx context.Context, filter bson.D, variabl
 }
 
 func (m MongoClient) FindEmployees(ctx context.Context, filter bson.D) (*mongo.Cursor, error) {
-	collection := m.db.Database(string(mongodb.EMPLOYEE_DB)).Collection(string(mongodb.EMPLOYEE_DB))
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_DB))
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err
@@ -117,7 +117,7 @@ func (m MongoClient) FindEmployees(ctx context.Context, filter bson.D) (*mongo.C
 }
 
 func (m MongoClient) FindOneAndUpdateEmployee(ctx context.Context, filter bson.D, variable *models.EmployeeItem, update bson.D, options *options.FindOneAndUpdateOptions) error {
-	collection := m.db.Database(string(mongodb.EMPLOYEE_DB)).Collection(string(mongodb.EMPLOYEE_COL))
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	err := collection.FindOneAndUpdate(ctx, filter, update, options).Decode(variable)
 	if err != nil {
 		return err
@@ -126,7 +126,7 @@ func (m MongoClient) FindOneAndUpdateEmployee(ctx context.Context, filter bson.D
 }
 
 func (m MongoClient) FindOneAndDeleteEmployee(ctx context.Context, filter bson.D, variable *models.EmployeeItem) error {
-	collection := m.db.Database(string(mongodb.EMPLOYEE_DB)).Collection(string(mongodb.EMPLOYEE_COL))
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	err := collection.FindOneAndDelete(ctx, filter).Decode(variable)
 	if err != nil {
 		return err
