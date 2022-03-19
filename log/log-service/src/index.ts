@@ -7,11 +7,11 @@ async function main(): Promise<void> {
         if (!process.env.LOG_PROVIDER_TYPE) throw new Error("LOG_PROVIDER_TYPE must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!, `[log-service:rabbitmq]: Connected successfully`);
+        const rabbit = await rabbitClient.connect(process.env.RABBIT_URI!, `[log-service:rabbitmq]: Connected successfully`);
 
         /** Create RabbitMQ consumers */
-        await new LogsConsumer(rabbitClient.connection).listen();
-
+        const logChannel = await rabbit.addChannel("log");
+        await new LogsConsumer(logChannel).listen();
     } catch (error) {
         const msg = error as Error;
         console.log(`[log-service:error]: Service start up error -> ${msg}`);

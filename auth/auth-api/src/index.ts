@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 async function main(): Promise<void> {
     try {
         /** gRPC Client */
-        GrpcUserClient.getClient().connect("[auth-api:gRPC-client]: ")
+        GrpcUserClient.getClient().connect("[auth-api:gRPC-client]: ");
         /** RabbitMQ */
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
         /** Google */
@@ -23,10 +23,11 @@ async function main(): Promise<void> {
         if (!process.env.GITHUB_CALLBACK_URL) throw new Error("GITHUB_CALLBACK must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
+        const rabbit = await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
 
         /** Start logger */
-        LocalLogger.start(rabbitClient.connection, MicroServiceNames.AUTH_API);
+        const logChannel = await rabbit.addChannel("log");
+        LocalLogger.start(logChannel, MicroServiceNames.AUTH_API);
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-api:error]: Service start up error -> ${msg}`);

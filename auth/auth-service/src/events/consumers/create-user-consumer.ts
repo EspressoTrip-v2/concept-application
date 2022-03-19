@@ -1,4 +1,4 @@
-import { AbstractConsumer, CreateUserEvent, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, rabbitClient, UserRoles } from "@espressotrip-org/concept-common";
+import { AbstractConsumer, BindKey, CreateUserEvent, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, rabbitClient } from "@espressotrip-org/concept-common";
 import * as amqp from "amqplib";
 import { User } from "../../models";
 import { UpdateEmployeePublisher, UserSaveFailurePublisher } from "../publishers";
@@ -8,39 +8,24 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
     m_queue: QueueInfo.CREATE_USER = QueueInfo.CREATE_USER;
+    m_bindKey: BindKey.CREATE = BindKey.CREATE;
 
-    constructor(rabbitConnection: amqp.Connection) {
-        super(rabbitConnection, "create-user");
+    constructor(rabbitChannel: amqp.Channel) {
+        super(rabbitChannel, "create-user");
     }
 
     async onMessage(data: CreateUserEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
         const employeeData: PersonMsg = JSON.parse(data.toString());
         try {
             const existingUser = await User.findOne({ email: employeeData.email });
-            if (existingUser && existingUser.userRole === UserRoles.EMPLOYEE) {
+            if (existingUser) {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     `Employee sign-in already exists`,
                     `auth/auth-service/src/events/consumers/create-user-consumer.ts:21`,
-                    `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
+                    `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`
                 );
-                return this.acknowledge(message);
-            } else if (existingUser && existingUser.userRole === UserRoles.ADMIN) {
-                /** If the employee is an admin the admin info will over-write the employee doc.
-                 * You will have to update the employee to change the user info for admin  */
-                new UpdateEmployeePublisher(this.m_connection).publish({
-                    ...User.convertToGrpcMessage(existingUser),
-                    userRole: UserRoles.ADMIN,
-                    signInType: existingUser.signInType,
-                    authId: existingUser.id,
-                });
-                LocalLogger.log(
-                    LogCodes.INFO,
-                    `Employee is admin user`,
-                    `auth/auth-service/src/events/consumers/create-user-consumer.ts:37`,
-                    `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
-                );
-                return this.acknowledge(message);
+                return;
             }
 
             const user = User.build({
@@ -64,23 +49,24 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
             });
             await user.save();
 
-            new UpdateEmployeePublisher(this.m_connection).publish({
+            UpdateEmployeePublisher.updateEmployeePublisher().publish({
                 ...employeeData,
                 authId: user.id,
             });
-
             LocalLogger.log(
                 LogCodes.CREATED,
                 `Employee saved as new user sign-in created`,
                 `auth/auth-service/src/events/consumers/create-user-consumer.ts:75`,
-                `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`,
+                `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`
             );
-
-            return this.acknowledge(message);
         } catch (error) {
-            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "auth/auth-service/src/events/consumers/create-user-consumer.ts:81", `error: ${(error as Error).message}`);
-            new UserSaveFailurePublisher(rabbitClient.connection).publish(employeeData);
-            this.acknowledge(message);
+            LocalLogger.log(
+                LogCodes.ERROR,
+                "Consumer Error",
+                "auth/auth-service/src/events/consumers/create-user-consumer.ts:81",
+                `error: ${(error as Error).message}`
+            );
+            UserSaveFailurePublisher.userFailurePublisher().publish(employeeData);
         }
     }
 }

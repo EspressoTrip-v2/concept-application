@@ -15,11 +15,11 @@ type localLoggerConfig struct {
 	logger      *logging.LogPublish
 }
 
-func Start(rabbitConnection *amqp.Connection, serviceName microserviceNames.MicroserviceNames) {
+func Start(rabbitChannel *amqp.Channel, serviceName microserviceNames.MicroserviceNames) {
 	if localLogger == nil {
 		logger := localLoggerConfig{
 			serviceName: serviceName,
-			logger:      logging.NewLogPublish(rabbitConnection, serviceName),
+			logger:      logging.NewLogPublish(rabbitChannel, serviceName),
 		}
 		localLogger = &logger
 	}

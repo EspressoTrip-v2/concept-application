@@ -80,8 +80,8 @@ employeeSchema.statics.convertToMessage = function (document: EmployeeDoc): Pers
 
 
 employeeSchema.statics.updateByEvent = async function (employee: PersonMsg): Promise<EmployeeDoc | null> {
-    if (!employee.version) return Employee.findOneAndUpdate({ email: employee.email }, employee);
-    return Employee.findOneAndUpdate({ email: employee.email, version: employee.version }, employee);
+    if (!employee.version) return await Employee.findOneAndUpdate({ email: employee.email }, employee);
+    return await Employee.findOneAndUpdate({ email: employee.email, version: employee.version }, employee);
 };
 /** Create model from schema */
 const Employee = mongoose.model<EmployeeDoc, EmployeeModel>("Employee", employeeSchema);

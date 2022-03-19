@@ -16,10 +16,11 @@ async function main(): Promise<void> {
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!, `[employee-api:rabbitmq]: Connected successfully`);
+        const rabbit = await rabbitClient.connect(process.env.RABBIT_URI!, `[employee-api:rabbitmq]: Connected successfully`);
 
         /** Start logger */
-        LocalLogger.start(rabbitClient.connection, MicroServiceNames.EMPLOYEE_API);
+        const logChannel = await rabbit.addChannel("log");
+        LocalLogger.start(logChannel, MicroServiceNames.EMPLOYEE_API);
     } catch (error) {
         const msg = error as Error;
         console.log(`[employee-api:error]: Service start up error -> ${msg}`);

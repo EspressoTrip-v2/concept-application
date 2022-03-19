@@ -2,7 +2,7 @@ import "./tracer";
 import { grpcServer } from "./services";
 import mongoose from "mongoose";
 import { LogCodes, MicroServiceNames, rabbitClient } from "@espressotrip-org/concept-common";
-import { UpdateEmployeeConsumer, UserSaveFailureConsumer } from "./events";
+import { CreateUserPublisher, DeleteUserPublisher, UpdateEmployeeConsumer, UpdateUserPublisher, UserSaveFailureConsumer } from "./events";
 import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
@@ -13,9 +13,10 @@ async function main(): Promise<void> {
         if (!process.env.GRPC_SERVER_PORT) throw new Error("GRPC_SERVER_PORT must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!, `[employee-service:rabbitmq]: Connected successfully`);
+        const rabbit = await rabbitClient.connect(process.env.RABBIT_URI!, `[employee-service:rabbitmq]: Connected successfully`);
         /** Start logger */
-        LocalLogger.start(rabbitClient.connection, MicroServiceNames.EMPLOYEE_SERVICE);
+        const logChannel = await rabbit.addChannel("log");
+        LocalLogger.start(logChannel, MicroServiceNames.EMPLOYEE_SERVICE);
 
         // /** Create Mongoose connection */
         await mongoose.connect(process.env.MONGO_URI!, { dbName: process.env.MONGO_DBNAME! });
@@ -24,9 +25,19 @@ async function main(): Promise<void> {
         /** Create gRPC server */
         const gRPC = grpcServer(rabbitClient.connection).listen(`[employee-service:gRPC-server]: Listening on ${process.env.GRPC_SERVER_PORT}`);
 
+        /** Create Publishers */
+        const cupChannel = await rabbit.addChannel("cup")
+        CreateUserPublisher.NewCreateUserPublisher(cupChannel)
+        const dupChannel = await rabbit.addChannel("dup")
+        DeleteUserPublisher.NewDeleteUserPublisher(dupChannel)
+        const uupChannel = await rabbit.addChannel("uup")
+        UpdateUserPublisher.NewUpdateUserPublisher(uupChannel)
+
         /** Rabbit Consumers */
-        await new UserSaveFailureConsumer(rabbitClient.connection).listen();
-        await new UpdateEmployeeConsumer(rabbitClient.connection).listen();
+        const usfcChannel = await rabbit.addChannel("usfc")
+        await new UserSaveFailureConsumer(usfcChannel).listen();
+        const uecChannel = await rabbit.addChannel("uec")
+        await new UpdateEmployeeConsumer(uecChannel).listen();
     } catch (error) {
         const msg = error as Error;
         console.log(`[employee-service:error]: Service start up error -> ${msg}`);
