@@ -45,7 +45,7 @@ func (c *GrpcClientInstance) Close() {
 	c.connection.Close()
 }
 
-func (c GrpcClientInstance) CreateTask(data *taskPackage.Task) (*taskPackage.ResponsePayload, *libErrors.CustomError) {
+func (c GrpcClientInstance) CreateTask(data *taskPackage.Task) (*taskPackage.TaskResponsePayload, *libErrors.CustomError) {
 	response, err := c.client.CreateTask(c.ctx, data)
 
 	if err != nil {
@@ -54,7 +54,7 @@ func (c GrpcClientInstance) CreateTask(data *taskPackage.Task) (*taskPackage.Res
 	return response, nil
 }
 
-func (c GrpcClientInstance) GetTask(request *taskPackage.TaskRequest) (*taskPackage.ResponsePayload, *libErrors.CustomError) {
+func (c GrpcClientInstance) GetTask(request *taskPackage.TaskRequest) (*taskPackage.TaskResponsePayload, *libErrors.CustomError) {
 	response, err := c.client.GetTask(c.ctx, request)
 	if err != nil {
 		return nil, libErrors.GrpcTranslator(err)
@@ -70,7 +70,7 @@ func (c GrpcClientInstance) GetAllTasks(request *taskPackage.AllTaskRequest) (*t
 	return response, nil
 }
 
-func (c GrpcClientInstance) UpdateTask(data *taskPackage.Task) (*taskPackage.ResponsePayload, *libErrors.CustomError) {
+func (c GrpcClientInstance) UpdateTask(data *taskPackage.Task) (*taskPackage.TaskResponsePayload, *libErrors.CustomError) {
 	response, err := c.client.UpdateTask(c.ctx, data)
 	if err != nil {
 		return nil, libErrors.GrpcTranslator(err)
@@ -78,7 +78,7 @@ func (c GrpcClientInstance) UpdateTask(data *taskPackage.Task) (*taskPackage.Res
 	return response, nil
 }
 
-func (c GrpcClientInstance) DeleteTask(request *taskPackage.TaskRequest) (*taskPackage.ResponsePayload, *libErrors.CustomError) {
+func (c GrpcClientInstance) DeleteTask(request *taskPackage.TaskRequest) (*taskPackage.TaskResponsePayload, *libErrors.CustomError) {
 	response, err := c.client.DeleteTask(c.ctx, request)
 	if err != nil {
 		return nil, libErrors.GrpcTranslator(err)

@@ -21,6 +21,7 @@ message GrpcEmployee {
     string providerId = 16;
     string password = 17;
     string userRole = 18;
+    string division = 19;
 }
 
 message GrpcEmployeeAttributes {
@@ -39,6 +40,7 @@ message GrpcEmployeeAttributes {
     string password = 13;
     string id = 14;
     string userRole = 15;
+    string division = 16;
 }
 
 message EmployeeId {

@@ -21,6 +21,7 @@ message ServerStreamUserResponse {
 	string providerId = 16;
 	string userRole = 17;
 	string registeredEmployee = 18;
+	string division = 19;
 }
 
 message GrpcUser {
@@ -43,6 +44,7 @@ message GrpcUser {
 	string password = 17;
 	string userRole = 18;
 	string registeredEmployee = 19;
+	string division = 20;
 }
 
 message AllGrpcUsers {

@@ -3,11 +3,13 @@
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs.
 
 ### Reference for available URL's:
-- [https://acmefast.dev](https://acmefast.dev) -> Main Application
-- [https://rabbit.acmefast.dev](https://rabbit.acmefast.dev) -> RabbitMQ dashboard
-- [https://linkerd.acmefast.dev](https://linkerd.acmefast.dev) -> Linkerd service mesh dashboard. ** If enabled **
-- [https://jaeger.acmefast.dev](https://jaeger.acmefast.dev) -> Jaeger tracing dashboard. ** This deploys with the service mesh. so it needs to be enabled **
-- Log outputs can be viewed on Papertrail, you will need access. Give me a shout if you want to view it
+
+-   [https://acmefast.dev](https://acmefast.dev) -> Main Application
+-   [https://rabbit.acmefast.dev](https://rabbit.acmefast.dev) -> RabbitMQ dashboard
+-   [https://linkerd.acmefast.dev](https://linkerd.acmefast.dev) -> Linkerd service mesh dashboard. ** If enabled **
+-   [https://jaeger.acmefast.dev](https://jaeger.acmefast.dev) -> Jaeger tracing dashboard. ** This deploys with the service mesh. so it needs to be enabled **
+-   Log outputs can be viewed on Papertrail, you will need access. Give me a shout if you want to view it
+
 ---
 
 #### Prerequisite installations:
@@ -54,7 +56,7 @@ If you have completed any of the optional setup above, please skip **_Minikube_*
 ### Minikube:
 
 ```bash
-# The application takes up a lot of space as there are multiple services and volumes that need to be created 
+# The application takes up a lot of space as there are multiple services and volumes that need to be created
 ~$ minikube start --disk-size 50000mb
 ```
 
@@ -74,7 +76,7 @@ You will need to add the domain to your OS hosts file.
 Add the minikube ip with the domains of the application into the hosts file,
 
 ```text
-<MINIKUBE IP> acmefast.dev 
+<MINIKUBE IP> acmefast.dev
 <MINIKUBE IP> rabbit.acmefast.dev
 ```
 
@@ -204,12 +206,13 @@ Users will not be created from a UI, they will have to be added manually. Only e
     "lastName": "Doe",
     "gender": "male",
     "race": "white",
-    "position": "developer",
+    "position": "baker",
     "startDate": "2022-02-28T20:37:08.858Z",
     "shiftPreference": "night",
     "branchName": "Wyzetalk",
     "region": "WC",
     "registeredEmployee": false,
+    "division": "kitchen",
     "country": "ZA",
     "phoneNumber": "0823333333",
     "email": "john@test.com",
@@ -227,7 +230,7 @@ Email values need to be unique: Password is **_12345_**
 
 ### Skaffold:
 
-Application uses Skaffold for the management of the Kubernetes cluster during development. 
+Application uses Skaffold for the management of the Kubernetes cluster during development.
 
 ```bash
 ~$ skaffold dev
@@ -257,9 +260,13 @@ This should stop the warnings.
 Using the -a flag will wipe all images and Skaffold will have to rebuild them all at start.
 
 ---
+
 ### Postman API:
-You can see and use the API here: [ACME Fast Food API]( https://www.postman.com/cloudy-crater-370854/workspace/acme-fast-foods/collection/17320608-dd78a46c-8c0e-4f69-806e-46f05cf907e7)
-___
+
+You can see and use the API here: [ACME Fast Food API](https://www.postman.com/cloudy-crater-370854/workspace/acme-fast-foods/collection/17320608-dd78a46c-8c0e-4f69-806e-46f05cf907e7)
+
+---
+
 ### Architectural Model:
 
 ![acme-fast-foods](https://user-images.githubusercontent.com/9296659/156255276-422bcf05-6605-4815-98e9-6c125087c0d8.png)

@@ -27,8 +27,3 @@ func (i *TaskItem) ConvertToMessage() *taskPackage.Task {
 		RejectionReason:  i.RejectionReason,
 	}
 }
-
-type EmployeeEntry struct {
-	Id       string `bson:"_id"`
-	Division string `bson:"division"`
-}

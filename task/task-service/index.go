@@ -44,16 +44,15 @@ func main() {
 	// MongoDB
 	mClient, err = mongoclient.GetMongoDB()
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/index.go:32", err.Message)
+		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/index.go:47", err.Message)
 	}
 	defer mClient.Disconnect()
-
 
 	// Consumers
 	if cecChannel, err := rabbit.AddChannel("cec"); err != nil {
 		log.Println("[rabbitmq:task-service]: Failed to create channel for employee-create-consumer")
 	} else {
-		go events.NewCreateEmployeeConsumer(cecChannel).Listen()
+		go events.NewCreateEmployeeConsumer(cecChannel, mClient).Listen()
 	}
 
 	// gRPC Server

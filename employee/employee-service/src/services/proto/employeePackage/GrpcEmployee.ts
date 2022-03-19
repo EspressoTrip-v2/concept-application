@@ -20,6 +20,7 @@ export interface GrpcEmployee {
   'providerId'?: (string);
   'password'?: (string);
   'userRole'?: (string);
+  'division'?: (string);
 }
 
 export interface GrpcEmployee__Output {
@@ -41,4 +42,5 @@ export interface GrpcEmployee__Output {
   'providerId': (string);
   'password': (string);
   'userRole': (string);
+  'division': (string);
 }

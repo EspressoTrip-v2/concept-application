@@ -36,6 +36,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     startDate: data.startDate!,
                     shiftPreference: data.shiftPreference!,
                     branchName: data.branchName!,
+                    division: data.division!,
                     region: data.region!,
                     country: data.country!,
                     phoneNumber: data.phoneNumber!,

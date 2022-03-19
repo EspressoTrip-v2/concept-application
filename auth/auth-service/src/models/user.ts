@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
         shiftPreference: { type: String, required: true },
         branchName: { type: String, required: true },
         region: { type: String, required: true },
+        division: { type: String, required: true },
         registeredEmployee: { type: Boolean, default: false },
         country: { type: String, required: true },
         phoneNumber: { type: String, required: true },
@@ -75,6 +76,7 @@ userSchema.statics.convertToGrpcMessage = function (document: UserDoc): PersonMs
         registeredEmployee: document.registeredEmployee,
         position: document.position,
         providerId: document.providerId,
+        division: document.division,
         shiftPreference: document.shiftPreference as ShiftPreference,
         startDate: document.startDate,
         signInType: document.signInType,
@@ -86,8 +88,7 @@ userSchema.statics.convertToGrpcMessage = function (document: UserDoc): PersonMs
 };
 
 userSchema.statics.convertToJWTPayload = function (document: UserDoc): string {
-
-    const msg =  {
+    const msg = {
         country: document.country,
         email: document.email,
         gender: document.gender as GenderType,
@@ -99,6 +100,7 @@ userSchema.statics.convertToJWTPayload = function (document: UserDoc): string {
         registeredEmployee: document.registeredEmployee,
         position: document.position,
         providerId: document.providerId,
+        division: document.division,
         shiftPreference: document.shiftPreference as ShiftPreference,
         startDate: document.startDate,
         signInType: document.signInType,
@@ -106,8 +108,8 @@ userSchema.statics.convertToJWTPayload = function (document: UserDoc): string {
         userRole: document.userRole as UserRoles,
         firstName: document.firstName,
         phoneNumber: document.phoneNumber,
-    }
-    return jwt.sign(msg, process.env.JWT_KEY!)
+    };
+    return jwt.sign(msg, process.env.JWT_KEY!);
 };
 
 /** Create model from schema */
