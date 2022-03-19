@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
-	"github.com/EspressoTrip-v2/concept-go-common/rabbitmq"
 	"log"
 	"os"
+	"task-service/events"
 	localLogger "task-service/local-logger"
 	"task-service/services/grpc"
 	"task-service/services/mongoclient"
+	"task-service/services/rabbitmq"
 )
 
 func envCheck() {
@@ -26,21 +27,33 @@ func envCheck() {
 
 func main() {
 	envCheck()
+	var mClient *mongoclient.MongoClient
 	// RabbitMQ
-	rabbit, err := rabbitmq.StartRabbitClient(os.Getenv("RABBIT_URI"), "task-api")
-
-	// Logger
-	localLogger.Start(rabbit, microserviceNames.TASK_SERVICE)
+	rabbit, err := rabbitmq.GetRabbitClient(os.Getenv("RABBIT_URI"), "task-service")
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "RabbitMQ connection failed", "task/task-service/index.go:32", err.Message)
+		log.Fatalln("[rabbitmq:task-service]: Failed to connect to RabbitMQ message bus")
+	}
+
+	// Logging
+	if logChannel, err := rabbit.AddChannel("log"); err != nil {
+		log.Println("[rabbitmq:task-service]: Failed to create channel for logging")
+	} else {
+		localLogger.Start(logChannel, microserviceNames.TASK_SERVICE)
 	}
 
 	// MongoDB
-	mClient, err := mongoclient.GetMongoDB()
+	mClient, err = mongoclient.GetMongoDB()
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/index.go:32", err.Message)
+		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/index.go:47", err.Message)
 	}
 	defer mClient.Disconnect()
+
+	// Consumers
+	if cecChannel, err := rabbit.AddChannel("cec"); err != nil {
+		log.Println("[rabbitmq:task-service]: Failed to create channel for employee-create-consumer")
+	} else {
+		go events.NewCreateEmployeeConsumer(cecChannel, mClient).Listen()
+	}
 
 	// gRPC Server
 	err = grpc.NewGrpcServer(os.Getenv("GRPC_SERVER_PORT"), microserviceNames.TASK_SERVICE, mClient).

@@ -13,6 +13,7 @@ export const updateEmployeeSchema = Joi.object({
     startDate: Joi.string().custom(isValidStartDate, "Check if startDate is a valid date"),
     shiftPreference: Joi.string().valid(ShiftPreference.DAY, ShiftPreference.NIGHT, ShiftPreference.ANY),
     branchName: Joi.string().required(),
+    division: Joi.string().required(),
     region: Joi.string().required(),
     country: Joi.string().required(),
     phoneNumber: Joi.string().required(),

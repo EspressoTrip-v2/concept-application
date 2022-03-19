@@ -13,6 +13,7 @@ export interface EmployeeAttrs {
     branchName: string;
     region: string;
     registeredEmployee?: boolean;
+    division: string;
     authId?: string;
     country: string;
     phoneNumber: string;
@@ -43,6 +44,7 @@ export interface EmployeeDoc extends mongoose.Document {
     branchName: string;
     region: string;
     registeredEmployee: boolean;
+    division: string;
     authId: string;
     country: string;
     phoneNumber: string;

@@ -14,10 +14,11 @@ async function main(): Promise<void> {
         if (!process.env.POSTGRES_PORT) throw new Error("POSTGRES_PORT must be defined");
 
         /** Create RabbitMQ connection */
-        await rabbitClient.connect(process.env.RABBIT_URI!, `[analytic-service:rabbitmq]: Connected successfully`);
+       const rabbit =  await rabbitClient.connect(process.env.RABBIT_URI!, `[analytic-service:rabbitmq]: Connected successfully`);
 
         /** Start logger */
-        LocalLogger.start(rabbitClient.connection, MicroServiceNames.ANALYTIC_SERVICE);
+        const logChannel = await rabbit.addChannel("log")
+        LocalLogger.start(logChannel, MicroServiceNames.ANALYTIC_SERVICE);
 
         /** Create postgres connection */
         await postgresClient.connect(`[analytic-service:postgres]: Connected successfully`);

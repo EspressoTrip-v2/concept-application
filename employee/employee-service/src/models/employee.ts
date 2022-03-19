@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { EmployeeAttrs, EmployeeDoc, EmployeeModel } from "./interfaces";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
-import { PersonMsg, GenderType, MicroServiceNames, RaceTypes, ShiftPreference, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
+import { PersonMsg, GenderType, RaceTypes, ShiftPreference, SignInTypes, UserRoles } from "@espressotrip-org/concept-common";
 
 /**
  * User model that uses update-if-current version incrementation
@@ -18,6 +18,7 @@ const employeeSchema = new mongoose.Schema(
         branchName: { type: String, required: true },
         region: { type: String, required: true },
         registeredEmployee: { type: Boolean, default: true },
+        division: {type: String, required: true},
         authId: { type: String, default: "" },
         country: { type: String, required: true },
         phoneNumber: { type: String, required: true },
@@ -67,6 +68,7 @@ employeeSchema.statics.convertToMessage = function (document: EmployeeDoc): Pers
         race: document.race as RaceTypes,
         region: document.region,
         registeredEmployee: document.registeredEmployee,
+        division: document.division,
         position: document.position,
         providerId: document.providerId,
         shiftPreference: document.shiftPreference as ShiftPreference,
@@ -80,8 +82,8 @@ employeeSchema.statics.convertToMessage = function (document: EmployeeDoc): Pers
 
 
 employeeSchema.statics.updateByEvent = async function (employee: PersonMsg): Promise<EmployeeDoc | null> {
-    if (!employee.version) return Employee.findOneAndUpdate({ email: employee.email }, employee);
-    return Employee.findOneAndUpdate({ email: employee.email, version: employee.version }, employee);
+    if (!employee.version) return await Employee.findOneAndUpdate({ email: employee.email }, employee);
+    return await Employee.findOneAndUpdate({ email: employee.email, version: employee.version }, employee);
 };
 /** Create model from schema */
 const Employee = mongoose.model<EmployeeDoc, EmployeeModel>("Employee", employeeSchema);

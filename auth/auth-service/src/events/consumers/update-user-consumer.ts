@@ -1,4 +1,4 @@
-import { AbstractConsumer, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, UpdateUserEvent, UserRoles } from "@espressotrip-org/concept-common";
+import { AbstractConsumer, BindKey, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, UpdateUserEvent } from "@espressotrip-org/concept-common";
 import * as amqp from "amqplib";
 import { User } from "../../models";
 import { LocalLogger } from "../../utils";
@@ -6,10 +6,10 @@ import { LocalLogger } from "../../utils";
 export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.UPDATE_USER = QueueInfo.UPDATE_USER;
+    m_bindKey: BindKey.UPDATE = BindKey.UPDATE;
 
-    constructor(rabbitConnection: amqp.Connection) {
-        super(rabbitConnection, "update-user");
+    constructor(rabbitChannel: amqp.Channel) {
+        super(rabbitChannel, "update-user");
     }
 
     async onMessage(data: UpdateUserEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
@@ -23,7 +23,6 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                     `auth/auth-service/src/events/consumers/update-user-consumer.ts:20`,
                     `email: ${employeeData.email}, userRole: ${employeeData.userRole}`,
                 );
-                this.acknowledge(message);
                 throw new Error("Sign-in user not found.");
             }
 
@@ -35,7 +34,6 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                 "auth/auth-service/src/events/consumers/update-user-consumer.ts:32",
                 `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
             );
-            this.acknowledge(message);
         } catch (error) {
             LocalLogger.log(LogCodes.ERROR, "Consumer Error", "auth/auth-service/src/events/consumers/update-user-consumer.ts:40", `error: ${(error as Error).message}`);
         }

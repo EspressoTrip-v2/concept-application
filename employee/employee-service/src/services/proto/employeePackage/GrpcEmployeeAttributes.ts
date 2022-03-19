@@ -17,6 +17,7 @@ export interface GrpcEmployeeAttributes {
   'password'?: (string);
   'id'?: (string);
   'userRole'?: (string);
+  'division'?: (string);
 }
 
 export interface GrpcEmployeeAttributes__Output {
@@ -35,4 +36,5 @@ export interface GrpcEmployeeAttributes__Output {
   'password': (string);
   'id': (string);
   'userRole': (string);
+  'division': (string);
 }

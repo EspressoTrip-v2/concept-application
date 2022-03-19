@@ -16,7 +16,7 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
     readonly m_package = this.m_grpcObject.employeePackage;
     // @ts-ignore
-    private m_client: EmployeeServiceClient
+    m_client: EmployeeServiceClient
 
     constructor() {
         super();

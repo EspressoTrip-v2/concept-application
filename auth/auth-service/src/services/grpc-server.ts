@@ -65,7 +65,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     case SignInTypes.UNKNOWN:
                         googleUser.set({ signInType: SignInTypes.GOOGLE, providerId: call.request.sub });
                         await googleUser.save();
-                        if (googleUser.registeredEmployee) new UpdateEmployeePublisher(this.m_rabbitConnection!).publish(User.convertToGrpcMessage(googleUser));
+                        if (googleUser.registeredEmployee) UpdateEmployeePublisher.updateEmployeePublisher().publish(User.convertToGrpcMessage(googleUser));
                         LocalLogger.log(
                             LogCodes.UPDATED,
                             "Sign-in user registered",
@@ -150,7 +150,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     case SignInTypes.UNKNOWN:
                         gitHubUser.set({ signInType: SignInTypes.GITHUB, providerId: call.request.id!.toString() });
                         await gitHubUser.save();
-                        if (gitHubUser.registeredEmployee) new UpdateEmployeePublisher(this.m_rabbitConnection!).publish(User.convertToGrpcMessage(gitHubUser));
+                        if (gitHubUser.registeredEmployee) UpdateEmployeePublisher.updateEmployeePublisher().publish(User.convertToGrpcMessage(gitHubUser));
                         LocalLogger.log(
                             LogCodes.UPDATED,
                             "Sign-in user registered",
@@ -234,7 +234,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     case SignInTypes.UNKNOWN:
                         localUser.set({ signInType: SignInTypes.LOCAL });
                         await localUser.save();
-                        if (localUser.registeredEmployee) new UpdateEmployeePublisher(this.m_rabbitConnection!).publish(User.convertToGrpcMessage(localUser));
+                        if (localUser.registeredEmployee) UpdateEmployeePublisher.updateEmployeePublisher().publish(User.convertToGrpcMessage(localUser));
                         LocalLogger.log(
                             LogCodes.UPDATED,
                             "Sign-in user registered",

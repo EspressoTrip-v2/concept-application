@@ -1,13 +1,32 @@
-import { AbstractPublisher, ExchangeNames, ExchangeTypes, QueueInfo, UpdateEmployeeEvent, UpdateUserEvent } from "@espressotrip-org/concept-common";
+import { AbstractPublisher, BindKey, ExchangeNames, ExchangeTypes, LogCodes, UpdateUserEvent } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
+import { LocalLogger } from "../../utils";
 
 export class UpdateUserPublisher extends AbstractPublisher<UpdateUserEvent> {
+    static m_instance: UpdateUserPublisher;
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.UPDATE_USER = QueueInfo.UPDATE_USER;
+    m_bindKey: BindKey.UPDATE = BindKey.UPDATE;
 
-    constructor(rabbitConnection: amqp.Connection) {
-        super(rabbitConnection, "update-user");
+    constructor(rabbitChannel: amqp.Channel) {
+        super(rabbitChannel, "update-user");
+    }
+
+    static NewUpdateUserPublisher(rabbitChannel: amqp.Channel) {
+        this.m_instance = new UpdateUserPublisher(rabbitChannel);
+    }
+
+    static updateUserPublisher(): UpdateUserPublisher {
+        if (!this.m_instance) {
+            LocalLogger.log(
+                LogCodes.ERROR,
+                `UpdateUserPublisher not created`,
+                `employee/employee-service/src/events/publishers/update-user-publisher.ts:23`,
+                "UpdateUserPublisher not created in application index.ts"
+            );
+            throw new Error("UpdateUserPublisher not created in application index.ts");
+        }
+        return this.m_instance;
     }
 
     async publish(data: UpdateUserEvent["data"]): Promise<void> {

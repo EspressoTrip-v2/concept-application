@@ -20,20 +20,44 @@ message TaskRequest {
 
 message AllTaskRequest {}
 
-message ResponsePayload {
+message TaskResponsePayload {
   int32 status = 1;
-  Task data = 3;
+  Task data = 2;
 }
 
 message AllTaskResponsePayload {
   int32 status = 1;
-  repeated Task data = 3;
+  repeated Task data = 2;
 }
 
+message Employee {
+  string id = 1;
+  string division = 2;
+  int32 numberTasks = 3;
+  string email = 4;
+}
+
+message EmployeeResponsePayload {
+  int32 status = 1;
+  Employee data = 2;
+}
+
+message EmployeeRequest {
+  string id = 1;
+}
+message AllEmployeeResponsePayload {
+  int32 status = 1;
+  repeated Employee data = 2;
+}
+
+message AllEmployeeRequest {}
 service TaskService {
-  rpc GetTask(TaskRequest) returns (ResponsePayload){};
+  rpc GetTask(TaskRequest) returns (TaskResponsePayload){};
   rpc GetAllTasks(AllTaskRequest) returns (AllTaskResponsePayload){}
-  rpc CreateTask (Task) returns (ResponsePayload){}
-  rpc UpdateTask (Task) returns (ResponsePayload){}
-  rpc DeleteTask (TaskRequest) returns (ResponsePayload){}
+  rpc CreateTask (Task) returns (TaskResponsePayload){}
+  rpc UpdateTask (Task) returns (TaskResponsePayload){}
+  rpc DeleteTask (TaskRequest) returns (TaskResponsePayload){}
+  rpc GetEmployee (EmployeeRequest) returns (EmployeeResponsePayload){}
+  rpc GetAllEmployees(AllEmployeeRequest) returns (AllEmployeeResponsePayload){}
+
 }

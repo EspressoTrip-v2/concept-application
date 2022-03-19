@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"github.com/EspressoTrip-v2/concept-go-common/grpcsevices/grpcports"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
-	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
-	"github.com/EspressoTrip-v2/concept-go-common/rabbitmq"
 	"log"
 	"net/http"
 	"os"
@@ -47,13 +45,13 @@ func startServer(route http.Handler, logMsg string) {
 func main() {
 	envCheck()
 	// RabbitMQ
-	rabbit, err := rabbitmq.StartRabbitClient(os.Getenv("RABBIT_URI"), "task-api")
-
-	// Logger
-	localLogger.Start(rabbit, microserviceNames.TASK_API)
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "RabbitMQ connection failed", "task-service/index.go:32", err.Message)
-	}
+	//rabbit, err := rabbitmq.StartRabbitClient(os.Getenv("RABBIT_URI"), "task-api")
+	//
+	//// Logger
+	//localLogger.Start(rabbit.GetConnection(), microserviceNames.TASK_API)
+	//if err != nil {
+	//	localLogger.Log(logcodes.ERROR, "RabbitMQ connection failed", "task-service/index.go:32", err.Message)
+	//}
 
 	// GRPC
 	client := grpc.GrpcClient()

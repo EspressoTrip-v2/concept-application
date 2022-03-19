@@ -13,6 +13,7 @@ export interface UserAttrs {
     branchName: string;
     region: string;
     registeredEmployee?: boolean;
+    division: string;
     country: string;
     phoneNumber: string;
     email: string;
@@ -41,6 +42,7 @@ export interface UserDoc extends mongoose.Document {
     shiftPreference: string;
     branchName: string;
     region: string;
+    division: string;
     registeredEmployee: boolean;
     country: string;
     phoneNumber: string;

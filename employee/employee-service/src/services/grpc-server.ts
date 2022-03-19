@@ -36,6 +36,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     startDate: data.startDate!,
                     shiftPreference: data.shiftPreference!,
                     branchName: data.branchName!,
+                    division: data.division!,
                     region: data.region!,
                     country: data.country!,
                     phoneNumber: data.phoneNumber!,
@@ -48,7 +49,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     password: call.request.password!,
                 };
 
-                new CreateUserPublisher(this.m_rabbitConnection!).publish(employeeMsg);
+                CreateUserPublisher.createUserPublisher().publish(employeeMsg);
 
                 callback(null, {
                     status: 200,
@@ -76,11 +77,11 @@ export class GrpcServer extends AbstractGrpcServer {
             }
             LocalLogger.log(
                 LogCodes.DELETED,
-                "Employee deleted successfully",
+                "Employee deleted",
                 "employee/employee-service/src/services/grpc-server.ts:77",
                 `email: ${deletedEmployee.email}, employeeId: ${deletedEmployee.id}`
             );
-            new DeleteUserPublisher(this.m_rabbitConnection!).publish(Employee.convertToMessage(deletedEmployee));
+           DeleteUserPublisher.deleteUserPublisher().publish(Employee.convertToMessage(deletedEmployee));
             return callback(null, {
                 status: 200,
                 data: Employee.convertToMessage(deletedEmployee),
@@ -119,7 +120,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 employee.set({ ...employeeUpdate });
                 await employee.save();
                 LocalLogger.log(LogCodes.UPDATED, "Employee updated", "employee/employee-service/src/services/grpc-server.ts:121", `email: ${employee.email}, employeeId: ${employee.id}`);
-                new UpdateUserPublisher(this.m_rabbitConnection!).publish({
+                UpdateUserPublisher.updateUserPublisher().publish({
                     ...Employee.convertToMessage(employee),
                     password: call.request.password!,
                 });
