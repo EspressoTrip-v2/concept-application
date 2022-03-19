@@ -1,4 +1,4 @@
-import { AbstractPublisher, BindKey, ExchangeNames, ExchangeTypes, LogCodes, QueueInfo, UpdateUserEvent } from "@espressotrip-org/concept-common";
+import { AbstractPublisher, BindKey, ExchangeNames, ExchangeTypes, LogCodes, UpdateUserEvent } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { LocalLogger } from "../../utils";
 
@@ -6,7 +6,6 @@ export class UpdateUserPublisher extends AbstractPublisher<UpdateUserEvent> {
     static m_instance: UpdateUserPublisher;
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.UPDATE_USER = QueueInfo.UPDATE_USER;
     m_bindKey: BindKey.UPDATE = BindKey.UPDATE;
 
     constructor(rabbitChannel: amqp.Channel) {

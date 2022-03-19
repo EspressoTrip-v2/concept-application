@@ -1,4 +1,4 @@
-import { AbstractConsumer, BindKey, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, UpdateEmployeeEvent } from "@espressotrip-org/concept-common";
+import { AbstractConsumer, BindKey, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, UpdateEmployeeEvent } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { Employee } from "../../models";
 import { LocalLogger } from "../../utils";
@@ -6,7 +6,6 @@ import { LocalLogger } from "../../utils";
 export class UpdateEmployeeConsumer extends AbstractConsumer<UpdateEmployeeEvent> {
     m_exchangeName: ExchangeNames.EMPLOYEE = ExchangeNames.EMPLOYEE;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.UPDATE_EMPLOYEE = QueueInfo.UPDATE_EMPLOYEE;
     m_bindKey: BindKey.UPDATE = BindKey.UPDATE;
 
     constructor(rabbitChannel: amqp.Channel) {

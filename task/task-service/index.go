@@ -35,7 +35,7 @@ func main() {
 	}
 
 	// Logging
-	if logChannel, err := rabbit.AddNewChannel("log"); err != nil {
+	if logChannel, err := rabbit.AddChannel("log"); err != nil {
 		log.Println("[rabbitmq:task-service]: Failed to create channel for logging")
 	} else {
 		localLogger.Start(logChannel, microserviceNames.TASK_SERVICE)
@@ -49,10 +49,10 @@ func main() {
 	}
 
 	// Consumers
-	if empChannel, err := rabbit.AddNewChannel("employee-create-consumer"); err != nil {
+	if cecChannel, err := rabbit.AddChannel("cec"); err != nil {
 		log.Println("[rabbitmq:task-service]: Failed to create channel for employee-create-consumer")
 	} else {
-		go events.NewCreateEmployeeConsumer(empChannel).Listen()
+		go events.NewCreateEmployeeConsumer(cecChannel).Listen()
 	}
 
 	// gRPC Server

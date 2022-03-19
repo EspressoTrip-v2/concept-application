@@ -1,4 +1,4 @@
-import { AbstractConsumer, BindKey, CreateUserEvent, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, rabbitClient } from "@espressotrip-org/concept-common";
+import { AbstractConsumer, BindKey, CreateUserEvent, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg } from "@espressotrip-org/concept-common";
 import * as amqp from "amqplib";
 import { User } from "../../models";
 import { UpdateEmployeePublisher, UserSaveFailurePublisher } from "../publishers";
@@ -7,7 +7,6 @@ import { LocalLogger } from "../../utils";
 export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.CREATE_USER = QueueInfo.CREATE_USER;
     m_bindKey: BindKey.CREATE = BindKey.CREATE;
 
     constructor(rabbitChannel: amqp.Channel) {

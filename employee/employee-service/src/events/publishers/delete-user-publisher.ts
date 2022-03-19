@@ -1,4 +1,4 @@
-import { AbstractPublisher, BindKey, DeleteUserEvent, ExchangeNames, ExchangeTypes, LogCodes, QueueInfo } from "@espressotrip-org/concept-common";
+import { AbstractPublisher, BindKey, DeleteUserEvent, ExchangeNames, ExchangeTypes, LogCodes } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { LocalLogger } from "../../utils";
 
@@ -6,7 +6,6 @@ export class DeleteUserPublisher extends AbstractPublisher<DeleteUserEvent> {
     static m_instance: DeleteUserPublisher
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.DELETE_USER = QueueInfo.DELETE_USER;
     m_bindKey: BindKey.DELETE = BindKey.DELETE;
 
     constructor(rabbitChannel: amqp.Channel) {

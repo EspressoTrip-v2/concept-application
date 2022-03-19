@@ -1,4 +1,4 @@
-import { AbstractPublisher, BindKey, ExchangeNames, ExchangeTypes, LogCodes, QueueInfo, SaveUserFailEvent } from "@espressotrip-org/concept-common";
+import { AbstractPublisher, BindKey, ExchangeNames, ExchangeTypes, LogCodes, SaveUserFailEvent } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { LocalLogger } from "../../utils";
 
@@ -6,7 +6,6 @@ export class UserSaveFailurePublisher extends AbstractPublisher<SaveUserFailEven
     static m_instance: UserSaveFailurePublisher | undefined
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.AUTH_ERROR = QueueInfo.AUTH_ERROR;
     m_bindKey: BindKey.ERROR = BindKey.ERROR;
 
     private constructor(rabbitChannel: amqp.Channel) {

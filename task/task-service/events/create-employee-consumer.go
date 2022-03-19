@@ -2,15 +2,15 @@ package events
 
 import (
 	"fmt"
+	"github.com/EspressoTrip-v2/concept-go-common/exchange/bindkeys"
 	"github.com/EspressoTrip-v2/concept-go-common/exchange/exchangeNames"
 	"github.com/EspressoTrip-v2/concept-go-common/exchange/exchangeTypes"
-	"github.com/EspressoTrip-v2/concept-go-common/exchange/queue/queueInfo"
 	"github.com/streadway/amqp"
 	"log"
 )
 
 type CreateEmployeeConsumer struct {
-	queueName     queueInfo.QueueInfo
+	bindKey       bindkeys.BindKey
 	exchangeName  exchangeNames.ExchangeNames
 	exchangeType  exchangeTypes.ExchangeType
 	rabbitChannel *amqp.Channel
@@ -18,7 +18,7 @@ type CreateEmployeeConsumer struct {
 }
 
 func NewCreateEmployeeConsumer(rabbitChannel *amqp.Channel) *CreateEmployeeConsumer {
-	return &CreateEmployeeConsumer{queueName: queueInfo.CREATE_USER, exchangeName: exchangeNames.AUTH, exchangeType: exchangeTypes.DIRECT, rabbitChannel: rabbitChannel, consumerName: "create-employee"}
+	return &CreateEmployeeConsumer{bindKey: bindkeys.CREATE, exchangeName: exchangeNames.AUTH, exchangeType: exchangeTypes.DIRECT, rabbitChannel: rabbitChannel, consumerName: "create-employee"}
 }
 
 func (c *CreateEmployeeConsumer) Listen() {
@@ -30,13 +30,13 @@ func (c *CreateEmployeeConsumer) Listen() {
 	}
 
 	// Declare queue
-	queue, err := c.rabbitChannel.QueueDeclare(string(c.queueName), true, false, false, false, nil)
+	queue, err := c.rabbitChannel.QueueDeclare("", true, false, false, false, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Bind queue
-	err = c.rabbitChannel.QueueBind(string(c.queueName), string(c.queueName), string(c.exchangeName), false, nil)
+	err = c.rabbitChannel.QueueBind(queue.Name, string(c.bindKey), string(c.exchangeName), false, nil)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -46,12 +46,12 @@ func (c *CreateEmployeeConsumer) Listen() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("[consumer:%v]: Subscribed on queue:%v\n", c.consumerName, c.queueName)
+	fmt.Printf("[consumer:%v]: Subscribed on exchange:%v | route:%v\n", c.consumerName, c.exchangeName, c.bindKey)
 
 	forever := make(chan bool)
 	go func() {
 		for d := range messages {
-				log.Printf("%s",d.Body)
+			log.Printf("%s", d.Body)
 		}
 	}()
 	<-forever

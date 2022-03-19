@@ -30,7 +30,7 @@ func (c *RabbitConfig) GetChannel(key string) (*amqp.Channel, *libErrors.CustomE
 	return c.channels[key], nil
 }
 
-func (c *RabbitConfig) AddNewChannel(key string) (*amqp.Channel, *libErrors.CustomError) {
+func (c *RabbitConfig) AddChannel(key string) (*amqp.Channel, *libErrors.CustomError) {
 	newChannel, err := c.connection.Channel()
 	if err != nil {
 		return nil, libErrors.NewRabbitConnectionError(fmt.Sprintf("Channel ceration error %v", key))

@@ -1,4 +1,4 @@
-import { AbstractConsumer, BindKey, DeleteUserEvent, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo } from "@espressotrip-org/concept-common";
+import { AbstractConsumer, BindKey, DeleteUserEvent, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { User } from "../../models";
 import { LocalLogger } from "../../utils";
@@ -6,7 +6,6 @@ import { LocalLogger } from "../../utils";
 export class DeleteUserConsumer extends AbstractConsumer<DeleteUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.DELETE_USER = QueueInfo.DELETE_USER;
     m_bindKey: BindKey.DELETE = BindKey.DELETE;
 
     constructor(rabbitChannel: amqp.Channel) {

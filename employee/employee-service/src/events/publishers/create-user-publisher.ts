@@ -1,4 +1,4 @@
-import { AbstractPublisher, BindKey, CreateUserEvent, ExchangeNames, ExchangeTypes, LogCodes, QueueInfo } from "@espressotrip-org/concept-common";
+import { AbstractPublisher, BindKey, CreateUserEvent, ExchangeNames, ExchangeTypes, LogCodes } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { LocalLogger } from "../../utils";
 
@@ -6,7 +6,6 @@ export class CreateUserPublisher extends AbstractPublisher<CreateUserEvent> {
     static m_instance: CreateUserPublisher;
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.CREATE_USER = QueueInfo.CREATE_USER;
     m_bindKey: BindKey.CREATE = BindKey.CREATE;
 
     constructor(rabbitChannel: amqp.Channel) {

@@ -1,4 +1,4 @@
-import { AbstractConsumer, BindKey, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, QueueInfo, SaveUserFailEvent } from "@espressotrip-org/concept-common";
+import { AbstractConsumer, BindKey, ExchangeNames, ExchangeTypes, LogCodes, PersonMsg, SaveUserFailEvent } from "@espressotrip-org/concept-common";
 import amqp from "amqplib";
 import { Employee } from "../../models";
 import { LocalLogger } from "../../utils";
@@ -6,7 +6,6 @@ import { LocalLogger } from "../../utils";
 export class UserSaveFailureConsumer extends AbstractConsumer<SaveUserFailEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_queue: QueueInfo.AUTH_ERROR = QueueInfo.AUTH_ERROR;
     m_bindKey: BindKey.ERROR = BindKey.ERROR;
 
     constructor(rabbitChannel: amqp.Channel) {
