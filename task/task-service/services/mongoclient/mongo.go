@@ -108,7 +108,7 @@ func (m MongoClient) FindOneEmployee(ctx context.Context, filter bson.D, variabl
 }
 
 func (m MongoClient) FindEmployees(ctx context.Context, filter bson.D) (*mongo.Cursor, error) {
-	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_DB))
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
 		return nil, err

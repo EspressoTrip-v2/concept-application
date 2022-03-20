@@ -56,14 +56,14 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
             LocalLogger.log(
                 LogCodes.CREATED,
                 `Employee saved as new user sign-in created`,
-                `auth/auth-service/src/events/consumers/create-user-consumer.ts:75`,
+                `auth/auth-service/src/events/consumers/create-user-consumer.ts:56`,
                 `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`
             );
         } catch (error) {
             LocalLogger.log(
                 LogCodes.ERROR,
                 "Consumer Error",
-                "auth/auth-service/src/events/consumers/create-user-consumer.ts:81",
+                "auth/auth-service/src/events/consumers/create-user-consumer.ts:66",
                 `error: ${(error as Error).message}`
             );
             UserSaveFailurePublisher.userFailurePublisher().publish(employeeData);

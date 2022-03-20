@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
 	"log"
 	"os"
-	"task-service/events"
+	"task-service/events/consumers"
 	localLogger "task-service/local-logger"
 	"task-service/services/grpc"
 	"task-service/services/mongoclient"
@@ -35,31 +36,51 @@ func main() {
 	}
 
 	// Logging
-	if logChannel, err := rabbit.AddChannel("log"); err != nil {
-		log.Println("[rabbitmq:task-service]: Failed to create channel for logging")
-	} else {
+	logChannel, err := rabbit.AddChannel("log")
+	ok := onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:40")
+	if ok == true {
 		localLogger.Start(logChannel, microserviceNames.TASK_SERVICE)
 	}
 
 	// MongoDB
 	mClient, err = mongoclient.GetMongoDB()
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/index.go:47", err.Message)
-	}
+	onFailure(err, logcodes.ERROR, "MongoDB error", "task/task-service/index.go:47")
 	defer mClient.Disconnect()
 
 	// Consumers
-	if cecChannel, err := rabbit.AddChannel("cec"); err != nil {
-		log.Println("[rabbitmq:task-service]: Failed to create channel for employee-create-consumer")
-	} else {
-		go events.NewCreateEmployeeConsumer(cecChannel, mClient).Listen()
+	cecChannel, err := rabbit.AddChannel("cec")
+	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:52")
+	if ok == true {
+		go consumers.NewCreateEmployeeConsumer(cecChannel, mClient).Listen()
+	}
+
+	decChannel, err := rabbit.AddChannel("dec")
+	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:58")
+	if ok == true {
+		go consumers.NewDeleteEmployeeConsumer(decChannel, mClient).Listen()
+	}
+
+	uecChannel, err := rabbit.AddChannel("uec")
+	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:64")
+	if ok == true {
+		go consumers.NewUpdateEmployeeConsumer(uecChannel, mClient).Listen()
 	}
 
 	// gRPC Server
 	err = grpc.NewGrpcServer(os.Getenv("GRPC_SERVER_PORT"), microserviceNames.TASK_SERVICE, mClient).
 		Listen(fmt.Sprintf("[task-service:gRPC-server]: Listening on %v\n", os.Getenv("GRPC_SERVER_PORT")))
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "gRPC server failed", "task/task-service/index.go:56", err.Message)
+	ok = onFailure(err, logcodes.ERROR, "gRPC server failed", "task/task-service/index.go:72")
+	if ok != true {
+		log.Fatalln("[task-service:gRPC-server]: Failed to connect to gRPC server")
 	}
 
+}
+
+func onFailure(err *libErrors.CustomError, errCode logcodes.LogCodes, message string, origin string) bool {
+	if err != nil {
+		localLogger.Log(errCode, message, origin, err.Message)
+		log.Printf("[task-service:error]: Service start up error -> %v", message)
+		return false
+	}
+	return true
 }

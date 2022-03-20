@@ -164,7 +164,7 @@ func (r *RpcHandlers) GetEmployee(ctx context.Context, request *taskPackage.Empl
 func (r *RpcHandlers) GetAllEmployees(ctx context.Context, request *taskPackage.AllEmployeeRequest) (*taskPackage.AllEmployeeResponsePayload, error) {
 	var employees []*models.EmployeeItem
 	var msgEmployees []*taskPackage.Employee
-	cursor, err := r.mongo.FindTasks(ctx, bson.D{})
+	cursor, err := r.mongo.FindEmployees(ctx, bson.D{})
 	if err != nil {
 		localLogger.Log(logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:170", err.Error())
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))

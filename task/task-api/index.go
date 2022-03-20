@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/EspressoTrip-v2/concept-go-common/grpcsevices/grpcports"
+	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"log"
 	"net/http"
@@ -62,4 +63,13 @@ func main() {
 	router := GetRouter()
 	startServer(router, fmt.Sprintf("[task-api:mux-service]: Listening port %v", PORT))
 
+}
+
+func onFailure(err *libErrors.CustomError, errCode logcodes.LogCodes, message string, origin string) bool {
+	if err != nil {
+		localLogger.Log(errCode, message, origin, err.Message)
+		log.Printf("[task-service:error]: Service start up error -> %v", message)
+		return false
+	}
+	return true
 }
