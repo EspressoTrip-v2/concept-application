@@ -25,7 +25,7 @@ type DeleteEmployeeConsumer struct {
 }
 
 func NewDeleteEmployeeConsumer(rabbitChannel *amqp.Channel, mongoClient *mongoclient.MongoClient) *DeleteEmployeeConsumer {
-	return &DeleteEmployeeConsumer{bindKey: bindkeys.DELETE, exchangeName: exchangeNames.EMPLOYEE, exchangeType: exchangeTypes.DIRECT, mongoClient: mongoClient, rabbitChannel: rabbitChannel, consumerName: "delete-employee"}
+	return &DeleteEmployeeConsumer{bindKey: bindkeys.DELETE, exchangeName: exchangeNames.AUTH, exchangeType: exchangeTypes.DIRECT, mongoClient: mongoClient, rabbitChannel: rabbitChannel, consumerName: "delete-employee"}
 }
 
 func (c *DeleteEmployeeConsumer) Listen() {
@@ -46,17 +46,21 @@ func (c *DeleteEmployeeConsumer) Listen() {
 	forever := make(chan bool)
 	go func() {
 		for d := range messages {
-			c.deleteEmployee(d.Body)
+			ok := c.deleteEmployee(d.Body)
+			if !ok {
+				localLogger.Log(logcodes.ERROR, "go routine error", "task/task-service/events/delete-employee-consumer.go:51", "Error deleting employee")
+			}
 		}
 	}()
 	<-forever
 }
 
-func (c *DeleteEmployeeConsumer) deleteEmployee(data []byte) {
-	var employeePayload models.Employee
+func (c *DeleteEmployeeConsumer) deleteEmployee(data []byte) bool {
+	var employeePayload models.EmployeePayload
 	err := json.Unmarshal(data, &employeePayload)
-	if err != nil {
-		c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/delete-employee-consumer.go:59")
+	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/delete-employee-consumer.go:58")
+	if !ok {
+		return ok
 	}
 	employee := models.EmployeeItem{
 		Id:          employeePayload.Id,
@@ -66,14 +70,22 @@ func (c *DeleteEmployeeConsumer) deleteEmployee(data []byte) {
 	}
 
 	err = c.mongoClient.FindOneAndDeleteEmployee(context.TODO(), bson.D{{"email", employeePayload.Email}}, &employee)
-	if err != nil {
-		c.onFailure(err, logcodes.ERROR, "Delete employee failed", "task/task-service/events/delete-employee-consumer.go:70")
+	ok = c.onFailure(err, logcodes.ERROR, "Delete employee failed", "task/task-service/events/delete-employee-consumer.go:70")
+	if !ok {
+		return ok
 	}
+	c.onSuccess(logcodes.DELETED, "Employee deleted", "", fmt.Sprintf("email: %v, employeeId: %v", employeePayload.Email, employeePayload.Id))
+	return true
 }
 
-func (c *DeleteEmployeeConsumer) onFailure(err error, errCode logcodes.LogCodes, message string, origin string) {
+func (c *DeleteEmployeeConsumer) onFailure(err error, logCode logcodes.LogCodes, message string, origin string) bool {
 	if err != nil {
-		localLogger.Log(errCode, message, origin, err.Error())
-		panic(fmt.Sprintf("%v: %v", message, err.Error()))
+		localLogger.Log(logCode, message, origin, err.Error())
+		return false
 	}
+	return true
+}
+
+func (c *DeleteEmployeeConsumer) onSuccess(logCode logcodes.LogCodes, message string, origin string, detail string) {
+	localLogger.Log(logCode, message, origin, detail)
 }

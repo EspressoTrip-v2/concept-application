@@ -5,6 +5,8 @@ import (
 	"github.com/EspressoTrip-v2/concept-go-common/grpcsevices/grpcports"
 	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
+	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
+	"github.com/EspressoTrip-v2/concept-go-common/rabbitmq"
 	"log"
 	"net/http"
 	"os"
@@ -38,21 +40,26 @@ func startServer(route http.Handler, logMsg string) {
 	fmt.Println(logMsg)
 	err := server.ListenAndServe()
 	if err != nil {
-		fmt.Printf("[task-api:error]: Service start up error -> %v\n", err.Error())
-		localLogger.Log(logcodes.ERROR, "Service error", "task-api/index.go:38", err.Error())
+		e := libErrors.NewDatabaseError("Failed to connect mux server")
+		onFailure(e, logcodes.ERROR, "Service error", "task-api/index.go:44")
+		log.Fatalln("[task-api:mux]: Failed to connect mux server")
 	}
 }
 
 func main() {
 	envCheck()
 	// RabbitMQ
-	//rabbit, err := rabbitmq.StartRabbitClient(os.Getenv("RABBIT_URI"), "task-api")
-	//
-	//// Logger
-	//localLogger.Start(rabbit.GetConnection(), microserviceNames.TASK_API)
-	//if err != nil {
-	//	localLogger.Log(logcodes.ERROR, "RabbitMQ connection failed", "task-service/index.go:32", err.Message)
-	//}
+	rabbit, err := rabbitmq.GetRabbitClient(os.Getenv("RABBIT_URI"), "task-service")
+	if err != nil {
+		log.Fatalln("[task-api:rabbitmq]: Failed to connect to RabbitMQ message bus")
+	}
+
+	// Logging
+	logChannel, err := rabbit.AddChannel("log")
+	ok := onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:59")
+	if ok == true {
+		localLogger.Start(logChannel, microserviceNames.TASK_API)
+	}
 
 	// GRPC
 	client := grpc.GrpcClient()
@@ -65,9 +72,9 @@ func main() {
 
 }
 
-func onFailure(err *libErrors.CustomError, errCode logcodes.LogCodes, message string, origin string) bool {
+func onFailure(err *libErrors.CustomError, logCode logcodes.LogCodes, message string, origin string) bool {
 	if err != nil {
-		localLogger.Log(errCode, message, origin, err.Message)
+		localLogger.Log(logCode, message, origin, err.Message)
 		log.Printf("[task-service:error]: Service start up error -> %v", message)
 		return false
 	}

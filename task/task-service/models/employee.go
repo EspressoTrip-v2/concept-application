@@ -6,22 +6,34 @@ import (
 )
 
 type EmployeeItem struct {
-	Id          string `bson:"_id"`
-	Division    string `bson:"division"`
-	NumberTasks int32  `bson:"numberTasks"`
-	Email       string `bson:"email"`
+	Id              string `bson:"_id"`
+	Division        string `bson:"division"`
+	NumberTasks     int32  `bson:"numberTasks"`
+	Email           string `bson:"email"`
+	BranchName      string `bson:"branchName"`
+	FirstName       string `bson:"firstName"`
+	LastName        string `bson:"lastName"`
+	Position        string `bson:"position"`
+	Country         string `bson:"country"`
+	ShiftPreference string `bson:"shiftPreference"`
 }
 
 func (e EmployeeItem) ConvertToMessage() *taskPackage.Employee {
 	return &taskPackage.Employee{
-		Id:          e.Id,
-		Division:    e.Division,
-		NumberTasks: e.NumberTasks,
-		Email:       e.Email,
+		Id:              e.Id,
+		Division:        e.Division,
+		NumberTasks:     e.NumberTasks,
+		Email:           e.Email,
+		BranchName:      e.BranchName,
+		Country:         e.Country,
+		Position:        e.Position,
+		FirstName:       e.FirstName,
+		LastName:        e.LastName,
+		ShiftPreference: e.ShiftPreference,
 	}
 }
 
-type Employee struct {
+type EmployeePayload struct {
 	Id                 string    `json:"id"`
 	Country            string    `json:"country"`
 	Email              string    `json:"email"`

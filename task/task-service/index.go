@@ -5,13 +5,13 @@ import (
 	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
+	"github.com/EspressoTrip-v2/concept-go-common/rabbitmq"
 	"log"
 	"os"
 	"task-service/events/consumers"
 	localLogger "task-service/local-logger"
 	"task-service/services/grpc"
 	"task-service/services/mongoclient"
-	"task-service/services/rabbitmq"
 )
 
 func envCheck() {
@@ -28,11 +28,11 @@ func envCheck() {
 
 func main() {
 	envCheck()
-	var mClient *mongoclient.MongoClient
 	// RabbitMQ
+	var mClient *mongoclient.MongoClient
 	rabbit, err := rabbitmq.GetRabbitClient(os.Getenv("RABBIT_URI"), "task-service")
 	if err != nil {
-		log.Fatalln("[rabbitmq:task-service]: Failed to connect to RabbitMQ message bus")
+		log.Fatalln("[task-service:rabbitmq:]: Failed to connect to RabbitMQ message bus")
 	}
 
 	// Logging
@@ -76,9 +76,9 @@ func main() {
 
 }
 
-func onFailure(err *libErrors.CustomError, errCode logcodes.LogCodes, message string, origin string) bool {
+func onFailure(err *libErrors.CustomError, logCode logcodes.LogCodes, message string, origin string) bool {
 	if err != nil {
-		localLogger.Log(errCode, message, origin, err.Message)
+		localLogger.Log(logCode, message, origin, err.Message)
 		log.Printf("[task-service:error]: Service start up error -> %v", message)
 		return false
 	}

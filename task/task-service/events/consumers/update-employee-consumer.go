@@ -25,19 +25,19 @@ type UpdateEmployeeConsumer struct {
 }
 
 func NewUpdateEmployeeConsumer(rabbitChannel *amqp.Channel, mongoClient *mongoclient.MongoClient) *UpdateEmployeeConsumer {
-	return &UpdateEmployeeConsumer{bindKey: bindkeys.UPDATE, exchangeName: exchangeNames.EMPLOYEE, exchangeType: exchangeTypes.DIRECT, mongoClient: mongoClient, rabbitChannel: rabbitChannel, consumerName: "update-employee"}
+	return &UpdateEmployeeConsumer{bindKey: bindkeys.UPDATE, exchangeName: exchangeNames.AUTH, exchangeType: exchangeTypes.DIRECT, mongoClient: mongoClient, rabbitChannel: rabbitChannel, consumerName: "update-employee"}
 }
 
 func (c *UpdateEmployeeConsumer) Listen() {
 	var err error
 	err = c.rabbitChannel.ExchangeDeclare(string(c.exchangeName), string(c.exchangeType), true, false, false, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to declare exchange", "task/task-service/events/update-employee-consumer.go:33")
+	c.onFailure(err, logcodes.ERROR, "Failure to declare exchange", "task/task-service/events/update-employee-consumer.go:34")
 
 	queue, err := c.rabbitChannel.QueueDeclare("", false, false, true, false, nil)
 	c.onFailure(err, logcodes.ERROR, "Failure to declare queue", "task/task-service/events/update-employee-consumer.go:37")
 
 	err = c.rabbitChannel.QueueBind(queue.Name, string(c.bindKey), string(c.exchangeName), false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "task/task-service/events/update-employee-consumer.go:39")
+	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "task/task-service/events/update-employee-consumer.go:40")
 
 	messages, err := c.rabbitChannel.Consume(queue.Name, "", true, false, false, false, nil)
 	c.onFailure(err, logcodes.ERROR, "Failure to listen on queue", "task/task-service/events/update-employee-consumer.go:43")
@@ -46,36 +46,53 @@ func (c *UpdateEmployeeConsumer) Listen() {
 	forever := make(chan bool)
 	go func() {
 		for d := range messages {
-			c.updateEmployee(d.Body)
+			ok := c.updateEmployee(d.Body)
+			if !ok {
+				localLogger.Log(logcodes.ERROR, "go routine error", "task/task-service/events/update-employee-consumer.go:51", "Error updating employee")
+			}
 		}
 	}()
 	<-forever
 }
 
-func (c *UpdateEmployeeConsumer) updateEmployee(data []byte) {
-	var employeePayload models.Employee
+func (c *UpdateEmployeeConsumer) updateEmployee(data []byte) bool {
+	var employeePayload models.EmployeePayload
 	err := json.Unmarshal(data, &employeePayload)
-	if err != nil {
-		c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/update-employee-consumer.go:59")
+
+	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/update-employee-consumer.go:62")
+	if !ok {
+		return ok
 	}
-	employee := models.EmployeeItem{
-		Id:          employeePayload.Id,
-		Division:    employeePayload.Division,
-		Email:       employeePayload.Email,
-		NumberTasks: 0,
-	}
+
+	var employee models.EmployeeItem
 	filter := bson.D{{"email", employeePayload.Email}}
-	update := bson.D{{"$set", bson.D{{"email", employeePayload.Email}, {"division", employeePayload.Division}}}}
+	update := bson.D{{"$set", bson.D{
+		{"email", employeePayload.Email},
+		{"division", employeePayload.Division},
+		{"branchName", employeePayload.BranchName},
+		{"firstName", employeePayload.FirstName},
+		{"lastName", employeePayload.LastName},
+		{"position", employeePayload.Position},
+		{"country", employeePayload.Country},
+		{"shiftPreference", employeePayload.ShiftPreference},
+	}}}
 
 	err = c.mongoClient.FindOneAndUpdateEmployee(context.TODO(), filter, &employee, update, nil)
-	if err != nil {
-		c.onFailure(err, logcodes.ERROR, "Update employee failed", "task/task-service/events/update-employee-consumer.go:72")
+	ok = c.onFailure(err, logcodes.ERROR, "Update employee failed", "task/task-service/events/update-employee-consumer.go:81")
+	if !ok {
+		return ok
 	}
+	return true
 }
 
-func (c *UpdateEmployeeConsumer) onFailure(err error, errCode logcodes.LogCodes, message string, origin string) {
+func (c *UpdateEmployeeConsumer) onFailure(err error, logCode logcodes.LogCodes, message string, origin string) bool {
 	if err != nil {
-		localLogger.Log(errCode, message, origin, err.Error())
-		panic(fmt.Sprintf("%v: %v", message, err.Error()))
+		localLogger.Log(logCode, message, origin, err.Error())
+		return false
 	}
+	return true
+}
+
+func (c *UpdateEmployeeConsumer) onSuccess(logCode logcodes.LogCodes, message string, origin string, detail string) {
+	localLogger.Log(logCode, message, origin, detail)
 }
