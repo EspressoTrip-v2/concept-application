@@ -25,10 +25,10 @@ func Start(rabbitChannel *amqp.Channel, serviceName microserviceNames.Microservi
 	}
 }
 
-func Log(errCode logcodes.LogCodes, message string, origin string, details string) {
+func Log(logCode logcodes.LogCodes, message string, origin string, details string) {
 	if localLogger == nil {
 		fmt.Printf("[logger:%v]: Has not been started, logs will not be sent", localLogger.serviceName)
 	} else {
-		localLogger.logger.Log(errCode, message, origin, details)
+		localLogger.logger.Log(logCode, message, origin, details)
 	}
 }

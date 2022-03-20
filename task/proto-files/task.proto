@@ -35,6 +35,12 @@ message Employee {
   string division = 2;
   int32 numberTasks = 3;
   string email = 4;
+  string branchName = 5;
+  string country = 6;
+  string position = 7;
+  string firstName = 8;
+  string lastName = 9;
+  string shiftPreference = 10;
 }
 
 message EmployeeResponsePayload {

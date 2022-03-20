@@ -22,13 +22,14 @@ type RpcHandlers struct {
 func (r *RpcHandlers) DeleteTask(ctx context.Context, request *taskPackage.TaskRequest) (*taskPackage.TaskResponsePayload, error) {
 	var deletedTask models.TaskItem
 	oid, err := primitive.ObjectIDFromHex(request.GetId())
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:26", err.Error())
+	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:25")
+	if !ok {
 		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Payload error: %v", err.Error()))
 	}
 
 	err = r.mongo.FindOneAndDeleteTask(ctx, bson.D{{"_id", oid}}, &deletedTask)
-	if err != nil {
+	ok = r.onFailure(err, logcodes.ERROR, "Task not found", "task/task-service/services/grpc/rpc-handlers.go:31")
+	if !ok {
 		return nil, status.Errorf(codes.NotFound, "Task not found: %v", err.Error())
 	}
 
@@ -42,12 +43,13 @@ func (r *RpcHandlers) DeleteTask(ctx context.Context, request *taskPackage.TaskR
 func (r *RpcHandlers) GetTask(ctx context.Context, request *taskPackage.TaskRequest) (*taskPackage.TaskResponsePayload, error) {
 	var task models.TaskItem
 	oid, err := primitive.ObjectIDFromHex(request.GetId())
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:46", err.Error())
+	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:46")
+	if !ok {
 		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Payload error: %v", err.Error()))
 	}
 	err = r.mongo.FindOneTask(ctx, bson.D{{"_id", oid}}, &task)
-	if err != nil {
+	ok = r.onFailure(err, logcodes.ERROR, "Task not found", "task/task-service/services/grpc/rpc-handlers.go:51")
+	if !ok {
 		return nil, status.Errorf(codes.NotFound, "Task not found: %v", err.Error())
 	}
 	payload := taskPackage.TaskResponsePayload{
@@ -61,12 +63,13 @@ func (r *RpcHandlers) GetAllTasks(ctx context.Context, request *taskPackage.AllT
 	var tasks []*models.TaskItem
 	var msgTasks []*taskPackage.Task
 	cursor, err := r.mongo.FindTasks(ctx, bson.D{})
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:65", err.Error())
+	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:66")
+	if !ok {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
 	}
-	if err := cursor.All(ctx, &tasks); err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:69", err.Error())
+	err = cursor.All(ctx, &tasks)
+	ok = r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:71")
+	if !ok {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
 	}
 	// Convert to gRPC message type
@@ -93,34 +96,29 @@ func (r *RpcHandlers) CreateTask(ctx context.Context, newTask *taskPackage.Task)
 		RejectionReason:  newTask.GetRejectionReason(),
 	}
 	insertResponse, err := r.mongo.InsertOneTask(ctx, &nTask)
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:82", err.Error())
+	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:99")
+	if !ok {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
 	}
 	oid := insertResponse.InsertedID.(primitive.ObjectID)
 	var task models.TaskItem
 	err = r.mongo.FindOneTask(ctx, bson.D{{"_id", oid}}, &task)
-	if err != nil {
+	ok = r.onFailure(err, logcodes.ERROR, "Task not found", "task/task-service/services/grpc/rpc-handlers.go:106")
+	if !ok {
 		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("Task not found: %v", err.Error()))
 	}
 
-	if err != nil {
-		return nil, err
-	}
 	payload := taskPackage.TaskResponsePayload{
 		Status: http.StatusCreated,
 		Data:   task.ConvertToMessage(),
 	}
+	r.onSuccess(logcodes.CREATED, "Task created", "task/task-service/services/grpc/rpc-handlers.go:115",
+		fmt.Sprintf("taskId: %v, division: %v", task.Id, task.Division))
 	return &payload, nil
 }
 
 func (r *RpcHandlers) UpdateTask(ctx context.Context, task *taskPackage.Task) (*taskPackage.TaskResponsePayload, error) {
 	var updatedTask models.TaskItem
-	oid, err := primitive.ObjectIDFromHex(task.GetId())
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:103", err.Error())
-		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Payload error: %v", err.Error()))
-	}
 	update := bson.D{{"$set",
 		bson.D{{"division", task.GetDivision()},
 			{"employeeId", task.GetEmployeeId()},
@@ -131,8 +129,9 @@ func (r *RpcHandlers) UpdateTask(ctx context.Context, task *taskPackage.Task) (*
 			{"completed", task.GetCompleted()},
 			{"rejectionReason", task.GetRejectionReason()}}}}
 
-	err = r.mongo.FindOneAndUpdateTask(ctx, bson.D{{"_id", oid}}, &updatedTask, update, nil)
-	if err != nil {
+	err := r.mongo.FindOneAndUpdateTask(ctx, bson.D{{"_id", task.GetId()}}, &updatedTask, update, nil)
+	ok := r.onFailure(err, logcodes.ERROR, "Task not found", "task/task-service/services/grpc/rpc-handlers.go:133")
+	if !ok {
 		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("Task not found: %v", err.Error()))
 	}
 
@@ -140,18 +139,16 @@ func (r *RpcHandlers) UpdateTask(ctx context.Context, task *taskPackage.Task) (*
 		Status: http.StatusCreated,
 		Data:   updatedTask.ConvertToMessage(),
 	}
+	r.onSuccess(logcodes.INFO, "", "task/task-service/services/grpc/rpc-handlers.go:142",
+		fmt.Sprintf("taskId: %v, division: %v", updatedTask.Id, updatedTask.Division))
 	return &payload, nil
 }
 
 func (r *RpcHandlers) GetEmployee(ctx context.Context, request *taskPackage.EmployeeRequest) (*taskPackage.EmployeeResponsePayload, error) {
 	var employee models.EmployeeItem
-	oid, err := primitive.ObjectIDFromHex(request.GetId())
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:151", err.Error())
-		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Payload error: %v", err.Error()))
-	}
-	err = r.mongo.FindOneEmployee(ctx, bson.D{{"_id", oid}}, &employee)
-	if err != nil {
+	err := r.mongo.FindOneEmployee(ctx, bson.D{{"_id", request.GetId()}}, &employee)
+	ok := r.onFailure(err, logcodes.ERROR, "Employee not found", "task/task-service/services/grpc/rpc-handlers.go:150")
+	if !ok {
 		return nil, status.Errorf(codes.NotFound, "Employee not found: %v", err.Error())
 	}
 	payload := taskPackage.EmployeeResponsePayload{
@@ -164,15 +161,15 @@ func (r *RpcHandlers) GetEmployee(ctx context.Context, request *taskPackage.Empl
 func (r *RpcHandlers) GetAllEmployees(ctx context.Context, request *taskPackage.AllEmployeeRequest) (*taskPackage.AllEmployeeResponsePayload, error) {
 	var employees []*models.EmployeeItem
 	var msgEmployees []*taskPackage.Employee
-	cursor, err := r.mongo.FindTasks(ctx, bson.D{})
-	if err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:170", err.Error())
+	cursor, err := r.mongo.FindEmployees(ctx, bson.D{})
+	r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:165")
+
+	err = cursor.All(ctx, &employees)
+	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:168")
+	if !ok {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
 	}
-	if err := cursor.All(ctx, &employees); err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:174", err.Error())
-		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
-	}
+
 	// Convert to gRPC message type
 	for _, employee := range employees {
 		msgEmployees = append(msgEmployees, employee.ConvertToMessage())
@@ -183,4 +180,17 @@ func (r *RpcHandlers) GetAllEmployees(ctx context.Context, request *taskPackage.
 		Data:   msgEmployees,
 	}
 	return &payload, nil
+}
+
+func (r *RpcHandlers) onSuccess(logCode logcodes.LogCodes, message string, origin string, detail string) {
+	localLogger.Log(logCode, message, origin, detail)
+}
+
+func (r *RpcHandlers) onFailure(err error, logCode logcodes.LogCodes, message string, origin string) bool {
+	if err != nil {
+		localLogger.Log(logCode, message, origin, err.Error())
+		fmt.Printf("[task-service:gRPC-handlers]: %v -> %v\n", message, err.Error())
+		return false
+	}
+	return true
 }

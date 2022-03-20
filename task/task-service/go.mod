@@ -3,7 +3,7 @@ module task-service
 go 1.18
 
 require (
-	github.com/EspressoTrip-v2/concept-go-common v1.0.58
+	github.com/EspressoTrip-v2/concept-go-common v1.0.59
 	github.com/golang/protobuf v1.5.2
 	github.com/streadway/amqp v1.0.0
 	go.mongodb.org/mongo-driver v1.8.4

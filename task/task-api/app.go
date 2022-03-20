@@ -8,6 +8,9 @@ import (
 
 func GetRouter() *mux.Router {
 	router := mux.NewRouter()
+	// Employees
+	router.HandleFunc("/api/task/employee", routes.GetAllEmployees).Methods(http.MethodGet)
+	router.HandleFunc("/api/task/employee/{employeeId}", routes.GetEmployee).Methods(http.MethodGet)
 
 	// Tasks
 	router.HandleFunc("/api/task", routes.GetAllTasks).Methods(http.MethodGet)
@@ -15,10 +18,6 @@ func GetRouter() *mux.Router {
 	router.HandleFunc("/api/task/{taskId}", routes.GetTask).Methods(http.MethodGet)
 	router.HandleFunc("/api/task", routes.UpdateTask).Methods(http.MethodPatch)
 	router.HandleFunc("/api/task/{taskId}", routes.DeleteTask).Methods(http.MethodDelete)
-
-	// Employees
-	router.HandleFunc("/api/task/employee", routes.GetAllEmployees).Methods(http.MethodGet)
-	router.HandleFunc("/api/task/employee/{employeeId}", routes.GetEmployee).Methods(http.MethodGet)
 
 	return router
 }
