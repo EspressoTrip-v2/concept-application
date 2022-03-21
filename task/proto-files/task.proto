@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package taskPackage;
 
+// Task
 message Task {
   string id = 1;
   string division = 2;
@@ -29,7 +30,7 @@ message AllTaskResponsePayload {
   int32 status = 1;
   repeated Task data = 2;
 }
-
+// Employee
 message Employee {
   string id = 1;
   string division = 2;
@@ -41,6 +42,7 @@ message Employee {
   string firstName = 8;
   string lastName = 9;
   string shiftPreference = 10;
+  int32 version = 11;
 }
 
 message EmployeeResponsePayload {
@@ -55,15 +57,47 @@ message AllEmployeeResponsePayload {
   int32 status = 1;
   repeated Employee data = 2;
 }
-
 message AllEmployeeRequest {}
+
+// Shift
+message Shift {
+  string id = 1;
+  string division = 2;
+  string type = 3;
+  string start = 4;
+  string end = 5;
+  int32 version = 6;
+}
+
+message ShiftResponsePayload {
+  int32 status = 1;
+  Shift data = 2;
+}
+
+message ShiftRequest {
+  string id = 1;
+}
+message AllShiftResponsePayload {
+  int32 status = 1;
+  repeated Shift data = 2;
+}
+
+message AllShiftRequest {}
+
+// Services
 service TaskService {
   rpc GetTask(TaskRequest) returns (TaskResponsePayload){};
   rpc GetAllTasks(AllTaskRequest) returns (AllTaskResponsePayload){}
   rpc CreateTask (Task) returns (TaskResponsePayload){}
   rpc UpdateTask (Task) returns (TaskResponsePayload){}
   rpc DeleteTask (TaskRequest) returns (TaskResponsePayload){}
+
   rpc GetEmployee (EmployeeRequest) returns (EmployeeResponsePayload){}
   rpc GetAllEmployees(AllEmployeeRequest) returns (AllEmployeeResponsePayload){}
+
+  rpc GetShift(ShiftRequest) returns (ShiftResponsePayload){};
+  rpc GetAllShifts(AllShiftRequest) returns (AllShiftResponsePayload){}
+  rpc CreateShift (Shift) returns (ShiftResponsePayload){}
+  rpc UpdateShift (Shift) returns (ShiftResponsePayload){}
 
 }

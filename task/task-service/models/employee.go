@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-type EmployeeItem struct {
+// Employee is the data structure used by the task service
+type Employee struct {
 	Id              string `bson:"_id"`
 	Division        string `bson:"division"`
 	NumberTasks     int32  `bson:"numberTasks"`
@@ -16,9 +17,11 @@ type EmployeeItem struct {
 	Position        string `bson:"position"`
 	Country         string `bson:"country"`
 	ShiftPreference string `bson:"shiftPreference"`
+	Version         int    `bson:"version"`
 }
 
-func (e EmployeeItem) ConvertToMessage() *taskPackage.Employee {
+// ConvertToMessage converts the Employee model to the required data structure for gRPC transmission
+func (e Employee) ConvertToMessage() *taskPackage.Employee {
 	return &taskPackage.Employee{
 		Id:              e.Id,
 		Division:        e.Division,
@@ -30,9 +33,11 @@ func (e EmployeeItem) ConvertToMessage() *taskPackage.Employee {
 		FirstName:       e.FirstName,
 		LastName:        e.LastName,
 		ShiftPreference: e.ShiftPreference,
+		Version:         int32(e.Version),
 	}
 }
 
+// EmployeePayload is the payload received from the Rabbit publishers
 type EmployeePayload struct {
 	Id                 string    `json:"id"`
 	Country            string    `json:"country"`
@@ -53,4 +58,5 @@ type EmployeePayload struct {
 	FirstName          string    `json:"firstName"`
 	PhoneNumber        string    `json:"phoneNumber"`
 	Division           string    `json:"division"`
+	Version            int       `json:"version"`
 }

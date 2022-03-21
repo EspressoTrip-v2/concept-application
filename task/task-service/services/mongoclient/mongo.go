@@ -19,16 +19,20 @@ import (
 var mongoClient *MongoClient
 
 type MongoDBCruder interface {
-	InsertOneTask(ctx context.Context, data *models.TaskItem) (*mongo.InsertOneResult, error)
-	FindOneTask(ctx context.Context, filter bson.D, variable *models.TaskItem) error
-	FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *models.TaskItem, update bson.D, options *options.FindOneAndUpdateOptions) error
-	FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *models.TaskItem) error
+	InsertTask(ctx context.Context, data *models.Task) (*mongo.InsertOneResult, error)
+	FindOneTask(ctx context.Context, filter bson.D, variable *models.Task) error
+	FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *models.Task, update bson.D, options *options.FindOneAndUpdateOptions) error
+	FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *models.Task) error
 	FindTasks(ctx context.Context, filter bson.D) (*mongo.Cursor, error)
-	InsertEmployee(ctx context.Context, data *models.EmployeeItem) (*mongo.InsertOneResult, error)
-	FindOneEmployee(ctx context.Context, filter bson.D, variable *models.EmployeeItem) error
+	InsertEmployee(ctx context.Context, data *models.Employee) (*mongo.InsertOneResult, error)
+	FindOneEmployee(ctx context.Context, filter bson.D, variable *models.Employee) error
 	FindEmployees(ctx context.Context, filter bson.D) (*mongo.Cursor, error)
-	FindOneAndUpdateEmployee(ctx context.Context, filter bson.D, variable *models.EmployeeItem, update bson.D, options *options.FindOneAndUpdateOptions) error
-	FindOneAndDeleteEmployee(ctx context.Context, filter bson.D, variable *models.EmployeeItem) error
+	FindOneAndUpdateEmployee(ctx context.Context, filter bson.D, variable *models.Employee, update bson.D, options *options.FindOneAndUpdateOptions) error
+	FindOneAndDeleteEmployee(ctx context.Context, filter bson.D, variable *models.Employee) error
+	InsertShift(ctx context.Context, data *models.Shift) (*mongo.InsertOneResult, error)
+	FindOneShift(ctx context.Context, filter bson.D, variable *models.Shift) error
+	FindOneAndUpdateShift(ctx context.Context, filter bson.D, variable *models.Shift, update bson.D, options *options.FindOneAndUpdateOptions) error
+	FindShifts(ctx context.Context, filter bson.D) (*mongo.Cursor, error)
 	Disconnect()
 }
 
@@ -43,7 +47,7 @@ func (m *MongoClient) Disconnect() {
 	}
 }
 
-func (m *MongoClient) InsertOneTask(ctx context.Context, data *models.TaskItem) (*mongo.InsertOneResult, error) {
+func (m *MongoClient) InsertTask(ctx context.Context, data *models.Task) (*mongo.InsertOneResult, error) {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.TASK_COL))
 	result, err := collection.InsertOne(ctx, data)
 	if err != nil {
@@ -52,7 +56,7 @@ func (m *MongoClient) InsertOneTask(ctx context.Context, data *models.TaskItem) 
 	return result, nil
 }
 
-func (m *MongoClient) FindOneTask(ctx context.Context, filter bson.D, variable *models.TaskItem) error {
+func (m *MongoClient) FindOneTask(ctx context.Context, filter bson.D, variable *models.Task) error {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.TASK_COL))
 	err := collection.FindOne(ctx, filter).Decode(variable)
 	if err != nil {
@@ -61,7 +65,7 @@ func (m *MongoClient) FindOneTask(ctx context.Context, filter bson.D, variable *
 	return nil
 }
 
-func (m *MongoClient) FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *models.TaskItem, update bson.D, options *options.FindOneAndUpdateOptions) error {
+func (m *MongoClient) FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *models.Task, update bson.D, options *options.FindOneAndUpdateOptions) error {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.TASK_COL))
 	err := collection.FindOneAndUpdate(ctx, filter, update, options).Decode(variable)
 	if err != nil {
@@ -70,7 +74,7 @@ func (m *MongoClient) FindOneAndUpdateTask(ctx context.Context, filter bson.D, v
 	return nil
 }
 
-func (m *MongoClient) FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *models.TaskItem) error {
+func (m *MongoClient) FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *models.Task) error {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.TASK_COL))
 	err := collection.FindOneAndDelete(ctx, filter).Decode(variable)
 	if err != nil {
@@ -89,7 +93,7 @@ func (m *MongoClient) FindTasks(ctx context.Context, filter bson.D) (*mongo.Curs
 
 }
 
-func (m *MongoClient) InsertEmployee(ctx context.Context, data *models.EmployeeItem) (*mongo.InsertOneResult, error) {
+func (m *MongoClient) InsertEmployee(ctx context.Context, data *models.Employee) (*mongo.InsertOneResult, error) {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	result, err := collection.InsertOne(ctx, data)
 	if err != nil {
@@ -98,7 +102,7 @@ func (m *MongoClient) InsertEmployee(ctx context.Context, data *models.EmployeeI
 	return result, nil
 }
 
-func (m *MongoClient) FindOneEmployee(ctx context.Context, filter bson.D, variable *models.EmployeeItem) error {
+func (m *MongoClient) FindOneEmployee(ctx context.Context, filter bson.D, variable *models.Employee) error {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	err := collection.FindOne(ctx, filter).Decode(variable)
 	if err != nil {
@@ -116,7 +120,7 @@ func (m *MongoClient) FindEmployees(ctx context.Context, filter bson.D) (*mongo.
 	return cursor, nil
 }
 
-func (m *MongoClient) FindOneAndUpdateEmployee(ctx context.Context, filter bson.D, variable *models.EmployeeItem, update bson.D, options *options.FindOneAndUpdateOptions) error {
+func (m *MongoClient) FindOneAndUpdateEmployee(ctx context.Context, filter bson.D, variable *models.Employee, update bson.D, options *options.FindOneAndUpdateOptions) error {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	err := collection.FindOneAndUpdate(ctx, filter, update, options).Decode(variable)
 	if err != nil {
@@ -125,7 +129,7 @@ func (m *MongoClient) FindOneAndUpdateEmployee(ctx context.Context, filter bson.
 	return nil
 }
 
-func (m *MongoClient) FindOneAndDeleteEmployee(ctx context.Context, filter bson.D, variable *models.EmployeeItem) error {
+func (m *MongoClient) FindOneAndDeleteEmployee(ctx context.Context, filter bson.D, variable *models.Employee) error {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	err := collection.FindOneAndDelete(ctx, filter).Decode(variable)
 	if err != nil {
@@ -142,6 +146,43 @@ func (m *MongoClient) FindOneAndDeleteEmployee(ctx context.Context, filter bson.
 		return err
 	}
 	return nil
+}
+
+func (m *MongoClient) InsertShift(ctx context.Context, data *models.Shift) (*mongo.InsertOneResult, error) {
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.SHIFT_COL))
+	result, err := collection.InsertOne(ctx, data)
+	if err != nil {
+		return nil, err
+	}
+	return result, nil
+}
+
+func (m *MongoClient) FindOneShift(ctx context.Context, filter bson.D, variable *models.Shift) error {
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.SHIFT_COL))
+	err := collection.FindOne(ctx, filter).Decode(variable)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MongoClient) FindOneAndUpdateShift(ctx context.Context, filter bson.D, variable *models.Shift, update bson.D, options *options.FindOneAndUpdateOptions) error {
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.SHIFT_COL))
+	err := collection.FindOneAndUpdate(ctx, filter, update, options).Decode(variable)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MongoClient) FindShifts(ctx context.Context, filter bson.D) (*mongo.Cursor, error) {
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.SHIFT_COL))
+	cursor, err := collection.Find(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+	return cursor, nil
+
 }
 
 func GetMongoDB() (*MongoClient, *libErrors.CustomError) {

@@ -13,6 +13,10 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
         super(rabbitChannel, "create-user");
     }
 
+    nackMessage(message: amqp.ConsumeMessage): void {
+        this.m_channel.ack(message);
+    }
+
     async onMessage(data: CreateUserEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
         const employeeData: PersonMsg = JSON.parse(data.toString());
         try {
@@ -59,6 +63,8 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                 `auth/auth-service/src/events/consumers/create-user-consumer.ts:56`,
                 `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`
             );
+            // Acknowledge message
+            this.nackMessage(message);
         } catch (error) {
             LocalLogger.log(
                 LogCodes.ERROR,

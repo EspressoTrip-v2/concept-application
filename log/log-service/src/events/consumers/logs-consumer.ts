@@ -12,8 +12,14 @@ export class LogsConsumer extends AbstractConsumer<LogEvent> {
         super(rabbitChannel, "all-logs");
     }
 
+    nackMessage(message: amqp.ConsumeMessage): void {
+        this.m_channel.ack(message);
+    }
+
     onMessage(data: LogEvent["data"], message: amqp.ConsumeMessage): void {
         const logData = JSON.parse(data.toString());
         this.m_logger.createLog(logData);
+        // Acknowledge message
+        this.nackMessage(message);
     }
 }

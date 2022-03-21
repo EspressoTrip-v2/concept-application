@@ -12,19 +12,41 @@ export class UpdateEmployeeConsumer extends AbstractConsumer<UpdateEmployeeEvent
         super(rabbitChannel, "update-employee");
     }
 
+    nackMessage(message: amqp.ConsumeMessage): void {
+        this.m_channel.ack(message);
+    }
+
     async onMessage(data: UpdateEmployeeEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
         const employeeData: PersonMsg = JSON.parse(data.toString());
         try {
             const employee = await Employee.updateByEvent(employeeData);
             if (employee) {
-                LocalLogger.log(LogCodes.UPDATED, "Employee updated", "employee/employee-service/src/events/consumers/update-employee-consumer.ts:20", `email: ${employee.email}, authId: ${employee.authId}`);
-                return
+                LocalLogger.log(
+                    LogCodes.UPDATED,
+                    "Employee updated",
+                    "employee/employee-service/src/events/consumers/update-employee-consumer.ts:20",
+                    `email: ${employee.email}, authId: ${employee.authId}`
+                );
+
+                // Acknowledge message
+                this.nackMessage(message);
+                return;
             } else {
-                LocalLogger.log(LogCodes.ERROR, "Employee not found", "employee/employee-service/src/events/consumers/update-employee-consumer.ts:23", `email: ${employeeData.email}, authId: ${employeeData.authId}`);
-                return
+                LocalLogger.log(
+                    LogCodes.ERROR,
+                    "Employee not found",
+                    "employee/employee-service/src/events/consumers/update-employee-consumer.ts:23",
+                    `email: ${employeeData.email}, authId: ${employeeData.authId}`
+                );
+                return;
             }
         } catch (error) {
-            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "employee/employee-service/src/events/consumers/update-employee-consumer.ts:27", `error: ${(error as Error).message}`);
+            LocalLogger.log(
+                LogCodes.ERROR,
+                "Consumer Error",
+                "employee/employee-service/src/events/consumers/update-employee-consumer.ts:27",
+                `error: ${(error as Error).message}`
+            );
         }
     }
 }

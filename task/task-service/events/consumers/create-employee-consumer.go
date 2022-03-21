@@ -38,7 +38,7 @@ func (c *CreateEmployeeConsumer) Listen() {
 	err = c.rabbitChannel.QueueBind(queue.Name, string(c.bindKey), string(c.exchangeName), false, nil)
 	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "task/task-service/events/create-employee-consumer.go:39")
 
-	messages, err := c.rabbitChannel.Consume(queue.Name, "", true, false, false, false, nil)
+	messages, err := c.rabbitChannel.Consume(queue.Name, "", false, false, false, false, nil)
 	c.onFailure(err, logcodes.ERROR, "Failure to listen on queue", "task/task-service/events/create-employee-consumer.go:42")
 
 	fmt.Printf("[consumer:%v]: Subscribed on exchange:%v | route:%v\n", c.consumerName, c.exchangeName, c.bindKey)
@@ -48,7 +48,14 @@ func (c *CreateEmployeeConsumer) Listen() {
 			ok := c.createEmployee(d.Body)
 			if !ok {
 				localLogger.Log(logcodes.ERROR, "go routine error", "task/task-service/events/create-employee-consumer.go:50", "Error creating employee")
+				continue
 			}
+			err := d.Ack(false)
+			if err != nil {
+				localLogger.Log(logcodes.ERROR, "go routine message acknowledge error", "task/task-service/events/create-employee-consumer.go:55",
+					fmt.Sprintf("Error acknowkledging message: %v", string(d.Body)))
+			}
+
 		}
 	}()
 	<-forever
@@ -61,7 +68,7 @@ func (c *CreateEmployeeConsumer) createEmployee(data []byte) bool {
 	if !ok {
 		return ok
 	}
-	employee := models.EmployeeItem{
+	employee := models.Employee{
 		Id:              employeePayload.Id,
 		Division:        employeePayload.Division,
 		NumberTasks:     0,
@@ -72,6 +79,7 @@ func (c *CreateEmployeeConsumer) createEmployee(data []byte) bool {
 		Position:        employeePayload.Position,
 		Country:         employeePayload.Country,
 		ShiftPreference: employeePayload.ShiftPreference,
+		Version:         employeePayload.Version,
 	}
 	_, err = c.mongoClient.InsertEmployee(context.TODO(), &employee)
 	ok = c.onFailure(err, logcodes.ERROR, "Insert employee failed", "task/task-service/events/create-employee-consumer.go:77")

@@ -39,7 +39,7 @@ func (c *UpdateEmployeeConsumer) Listen() {
 	err = c.rabbitChannel.QueueBind(queue.Name, string(c.bindKey), string(c.exchangeName), false, nil)
 	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "task/task-service/events/update-employee-consumer.go:40")
 
-	messages, err := c.rabbitChannel.Consume(queue.Name, "", true, false, false, false, nil)
+	messages, err := c.rabbitChannel.Consume(queue.Name, "", false, false, false, false, nil)
 	c.onFailure(err, logcodes.ERROR, "Failure to listen on queue", "task/task-service/events/update-employee-consumer.go:43")
 
 	fmt.Printf("[consumer:%v]: Subscribed on exchange:%v | route:%v\n", c.consumerName, c.exchangeName, c.bindKey)
@@ -49,6 +49,12 @@ func (c *UpdateEmployeeConsumer) Listen() {
 			ok := c.updateEmployee(d.Body)
 			if !ok {
 				localLogger.Log(logcodes.ERROR, "go routine error", "task/task-service/events/update-employee-consumer.go:51", "Error updating employee")
+				continue
+			}
+			err := d.Ack(false)
+			if err != nil {
+				localLogger.Log(logcodes.ERROR, "go routine message acknowledge error", "task/task-service/events/create-employee-consumer.go:56",
+					fmt.Sprintf("Error acknowkledging message: %v", string(d.Body)))
 			}
 		}
 	}()
@@ -64,8 +70,8 @@ func (c *UpdateEmployeeConsumer) updateEmployee(data []byte) bool {
 		return ok
 	}
 
-	var employee models.EmployeeItem
-	filter := bson.D{{"email", employeePayload.Email}}
+	var employee models.Employee
+	filter := bson.D{{"email", employeePayload.Email}, {"version", employeePayload.Version - 1}}
 	update := bson.D{{"$set", bson.D{
 		{"email", employeePayload.Email},
 		{"division", employeePayload.Division},
@@ -75,6 +81,7 @@ func (c *UpdateEmployeeConsumer) updateEmployee(data []byte) bool {
 		{"position", employeePayload.Position},
 		{"country", employeePayload.Country},
 		{"shiftPreference", employeePayload.ShiftPreference},
+		{"version", employeePayload.Version},
 	}}}
 
 	err = c.mongoClient.FindOneAndUpdateEmployee(context.TODO(), filter, &employee, update, nil)

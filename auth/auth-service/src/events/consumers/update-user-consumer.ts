@@ -12,6 +12,10 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
         super(rabbitChannel, "update-user");
     }
 
+    nackMessage(message: amqp.ConsumeMessage): void {
+        this.m_channel.ack(message);
+    }
+
     async onMessage(data: UpdateUserEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
         const employeeData: PersonMsg = JSON.parse(data.toString());
         try {
@@ -21,7 +25,7 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                     LogCodes.ERROR,
                     `Sign-in user not found`,
                     `auth/auth-service/src/events/consumers/update-user-consumer.ts:20`,
-                    `email: ${employeeData.email}, userRole: ${employeeData.userRole}`,
+                    `email: ${employeeData.email}, userRole: ${employeeData.userRole}`
                 );
                 throw new Error("Sign-in user not found.");
             }
@@ -32,10 +36,18 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                 LogCodes.UPDATED,
                 "User updated",
                 "auth/auth-service/src/events/consumers/update-user-consumer.ts:32",
-                `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`,
+                `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`
             );
+
+            // Acknowledge message
+            this.nackMessage(message);
         } catch (error) {
-            LocalLogger.log(LogCodes.ERROR, "Consumer Error", "auth/auth-service/src/events/consumers/update-user-consumer.ts:40", `error: ${(error as Error).message}`);
+            LocalLogger.log(
+                LogCodes.ERROR,
+                "Consumer Error",
+                "auth/auth-service/src/events/consumers/update-user-consumer.ts:40",
+                `error: ${(error as Error).message}`
+            );
         }
     }
 }
