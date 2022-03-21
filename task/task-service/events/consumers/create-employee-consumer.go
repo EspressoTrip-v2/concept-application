@@ -24,7 +24,7 @@ type CreateEmployeeConsumer struct {
 }
 
 func NewCreateEmployeeConsumer(rabbitChannel *amqp.Channel, mongoClient *mongoclient.MongoClient) *CreateEmployeeConsumer {
-	return &CreateEmployeeConsumer{bindKey: bindkeys.CREATE, exchangeName: exchangeNames.AUTH, exchangeType: exchangeTypes.DIRECT, mongoClient: mongoClient, rabbitChannel: rabbitChannel, consumerName: "create-employee"}
+	return &CreateEmployeeConsumer{bindKey: bindkeys.AUTH_CREATE, exchangeName: exchangeNames.AUTH, exchangeType: exchangeTypes.DIRECT, mongoClient: mongoClient, rabbitChannel: rabbitChannel, consumerName: "create-employee"}
 }
 
 func (c *CreateEmployeeConsumer) Listen() {
@@ -92,6 +92,7 @@ func (c *CreateEmployeeConsumer) createEmployee(data []byte) bool {
 func (c *CreateEmployeeConsumer) onFailure(err error, logCode logcodes.LogCodes, message string, origin string) bool {
 	if err != nil {
 		localLogger.Log(logCode, message, origin, err.Error())
+		fmt.Printf("[task-service:consumer]: CreateEmployeeConsumer error -> %v", err.Error())
 		return false
 	}
 	return true

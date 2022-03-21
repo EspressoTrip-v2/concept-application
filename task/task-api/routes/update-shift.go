@@ -5,19 +5,17 @@ import (
 	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
 	"github.com/EspressoTrip-v2/concept-go-common/utils"
 	"net/http"
-	payloadSchemas "task-api/payload-schemas"
+	taskPackage "task-api/proto"
 	"task-api/services/grpc"
 )
 
-func CreateTask(w http.ResponseWriter, r *http.Request) {
-	var ps payloadSchemas.CreateTaskPayload
-	jsonErr := json.NewDecoder(r.Body).Decode(&ps)
-	ts, payloadError := ps.Validate()
-
-	if jsonErr != nil || payloadError != nil {
+func UpdateShift(w http.ResponseWriter, r *http.Request) {
+	var s taskPackage.Shift
+	err := json.NewDecoder(r.Body).Decode(&s)
+	if err != nil {
 		utils.WriteResponse(w, http.StatusBadRequest, libErrors.NewBadRequestError("Invalid payload format").GetErrors())
 	} else {
-		response, err := grpc.GrpcClient().CreateTask(ts)
+		response, err := grpc.GrpcClient().UpdateShift(&s)
 		if err != nil {
 			utils.WriteResponse(w, http.StatusBadRequest, err.GetErrors())
 		} else {

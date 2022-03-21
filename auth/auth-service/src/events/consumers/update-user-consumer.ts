@@ -6,7 +6,7 @@ import { LocalLogger } from "../../utils";
 export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_bindKey: BindKey.UPDATE = BindKey.UPDATE;
+    m_bindKey: BindKey.AUTH_UPDATE = BindKey.AUTH_UPDATE;
 
     constructor(rabbitChannel: amqp.Channel) {
         super(rabbitChannel, "update-user");
@@ -19,33 +19,34 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
     async onMessage(data: UpdateUserEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
         const employeeData: PersonMsg = JSON.parse(data.toString());
         try {
-            const existingUser = await User.findOne({ email: employeeData.email });
-            if (!existingUser) {
+            const existingUser = await User.findByEvent(employeeData);
+            if (existingUser) {
+                delete employeeData.id;
+                existingUser.set({ ...employeeData });
+                await existingUser.save();
                 LocalLogger.log(
-                    LogCodes.ERROR,
-                    `Sign-in user not found`,
-                    `auth/auth-service/src/events/consumers/update-user-consumer.ts:20`,
-                    `email: ${employeeData.email}, userRole: ${employeeData.userRole}`
+                    LogCodes.UPDATED,
+                    "User updated",
+                    "auth/auth-service/src/events/consumers/update-user-consumer.ts:26",
+                    `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`
                 );
-                throw new Error("Sign-in user not found.");
+                // Acknowledge message
+                this.nackMessage(message);
+                return;
             }
-
-            existingUser.set(employeeData);
-            await existingUser.save();
             LocalLogger.log(
-                LogCodes.UPDATED,
-                "User updated",
-                "auth/auth-service/src/events/consumers/update-user-consumer.ts:32",
-                `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`
+                LogCodes.ERROR,
+                `Sign-in user not found`,
+                `auth/auth-service/src/events/consumers/update-user-consumer.ts:34`,
+                `email: ${employeeData.email}, userRole: ${employeeData.userRole}`
             );
-
-            // Acknowledge message
             this.nackMessage(message);
+            return;
         } catch (error) {
             LocalLogger.log(
                 LogCodes.ERROR,
                 "Consumer Error",
-                "auth/auth-service/src/events/consumers/update-user-consumer.ts:40",
+                "auth/auth-service/src/events/consumers/update-user-consumer.ts:44",
                 `error: ${(error as Error).message}`
             );
         }

@@ -6,7 +6,7 @@ import { LocalLogger } from "../../utils";
 export class DeleteUserConsumer extends AbstractConsumer<DeleteUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_bindKey: BindKey.DELETE = BindKey.DELETE;
+    m_bindKey: BindKey.AUTH_DELETE = BindKey.AUTH_DELETE;
 
     constructor(rabbitChannel: amqp.Channel) {
         super(rabbitChannel, "delete-user");
@@ -24,15 +24,16 @@ export class DeleteUserConsumer extends AbstractConsumer<DeleteUserEvent> {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     "User not found",
-                    "auth/auth-service/src/events/consumers/delete-user-consumer.ts:20",
+                    "auth/auth-service/src/events/consumers/delete-user-consumer.ts:24",
                     `email: ${employeeData.email}, employeeId: ${employeeData.id}`
                 );
+                this.nackMessage(message)
                 return;
             }
             LocalLogger.log(
                 LogCodes.DELETED,
                 "User deleted",
-                "auth/auth-service/src/events/consumers/delete-user-consumer.ts:23",
+                "auth/auth-service/src/events/consumers/delete-user-consumer.ts:33",
                 `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`
             );
             // Acknowledge message
@@ -42,7 +43,7 @@ export class DeleteUserConsumer extends AbstractConsumer<DeleteUserEvent> {
             LocalLogger.log(
                 LogCodes.ERROR,
                 "Consumer Error",
-                "auth/auth-service/src/events/consumers/delete-user-consumer.ts:26",
+                "auth/auth-service/src/events/consumers/delete-user-consumer.ts:43",
                 `error: ${(error as Error).message}`
             );
         }

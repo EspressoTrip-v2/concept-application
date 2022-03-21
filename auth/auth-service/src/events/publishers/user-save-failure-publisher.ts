@@ -6,7 +6,7 @@ export class UserSaveFailurePublisher extends AbstractPublisher<SaveUserFailEven
     static m_instance: UserSaveFailurePublisher | undefined
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_bindKey: BindKey.ERROR = BindKey.ERROR;
+    m_bindKey: BindKey.AUTH_ERROR = BindKey.AUTH_ERROR;
 
     private constructor(rabbitChannel: amqp.Channel) {
         super(rabbitChannel, "user-save-failure");
@@ -21,7 +21,7 @@ export class UserSaveFailurePublisher extends AbstractPublisher<SaveUserFailEven
             LocalLogger.log(
                 LogCodes.ERROR,
                 `UserSaveFailurePublisher not created`,
-                `auth/auth-service/src/events/publishers/user-save-failure-publisher.ts:22`,
+                `auth/auth-service/src/events/publishers/user-save-failure-publisher.ts:21`,
                 "UserSaveFailurePublisher not created in application index.ts"
             );
             throw new Error("UserSaveFailurePublisher not created in application index.ts")

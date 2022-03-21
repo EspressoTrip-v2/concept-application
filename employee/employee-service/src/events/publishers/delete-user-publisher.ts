@@ -6,7 +6,7 @@ export class DeleteUserPublisher extends AbstractPublisher<DeleteUserEvent> {
     static m_instance: DeleteUserPublisher
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_bindKey: BindKey.DELETE = BindKey.DELETE;
+    m_bindKey: BindKey.AUTH_DELETE = BindKey.AUTH_DELETE;
 
     constructor(rabbitChannel: amqp.Channel) {
         super(rabbitChannel, "delete-user");
@@ -21,7 +21,7 @@ export class DeleteUserPublisher extends AbstractPublisher<DeleteUserEvent> {
             LocalLogger.log(
                 LogCodes.ERROR,
                 `DeleteUserPublisher not created`,
-                `employee/employee-service/src/events/publishers/delete-user-publisher.ts:22`,
+                `employee/employee-service/src/events/publishers/delete-user-publisher.ts:21`,
                 "DeleteUserPublisher not created in application index.ts"
             );
             throw new Error("DeleteUserPublisher not created in application index.ts")

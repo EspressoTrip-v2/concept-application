@@ -7,7 +7,7 @@ import { LocalLogger } from "../../utils";
 export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_bindKey: BindKey.CREATE = BindKey.CREATE;
+    m_bindKey: BindKey.AUTH_CREATE = BindKey.AUTH_CREATE;
 
     constructor(rabbitChannel: amqp.Channel) {
         super(rabbitChannel, "create-user");
@@ -25,9 +25,10 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     `Employee sign-in already exists`,
-                    `auth/auth-service/src/events/consumers/create-user-consumer.ts:21`,
+                    `auth/auth-service/src/events/consumers/create-user-consumer.ts:25`,
                     `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`
                 );
+                this.nackMessage(message)
                 return;
             }
 
@@ -52,7 +53,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
                 providerId: employeeData.providerId,
             });
             await user.save();
-
+            delete employeeData.version // Remove the versioning so there are no clashes
             UpdateEmployeePublisher.updateEmployeePublisher().publish({
                 ...employeeData,
                 authId: user.id,
@@ -60,7 +61,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
             LocalLogger.log(
                 LogCodes.CREATED,
                 `Employee saved as new user sign-in created`,
-                `auth/auth-service/src/events/consumers/create-user-consumer.ts:56`,
+                `auth/auth-service/src/events/consumers/create-user-consumer.ts:61`,
                 `email: ${user.email}, UserId: ${user.id}, employeeId: ${employeeData.id}`
             );
             // Acknowledge message
@@ -69,7 +70,7 @@ export class CreateUserConsumer extends AbstractConsumer<CreateUserEvent> {
             LocalLogger.log(
                 LogCodes.ERROR,
                 "Consumer Error",
-                "auth/auth-service/src/events/consumers/create-user-consumer.ts:66",
+                "auth/auth-service/src/events/consumers/create-user-consumer.ts:70",
                 `error: ${(error as Error).message}`
             );
             UserSaveFailurePublisher.userFailurePublisher().publish(employeeData);

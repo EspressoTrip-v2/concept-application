@@ -6,7 +6,7 @@ import { LocalLogger } from "../../utils";
 export class UserSaveFailureConsumer extends AbstractConsumer<SaveUserFailEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_bindKey: BindKey.ERROR = BindKey.ERROR;
+    m_bindKey: BindKey.AUTH_ERROR = BindKey.AUTH_ERROR;
 
     constructor(rabbitChannel: amqp.Channel) {
         super(rabbitChannel, "user-save-failure");
@@ -24,15 +24,16 @@ export class UserSaveFailureConsumer extends AbstractConsumer<SaveUserFailEvent>
                 LocalLogger.log(
                     LogCodes.ERROR,
                     "Employee not found",
-                    "employee/employee-service/src/events/consumers/user-save-failure-consumer.ts:20",
+                    "employee/employee-service/src/events/consumers/user-save-failure-consumer.ts:24",
                     `email: ${employeeData.email}, UserId: ${employeeData.id}`
                 );
+                this.nackMessage(message);
                 return;
             }
             LocalLogger.log(
                 LogCodes.DELETED,
                 "Employee delete",
-                "employee/employee-service/src/events/consumers/user-save-failure-consumer.ts:23",
+                "employee/employee-service/src/events/consumers/user-save-failure-consumer.ts:33",
                 `email: ${employee.email}, UserId: ${employee.id}`
             );
             // Acknowledge message
@@ -41,7 +42,7 @@ export class UserSaveFailureConsumer extends AbstractConsumer<SaveUserFailEvent>
             LocalLogger.log(
                 LogCodes.ERROR,
                 "Consumer Error",
-                "employee/employee-service/src/events/consumers/user-save-failure-consumer.ts:26",
+                "employee/employee-service/src/events/consumers/user-save-failure-consumer.ts:42",
                 `error: ${(error as Error).message}`
             );
         }

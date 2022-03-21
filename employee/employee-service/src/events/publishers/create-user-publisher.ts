@@ -6,7 +6,7 @@ export class CreateUserPublisher extends AbstractPublisher<CreateUserEvent> {
     static m_instance: CreateUserPublisher;
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_bindKey: BindKey.CREATE = BindKey.CREATE;
+    m_bindKey: BindKey.AUTH_CREATE = BindKey.AUTH_CREATE;
 
     constructor(rabbitChannel: amqp.Channel) {
         super(rabbitChannel, "create-user");
@@ -21,7 +21,7 @@ export class CreateUserPublisher extends AbstractPublisher<CreateUserEvent> {
             LocalLogger.log(
                 LogCodes.ERROR,
                 `CreateUserPublisher not created`,
-                `employee/employee-service/src/events/publishers/create-user-publisher.ts:23`,
+                `employee/employee-service/src/events/publishers/create-user-publisher.ts:21`,
                 "CreateUserPublisher not created in application index.ts"
             );
             throw new Error("CreateUserPublisher not created in application index.ts");

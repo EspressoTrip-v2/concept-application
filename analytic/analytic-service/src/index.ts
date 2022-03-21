@@ -28,7 +28,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-service:error]: Service start up error -> ${msg}`);
-        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "analytic/analytic-service/srv/index.ts:27", msg.stack! || "No stack trace");
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "analytic/analytic-service/srv/index.ts:31", msg.stack! || "No stack trace");
     }
 }
 
