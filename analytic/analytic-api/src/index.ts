@@ -19,7 +19,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[analytic-api:error]: Service start up error -> ${msg}`);
-        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "analytic/analytic-api/srv/index.ts:18", msg.stack! || "No stack trace");
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "analytic/analytic-api/srv/index.ts:22", msg.stack! || "No stack trace");
     }
 }
 

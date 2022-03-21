@@ -62,8 +62,12 @@ userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
     return new User(attributes);
 };
 
-userSchema.statics.convertToGrpcMessage = function (document: UserDoc): PersonMsg {
-    return {
+userSchema.statics.findByEvent = async function (employee: PersonMsg): Promise<UserDoc | null> {
+    return await User.findOne({ email: employee.email });
+};
+
+userSchema.statics.convertToMessage = function (document: UserDoc, withVersion: boolean): PersonMsg {
+    const msg: PersonMsg = {
         id: document.id,
         country: document.country,
         email: document.email,
@@ -84,7 +88,10 @@ userSchema.statics.convertToGrpcMessage = function (document: UserDoc): PersonMs
         userRole: document.userRole as UserRoles,
         firstName: document.firstName,
         phoneNumber: document.phoneNumber,
+        version: document.version,
     };
+    if (!withVersion) delete msg.version;
+    return msg;
 };
 
 userSchema.statics.convertToJWTPayload = function (document: UserDoc): string {

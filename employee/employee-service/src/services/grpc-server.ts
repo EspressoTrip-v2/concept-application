@@ -8,7 +8,7 @@ import { EmployeeId } from "./proto/employeePackage/EmployeeId";
 import { GrpcEmployeeAttributes } from "./proto/employeePackage/GrpcEmployeeAttributes";
 import { Employee } from "../models";
 import { GrpcResponsePayload } from "./proto/employeePackage/GrpcResponsePayload";
-import { CreateUserPublisher, DeleteUserPublisher, UpdateUserPublisher } from "../events";
+import { CreateUserPublisher, DeleteUserPublisher, UpdateEmployeeTaskPublisher, UpdateUserPublisher } from "../events";
 import { LocalLogger } from "../utils";
 
 export class GrpcServer extends AbstractGrpcServer {
@@ -43,24 +43,33 @@ export class GrpcServer extends AbstractGrpcServer {
                     userRole: data.userRole! as UserRoles,
                 });
                 await employee.save();
-                LocalLogger.log(LogCodes.CREATED, "Employee created", "employee/employee-service/src/services/grpc-server.ts:45", `email: ${employee.email}, employeeId: ${employee.id}`);
+                LocalLogger.log(
+                    LogCodes.CREATED,
+                    "Employee created",
+                    "employee/employee-service/src/services/grpc-server.ts:46",
+                    `email: ${employee.email}, employeeId: ${employee.id}`
+                );
                 const employeeMsg = {
-                    ...Employee.convertToMessage(employee),
+                    ...Employee.convertToMessage(employee, true),
                     password: call.request.password!,
                 };
-
                 CreateUserPublisher.createUserPublisher().publish(employeeMsg);
 
                 callback(null, {
                     status: 200,
-                    data: Employee.convertToMessage(employee),
+                    data: Employee.convertToMessage(employee, true),
                 });
             } catch (error) {
                 const serverError: Partial<grpc.StatusObject> = {
                     code: grpc.status.INTERNAL,
                     details: "Could not create new employee, employee save failed",
                 };
-                LocalLogger.log(LogCodes.ERROR, "Employee create error", "employee/employee-service/src/services/grpc-server.ts:62", `error: ${(error as Error).message}`);
+                LocalLogger.log(
+                    LogCodes.ERROR,
+                    "Employee create error",
+                    "employee/employee-service/src/services/grpc-server.ts:67",
+                    `error: ${(error as Error).message}`
+                );
                 return callback(serverError);
             }
         },
@@ -69,7 +78,12 @@ export class GrpcServer extends AbstractGrpcServer {
             const { id }: EmployeeId = call.request;
             const deletedEmployee = await Employee.findByIdAndDelete(id);
             if (!deletedEmployee) {
-                LocalLogger.log(LogCodes.ERROR, "Employee not found", "employee/employee-service/src/services/grpc-server.ts:71", `Employee: ${id} does not exist`);
+                LocalLogger.log(
+                    LogCodes.ERROR,
+                    "Employee not found",
+                    "employee/employee-service/src/services/grpc-server.ts:81",
+                    `Employee: ${id} does not exist`
+                );
                 return callback({
                     code: grpc.status.NOT_FOUND,
                     details: "Employee not found.",
@@ -78,13 +92,13 @@ export class GrpcServer extends AbstractGrpcServer {
             LocalLogger.log(
                 LogCodes.DELETED,
                 "Employee deleted",
-                "employee/employee-service/src/services/grpc-server.ts:77",
+                "employee/employee-service/src/services/grpc-server.ts:92",
                 `email: ${deletedEmployee.email}, employeeId: ${deletedEmployee.id}`
             );
-           DeleteUserPublisher.deleteUserPublisher().publish(Employee.convertToMessage(deletedEmployee));
+            DeleteUserPublisher.deleteUserPublisher().publish(Employee.convertToMessage(deletedEmployee, true));
             return callback(null, {
                 status: 200,
-                data: Employee.convertToMessage(deletedEmployee),
+                data: Employee.convertToMessage(deletedEmployee, true),
             });
         },
 
@@ -92,7 +106,12 @@ export class GrpcServer extends AbstractGrpcServer {
             const { id }: EmployeeId = call.request;
             const employee = await Employee.findById(id);
             if (!employee) {
-                LocalLogger.log(LogCodes.ERROR, "Employee not found", "employee/employee-service/src/services/grpc-server.ts:94", `Employee: ${id} does not exist`);
+                LocalLogger.log(
+                    LogCodes.ERROR,
+                    "Employee not found",
+                    "employee/employee-service/src/services/grpc-server.ts:109",
+                    `Employee: ${id} does not exist`
+                );
                 return callback({
                     code: grpc.status.NOT_FOUND,
                     details: "Employee not found.",
@@ -109,31 +128,48 @@ export class GrpcServer extends AbstractGrpcServer {
                 const { id } = employeeUpdate;
                 delete employeeUpdate.id;
 
-                const employee = await Employee.findById(id);
+                const employee = await Employee.findByIdAndUpdate(id, employeeUpdate);
                 if (!employee) {
-                    LocalLogger.log(LogCodes.ERROR, "Employee not found", "employee/employee-service/src/services/grpc-server.ts:113", `email: ${employeeUpdate.email}, employeeId: ${id}`);
+                    LocalLogger.log(
+                        LogCodes.ERROR,
+                        "Employee not found",
+                        "employee/employee-service/src/services/grpc-server.ts:133",
+                        `email: ${employeeUpdate.email}, employeeId: ${id}`
+                    );
                     return callback({
                         code: grpc.status.NOT_FOUND,
                         details: "Employee not found",
                     });
                 }
-                employee.set({ ...employeeUpdate });
-                await employee.save();
-                LocalLogger.log(LogCodes.UPDATED, "Employee updated", "employee/employee-service/src/services/grpc-server.ts:121", `email: ${employee.email}, employeeId: ${employee.id}`);
+                LocalLogger.log(
+                    LogCodes.UPDATED,
+                    "Employee updated",
+                    "employee/employee-service/src/services/grpc-server.ts:144",
+                    `email: ${employee.email}, employeeId: ${employee.id}`
+                );
+
+                const pubMessage = Employee.convertToMessage(employee, true);
+                // Publish changes to all required services
                 UpdateUserPublisher.updateUserPublisher().publish({
-                    ...Employee.convertToMessage(employee),
+                    ...pubMessage,
                     password: call.request.password!,
                 });
+                UpdateEmployeeTaskPublisher.updateEmployeeTaskPublisher().publish(pubMessage);
                 return callback(null, {
                     status: 200,
-                    data: Employee.convertToMessage(employee),
+                    data: Employee.convertToMessage(employee, true),
                 });
             } catch (error) {
                 const serverError: Partial<grpc.StatusObject> = {
                     code: grpc.status.INTERNAL,
                     details: "Could not create new employee, employee save failed",
                 };
-                LocalLogger.log(LogCodes.ERROR, "Employee update error", "employee/employee-service/src/services/grpc-server.ts:135", `error: ${(error as Error).message}`);
+                LocalLogger.log(
+                    LogCodes.ERROR,
+                    "Employee update error",
+                    "employee/employee-service/src/services/grpc-server.ts:167",
+                    `error: ${(error as Error).message}`
+                );
                 return callback(serverError);
             }
         },

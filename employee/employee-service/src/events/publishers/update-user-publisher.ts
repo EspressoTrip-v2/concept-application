@@ -6,7 +6,7 @@ export class UpdateUserPublisher extends AbstractPublisher<UpdateUserEvent> {
     static m_instance: UpdateUserPublisher;
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
     m_exchangeType: ExchangeTypes.DIRECT = ExchangeTypes.DIRECT;
-    m_bindKey: BindKey.UPDATE = BindKey.UPDATE;
+    m_bindKey: BindKey.AUTH_UPDATE = BindKey.AUTH_UPDATE;
 
     constructor(rabbitChannel: amqp.Channel) {
         super(rabbitChannel, "update-user");
@@ -21,7 +21,7 @@ export class UpdateUserPublisher extends AbstractPublisher<UpdateUserEvent> {
             LocalLogger.log(
                 LogCodes.ERROR,
                 `UpdateUserPublisher not created`,
-                `employee/employee-service/src/events/publishers/update-user-publisher.ts:23`,
+                `employee/employee-service/src/events/publishers/update-user-publisher.ts:21`,
                 "UpdateUserPublisher not created in application index.ts"
             );
             throw new Error("UpdateUserPublisher not created in application index.ts");

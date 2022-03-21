@@ -18,7 +18,7 @@ const employeeSchema = new mongoose.Schema(
         branchName: { type: String, required: true },
         region: { type: String, required: true },
         registeredEmployee: { type: Boolean, default: true },
-        division: {type: String, required: true},
+        division: { type: String, required: true },
         authId: { type: String, default: "" },
         country: { type: String, required: true },
         phoneNumber: { type: String, required: true },
@@ -55,9 +55,10 @@ employeeSchema.statics.build = function (attributes: EmployeeAttrs): EmployeeDoc
 /**
  * Converts employee document to employee message object to create a auth user
  * @param document {EmployeeDoc}
+ * @param withVersion {boolean}
  */
-employeeSchema.statics.convertToMessage = function (document: EmployeeDoc): PersonMsg {
-    return {
+employeeSchema.statics.convertToMessage = function (document: EmployeeDoc, withVersion: boolean): PersonMsg {
+    const msg: PersonMsg = {
         id: document.id,
         country: document.country,
         email: document.email,
@@ -77,13 +78,15 @@ employeeSchema.statics.convertToMessage = function (document: EmployeeDoc): Pers
         userRole: document.userRole as UserRoles,
         firstName: document.firstName,
         phoneNumber: document.phoneNumber,
+        version: document.version,
     };
+    if (!withVersion) delete msg.version;
+    return msg;
 };
 
-
-employeeSchema.statics.updateByEvent = async function (employee: PersonMsg): Promise<EmployeeDoc | null> {
-    if (!employee.version) return await Employee.findOneAndUpdate({ email: employee.email }, employee);
-    return await Employee.findOneAndUpdate({ email: employee.email, version: employee.version }, employee);
+employeeSchema.statics.findByEvent = async function (employee: PersonMsg): Promise<EmployeeDoc | null> {
+    if (!employee.version) return await Employee.findOne({ email: employee.email });
+    return await Employee.findOne({ email: employee.email, version: employee.version - 1 });
 };
 /** Create model from schema */
 const Employee = mongoose.model<EmployeeDoc, EmployeeModel>("Employee", employeeSchema);

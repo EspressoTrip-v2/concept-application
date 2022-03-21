@@ -2,7 +2,7 @@ import "./tracer";
 import { GrpcServer, grpcServer } from "./services";
 import mongoose from "mongoose";
 import { LogCodes, MicroServiceNames, RabbitClient, rabbitClient } from "@espressotrip-org/concept-common";
-import { CreateUserPublisher, DeleteUserPublisher, UpdateEmployeeConsumer, UpdateUserPublisher, UserSaveFailureConsumer } from "./events";
+import { CreateUserPublisher, DeleteUserPublisher, UpdateEmployeeConsumer, UpdateEmployeeTaskPublisher, UpdateUserPublisher, UserSaveFailureConsumer } from "./events";
 import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
@@ -34,6 +34,8 @@ async function main(): Promise<void> {
         DeleteUserPublisher.NewDeleteUserPublisher(dupChannel);
         const uupChannel = await rabbit.addChannel("uup");
         UpdateUserPublisher.NewUpdateUserPublisher(uupChannel);
+        const uetpChannel = await rabbit.addChannel("uet");
+        UpdateEmployeeTaskPublisher.NewUpdateEmployeeTaskPublisher(uetpChannel);
 
         /** Rabbit Consumers */
         const usfcChannel = await rabbit.addChannel("usfc");
@@ -43,7 +45,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[employee-service:error]: Service start up error -> ${msg}`);
-        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "employee/employee-service/src/index.ts:33", msg.stack! || "No stack trace");
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "employee/employee-service/src/index.ts:48", msg.stack! || "No stack trace");
         if (rabbit) await rabbit.connection.close();
         if (gRPC) gRPC.m_server.forceShutdown()
     }

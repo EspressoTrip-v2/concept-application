@@ -60,10 +60,16 @@ func main() {
 		go consumers.NewDeleteEmployeeConsumer(decChannel, mClient).Listen()
 	}
 
-	uecChannel, err := rabbit.AddChannel("uec")
+	usfChannel, err := rabbit.AddChannel("usf")
 	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:64")
 	if ok == true {
-		go consumers.NewUpdateEmployeeConsumer(uecChannel, mClient).Listen()
+		go consumers.NewUserSaveFailureConsumer(usfChannel, mClient).Listen()
+	}
+
+	ueecChannel, err := rabbit.AddChannel("ueec")
+	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:64")
+	if ok == true {
+		go consumers.NewUpdateEmployeeEmpConsumer(ueecChannel, mClient).Listen()
 	}
 
 	// gRPC Server

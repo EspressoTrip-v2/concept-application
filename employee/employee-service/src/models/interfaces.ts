@@ -27,8 +27,8 @@ export interface EmployeeAttrs {
 /** Static build method to model */
 export interface EmployeeModel extends mongoose.Model<EmployeeDoc> {
     build(attributes: EmployeeAttrs): EmployeeDoc;
-    convertToMessage(document: EmployeeDoc): PersonMsg;
-    updateByEvent(employee: PersonMsg): Promise<EmployeeDoc | null>;
+    convertToMessage(document: EmployeeDoc, withVersion: boolean): PersonMsg;
+    findByEvent(employee: PersonMsg): Promise<EmployeeDoc | null>;
 }
 
 /** Extend mongoose document with product document values */

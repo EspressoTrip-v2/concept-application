@@ -101,3 +101,35 @@ func (c GrpcClientInstance) GetAllEmployees(request *taskPackage.AllEmployeeRequ
 	}
 	return response, nil
 }
+
+func (c GrpcClientInstance) CreateShift(data *taskPackage.Shift) (*taskPackage.ShiftResponsePayload, *libErrors.CustomError) {
+	response, err := c.client.CreateShift(c.ctx, data)
+	if err != nil {
+		return nil, libErrors.GrpcTranslator(err)
+	}
+	return response, nil
+}
+
+func (c GrpcClientInstance) GetShift(request *taskPackage.ShiftRequest) (*taskPackage.ShiftResponsePayload, *libErrors.CustomError) {
+	response, err := c.client.GetShift(c.ctx, request)
+	if err != nil {
+		return nil, libErrors.GrpcTranslator(err)
+	}
+	return response, nil
+}
+
+func (c GrpcClientInstance) GetAllShifts(request *taskPackage.AllShiftRequest) (*taskPackage.AllShiftResponsePayload, *libErrors.CustomError) {
+	response, err := c.client.GetAllShifts(c.ctx, request)
+	if err != nil {
+		return nil, libErrors.GrpcTranslator(err)
+	}
+	return response, nil
+}
+
+func (c GrpcClientInstance) UpdateShift(data *taskPackage.Shift) (*taskPackage.ShiftResponsePayload, *libErrors.CustomError) {
+	response, err := c.client.UpdateShift(c.ctx, data)
+	if err != nil {
+		return nil, libErrors.GrpcTranslator(err)
+	}
+	return response, nil
+}
