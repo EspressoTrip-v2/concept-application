@@ -11,7 +11,7 @@ message Task {
   string managerId = 5;
   int32 allocatedTimeMin = 6;
   string specialRequests = 7;
-  bool completed = 8;
+  string completed = 8;
   string rejectionReason = 9;
   }
 

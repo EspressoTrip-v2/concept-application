@@ -1,28 +1,30 @@
 package payloadSchemas
 
 import (
-	"fmt"
+	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
+	"github.com/go-playground/validator/v10"
 	taskPackage "task-api/proto"
 	"task-api/utils"
 )
 
 type CreateTaskPayload struct {
-	Division         string `json:"division"`
-	EmployeeId       string `json:"employeeId"`
-	ShiftId          string `json:"shiftId"`
-	ManagerId        string `json:"managerId"`
-	AllocatedTimeMin int    `json:"allocatedTimeMin"`
-	SpecialRequests  string `json:"specialRequests"`
-	Completed        bool   `json:"completed"`
-	RejectedReason   string `json:"rejectedReason"`
+	Division         string `json:"division" validate:"required"`
+	EmployeeId       string `json:"employeeId" validate:"required"`
+	ShiftId          string `json:"shiftId" validate:"required"`
+	ManagerId        string `json:"managerId" validate:"required"`
+	AllocatedTimeMin int    `json:"allocatedTimeMin" validate:"required,min=1"`
+	SpecialRequests  string `json:"specialRequests" validate:"required"`
+	Completed        string `json:"completed" validate:"required,oneof=yes no"`
+	RejectedReason   string `json:"rejectedReason" validate:"required"`
 }
 
-func (c *CreateTaskPayload) Validate() (*taskPackage.Task, error) {
+func (c *CreateTaskPayload) Validate() (*taskPackage.Task, *libErrors.CustomError) {
 	err := utils.GetValidator().PayloadValidator.Struct(c)
 	if err != nil {
-		fmt.Println(err)
-		return nil, err
+		validationErrors := err.(validator.ValidationErrors)
+		return nil, libErrors.NewPayloadValidationError(validationErrors)
 	}
+
 	t := taskPackage.Task{
 		Division:         c.Division,
 		EmployeeId:       c.EmployeeId,

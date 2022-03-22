@@ -11,7 +11,7 @@ type Task struct {
 	ManagerId        string `bson:"managerId"`
 	AllocatedTimeMin int32  `bson:"allocatedTimeMin"`
 	SpecialRequests  string `bson:"specialRequests"`
-	Completed        bool   `bson:"completed"`
+	Completed        string `bson:"completed"`
 	RejectionReason  string `bson:"rejectionReason"`
 }
 

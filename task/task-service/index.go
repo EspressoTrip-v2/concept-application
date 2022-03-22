@@ -84,7 +84,7 @@ func main() {
 
 func onFailure(err *libErrors.CustomError, logCode logcodes.LogCodes, message string, origin string) bool {
 	if err != nil {
-		localLogger.Log(logCode, message, origin, err.Message)
+		localLogger.Log(logCode, message, origin, err.Message[0])
 		log.Printf("[task-service:error]: Service start up error -> %v", message)
 		return false
 	}
