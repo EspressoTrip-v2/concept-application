@@ -6,6 +6,7 @@ import (
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"net/http"
@@ -134,9 +135,10 @@ func (r *RpcHandlers) UpdateTask(ctx context.Context, request *taskPackage.Task)
 			{"completed", request.GetCompleted()},
 			{"rejectionReason", request.GetRejectionReason()},
 		}}}
-
-	err := r.mongo.FindOneAndUpdateTask(ctx, bson.D{{"_id", request.GetId()}}, &ut, update, nil)
-	ok := r.onFailure(err, logcodes.ERROR, "Task not found", "task/task-service/services/grpc/rpc-handlers.go:133")
+	oid, err := primitive.ObjectIDFromHex(request.GetId())
+	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:139")
+	err = r.mongo.FindOneAndUpdateTask(ctx, bson.D{{"_id", oid}}, &ut, update, options.FindOneAndUpdate().SetReturnDocument(options.After))
+	ok = r.onFailure(err, logcodes.ERROR, "Task not found", "task/task-service/services/grpc/rpc-handlers.go:133")
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("Task not found: %v", err.Error()))
 	}
@@ -234,13 +236,11 @@ func (r *RpcHandlers) GetAllShifts(ctx context.Context, request *taskPackage.All
 
 func (r *RpcHandlers) CreateShift(ctx context.Context, request *taskPackage.Shift) (*taskPackage.ShiftResponsePayload, error) {
 	ns := models.Shift{
-		Id:       request.GetId(),
 		Division: request.GetDivision(),
 		Type:     request.GetType(),
 		Start:    request.GetStart(),
 		End:      request.GetEnd(),
 	}
-
 	insertResponse, err := r.mongo.InsertShift(ctx, &ns)
 	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:99")
 	if !ok {
@@ -253,10 +253,9 @@ func (r *RpcHandlers) CreateShift(ctx context.Context, request *taskPackage.Shif
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("Shift not found: %v", err.Error()))
 	}
-
 	payload := taskPackage.ShiftResponsePayload{
 		Status: http.StatusCreated,
-		Data:   ns.ConvertToMessage(),
+		Data:   s.ConvertToMessage(),
 	}
 	r.onSuccess(logcodes.CREATED, "Task created", "task/task-service/services/grpc/rpc-handlers.go:115",
 		fmt.Sprintf("shiftId: %v, division: %v", s.Id, s.Division))
@@ -272,8 +271,10 @@ func (r *RpcHandlers) UpdateShift(ctx context.Context, request *taskPackage.Shif
 			{"start", request.GetStart()},
 			{"end", request.GetEnd()}}}}
 
-	err := r.mongo.FindOneAndUpdateShift(ctx, bson.D{{"_id", request.GetId()}}, &us, update, nil)
-	ok := r.onFailure(err, logcodes.ERROR, "Shift not found", "task/task-service/services/grpc/rpc-handlers.go:133")
+	oid, err := primitive.ObjectIDFromHex(request.GetId())
+	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:273")
+	err = r.mongo.FindOneAndUpdateShift(ctx, bson.D{{"_id", oid}}, &us, update, options.FindOneAndUpdate().SetReturnDocument(options.After))
+	ok = r.onFailure(err, logcodes.ERROR, "Shift not found", "task/task-service/services/grpc/rpc-handlers.go:133")
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("Shift not found: %v", err.Error()))
 	}
