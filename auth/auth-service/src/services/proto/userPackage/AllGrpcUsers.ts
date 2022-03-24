@@ -1,4 +1,4 @@
-// Original file: src/services/proto/user.proto
+// Original file: proto/user.proto
 
 
 export interface AllGrpcUsers {

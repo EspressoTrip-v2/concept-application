@@ -1,4 +1,4 @@
-// Original file: src/services/proto/employee.proto
+// Original file: proto/employee.proto
 
 
 export interface GrpcEmployee {

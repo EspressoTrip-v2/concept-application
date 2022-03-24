@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "tsc-watch --onSuccess 'node ./src/index.js'",
-    "build:proto": "$(npm bin)/proto-loader-gen-types --longs=String --keepCase=true --enums=String --defaults --oneofs --grpcLib=@grpc/grpc-js --outDir=src/services/proto/ src/services/proto/*.proto"
+    "start": "tsc-watch --onSuccess 'node ./src/index.js'"
   },
   "author": "",
   "license": "ISC",

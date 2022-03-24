@@ -6,7 +6,7 @@ import taskPackage "task-service/proto"
 type Task struct {
 	Id               string `bson:"_id,omitempty"`
 	Division         string `bson:"division"`
-	EmployeeId       string `bson:"EmployeeId"`
+	EmployeeId       string `bson:"employeeId"`
 	ShiftId          string `bson:"shiftId"`
 	ManagerId        string `bson:"managerId"`
 	AllocatedTimeMin int32  `bson:"allocatedTimeMin"`
