@@ -32,16 +32,16 @@ func NewUpdateEmployeeEmpConsumer(rabbitChannel *amqp.Channel, mongoClient *mong
 func (c *UpdateEmployeeEmpConsumer) Listen() {
 	var err error
 	err = c.rabbitChannel.ExchangeDeclare(string(c.exchangeName), string(c.exchangeType), true, false, false, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to declare exchange", "task/task-service/events/update-employee-emp-consumer.go:34")
+	c.onFailure(err, logcodes.ERROR, "Failure to declare exchange", "task/task-service/events/update-employee-emp-consumer.go:35")
 
 	queue, err := c.rabbitChannel.QueueDeclare("", false, false, true, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to declare queue", "task/task-service/events/update-employee-emp-consumer.go:37")
+	c.onFailure(err, logcodes.ERROR, "Failure to declare queue", "task/task-service/events/update-employee-emp-consumer.go:38")
 
 	err = c.rabbitChannel.QueueBind(queue.Name, string(c.bindKey), string(c.exchangeName), false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "task/task-service/events/update-employee-emp-consumer.go:40")
+	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "task/task-service/events/update-employee-emp-consumer.go:41")
 
 	messages, err := c.rabbitChannel.Consume(queue.Name, "", false, false, false, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to listen on queue", "task/task-service/events/update-employee-emp-consumer.go:43")
+	c.onFailure(err, logcodes.ERROR, "Failure to listen on queue", "task/task-service/events/update-employee-emp-consumer.go:44")
 
 	fmt.Printf("[consumer:%v]: Subscribed on exchange:%v | route:%v\n", c.consumerName, c.exchangeName, c.bindKey)
 	forever := make(chan bool)
@@ -54,7 +54,7 @@ func (c *UpdateEmployeeEmpConsumer) Listen() {
 			}
 			err := d.Ack(false)
 			if err != nil {
-				localLogger.Log(logcodes.ERROR, "go routine message acknowledge error", "task/task-service/events/update-employee-emp-consumer.go:56",
+				localLogger.Log(logcodes.ERROR, "go routine message acknowledge error", "task/task-service/events/update-employee-emp-consumer.go:57",
 					fmt.Sprintf("Error acknowkledging message: %v", string(d.Body)))
 			}
 		}
@@ -65,7 +65,7 @@ func (c *UpdateEmployeeEmpConsumer) Listen() {
 func (c *UpdateEmployeeEmpConsumer) updateEmployee(data []byte) bool {
 	var employeePayload models.EmployeePayload
 	err := json.Unmarshal(data, &employeePayload)
-	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/update-employee-emp-consumer.go:62")
+	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/update-employee-emp-consumer.go:68")
 	if !ok {
 		return ok
 	}
@@ -85,7 +85,7 @@ func (c *UpdateEmployeeEmpConsumer) updateEmployee(data []byte) bool {
 	}}}
 
 	err = c.mongoClient.FindOneAndUpdateEmployee(context.TODO(), filter, &employee, update, nil)
-	ok = c.onFailure(err, logcodes.ERROR, "Update employee failed", "task/task-service/events/update-employee-emp-consumer.go:81")
+	ok = c.onFailure(err, logcodes.ERROR, "Update employee failed", "task/task-service/events/update-employee-emp-consumer.go:88")
 	if !ok {
 		return ok
 	}

@@ -70,17 +70,26 @@ func (c *DeleteEmployeeConsumer) Listen() {
 func (c *DeleteEmployeeConsumer) deleteEmployee(data []byte) bool {
 	var employeePayload models.EmployeePayload
 	err := json.Unmarshal(data, &employeePayload)
-	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/delete-employee-consumer.go:58")
+	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/delete-employee-consumer.go:73")
 	if !ok {
 		return ok
 	}
+
+	// Delete employee
 	var employee models.Employee
 	err = c.mongoClient.FindOneAndDeleteEmployee(context.TODO(), bson.D{{"email", employeePayload.Email}}, &employee)
-	ok = c.onFailure(err, logcodes.ERROR, "Delete employee failed", "task/task-service/events/delete-employee-consumer.go:70")
+	ok = c.onFailure(err, logcodes.ERROR, "Delete employee failed", "task/task-service/events/delete-employee-consumer.go:81")
 	if !ok {
 		return ok
 	}
 	c.onSuccess(logcodes.DELETED, "Employee deleted", "", fmt.Sprintf("email: %v, employeeId: %v", employeePayload.Email, employeePayload.Id))
+	// Delete the tasks associated with the employee
+	err = c.mongoClient.DeleteManyTasks(context.TODO(), bson.D{{"employeeId", employee.Id}})
+	ok = c.onFailure(err, logcodes.ERROR, "Delete tasks failed", "task/task-service/events/delete-employee-consumer.go:88")
+	if !ok {
+		return ok
+	}
+	c.onSuccess(logcodes.DELETED, "Tasks deleted", "", fmt.Sprintf("All tasks deleted for email: %v, employeeId: %v", employeePayload.Email, employeePayload.Id))
 	return true
 }
 

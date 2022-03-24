@@ -70,13 +70,13 @@ func (c *UserSaveFailureConsumer) Listen() {
 func (c *UserSaveFailureConsumer) deleteEmployee(data []byte) bool {
 	var employeePayload models.EmployeePayload
 	err := json.Unmarshal(data, &employeePayload)
-	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/user-save-failure-consumer.go:58")
+	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/user-save-failure-consumer.go:73")
 	if !ok {
 		return ok
 	}
 	var employee models.Employee
 	err = c.mongoClient.FindOneAndDeleteEmployee(context.TODO(), bson.D{{"email", employeePayload.Email}}, &employee)
-	ok = c.onFailure(err, logcodes.ERROR, "Delete employee failed", "task/task-service/events/user-save-failure-consumer.go:70")
+	ok = c.onFailure(err, logcodes.ERROR, "Delete employee failed", "task/task-service/events/user-save-failure-consumer.go:79")
 	if !ok {
 		return ok
 	}

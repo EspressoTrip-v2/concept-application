@@ -33,7 +33,7 @@ func (c *GrpcClientInstance) Connect(msg string) {
 
 	c.connection, err = grpc.Dial(string(c.port), grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "gRPC client failed to connect to server", "task/task-api/services/grpc-client.go:35", err.Error())
+		localLogger.Log(logcodes.ERROR, "gRPC client failed to connect to server", "task/task-api/services/grpc-client.go:36", err.Error())
 	} else {
 		fmt.Println(msg)
 	}

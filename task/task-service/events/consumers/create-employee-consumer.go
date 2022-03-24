@@ -9,6 +9,7 @@ import (
 	"github.com/EspressoTrip-v2/concept-go-common/exchange/exchangeTypes"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/streadway/amqp"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	localLogger "task-service/local-logger"
 	"task-service/models"
 	"task-service/services/mongoclient"
@@ -30,16 +31,16 @@ func NewCreateEmployeeConsumer(rabbitChannel *amqp.Channel, mongoClient *mongocl
 func (c *CreateEmployeeConsumer) Listen() {
 	var err error
 	err = c.rabbitChannel.ExchangeDeclare(string(c.exchangeName), string(c.exchangeType), true, false, false, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to declare exchange", "task/task-service/events/create-employee-consumer.go:33")
+	c.onFailure(err, logcodes.ERROR, "Failure to declare exchange", "task/task-service/events/create-employee-consumer.go:34")
 
 	queue, err := c.rabbitChannel.QueueDeclare("", false, false, true, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to declare queue", "task/task-service/events/create-employee-consumer.go:36")
+	c.onFailure(err, logcodes.ERROR, "Failure to declare queue", "task/task-service/events/create-employee-consumer.go:37")
 
 	err = c.rabbitChannel.QueueBind(queue.Name, string(c.bindKey), string(c.exchangeName), false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "task/task-service/events/create-employee-consumer.go:39")
+	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "task/task-service/events/create-employee-consumer.go:40")
 
 	messages, err := c.rabbitChannel.Consume(queue.Name, "", false, false, false, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to listen on queue", "task/task-service/events/create-employee-consumer.go:42")
+	c.onFailure(err, logcodes.ERROR, "Failure to listen on queue", "task/task-service/events/create-employee-consumer.go:43")
 
 	fmt.Printf("[consumer:%v]: Subscribed on exchange:%v | route:%v\n", c.consumerName, c.exchangeName, c.bindKey)
 	forever := make(chan bool)
@@ -47,12 +48,12 @@ func (c *CreateEmployeeConsumer) Listen() {
 		for d := range messages {
 			ok := c.createEmployee(d.Body)
 			if !ok {
-				localLogger.Log(logcodes.ERROR, "go routine error", "task/task-service/events/create-employee-consumer.go:50", "Error creating employee")
+				localLogger.Log(logcodes.ERROR, "go routine error", "task/task-service/events/create-employee-consumer.go:51", "Error creating employee")
 				continue
 			}
 			err := d.Ack(false)
 			if err != nil {
-				localLogger.Log(logcodes.ERROR, "go routine message acknowledge error", "task/task-service/events/create-employee-consumer.go:55",
+				localLogger.Log(logcodes.ERROR, "go routine message acknowledge error", "task/task-service/events/create-employee-consumer.go:56",
 					fmt.Sprintf("Error acknowkledging message: %v", string(d.Body)))
 			}
 
@@ -64,12 +65,17 @@ func (c *CreateEmployeeConsumer) Listen() {
 func (c *CreateEmployeeConsumer) createEmployee(data []byte) bool {
 	var employeePayload models.EmployeePayload
 	err := json.Unmarshal(data, &employeePayload)
-	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/create-employee-consumer.go:60")
+	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "task/task-service/events/create-employee-consumer.go:68")
+	if !ok {
+		return ok
+	}
+	oid, err := primitive.ObjectIDFromHex(employeePayload.Id)
+	ok = c.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/events/create-employee-consumer.go:73")
 	if !ok {
 		return ok
 	}
 	employee := models.Employee{
-		Id:              employeePayload.Id,
+		Id:              oid,
 		Division:        employeePayload.Division,
 		NumberTasks:     0,
 		Email:           employeePayload.Email,
@@ -82,10 +88,11 @@ func (c *CreateEmployeeConsumer) createEmployee(data []byte) bool {
 		Version:         employeePayload.Version,
 	}
 	_, err = c.mongoClient.InsertEmployee(context.TODO(), &employee)
-	ok = c.onFailure(err, logcodes.ERROR, "Insert employee failed", "task/task-service/events/create-employee-consumer.go:77")
+	ok = c.onFailure(err, logcodes.ERROR, "Insert employee failed", "task/task-service/events/create-employee-consumer.go:91")
 	if !ok {
 		return ok
 	}
+	c.onSuccess(logcodes.CREATED, "Employee created", "task/task-service/events/create-employee-consumer.go:95", "Employee view created")
 	return true
 }
 
