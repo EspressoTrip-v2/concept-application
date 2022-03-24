@@ -3,6 +3,7 @@ import Navbar from "./components/Navbar";
 import Dashboard from "./pages/Dashboard";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
+import User from "./pages/User";
 
 import { useStoreRehydrated } from "easy-peasy";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -13,7 +14,6 @@ toast.configure();
 
 const App = () => {
     const isRehydrated = useStoreRehydrated();
-
     return (
         <BrowserRouter>
             <Navbar />
@@ -23,6 +23,7 @@ const App = () => {
                     <Route path="/login" element={<Login />} />
                     <Route element={<Protected />} path="/">
                         <Route path="/dashboard" element={<Dashboard />} />
+                        <Route path="/user" element={<User />} />
                     </Route>
                 </Routes>
             ) : (
