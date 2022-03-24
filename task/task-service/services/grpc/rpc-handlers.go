@@ -149,22 +149,52 @@ func (r *RpcHandlers) CreateTask(ctx context.Context, request *taskPackage.Task)
 }
 
 func (r *RpcHandlers) UpdateTask(ctx context.Context, request *taskPackage.Task) (*taskPackage.TaskResponsePayload, error) {
+
+	shiftId, err := primitive.ObjectIDFromHex(request.GetShiftId())
+	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:154")
+	if !ok {
+		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Invalid object id error: %v", err.Error()))
+	}
+	employeeId, err := primitive.ObjectIDFromHex(request.GetEmployeeId())
+	ok = r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:159")
+	if !ok {
+		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Invalid object id error: %v", err.Error()))
+	}
+	mngId, err := primitive.ObjectIDFromHex(request.GetManagerId())
+	ok = r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:164")
+	if !ok {
+		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Invalid object id error: %v", err.Error()))
+	}
+
+	shiftCount, err := r.mongo.Count(ctx, mongodb.TASK_DB, mongodb.SHIFT_COL, bson.D{{"_id", shiftId}})
+	ok = r.onFailure(err, logcodes.ERROR, "Error getting shift document count", "task/task-service/services/grpc/rpc-handlers.go:170")
+	if shiftCount == 0 || !ok {
+		return nil, status.Errorf(codes.NotFound, "Shift not found")
+	}
+
+	employeeCount, err := r.mongo.Count(ctx, mongodb.TASK_DB, mongodb.EMPLOYEE_COL, bson.D{{"_id", employeeId}})
+	ok = r.onFailure(err, logcodes.ERROR, "Error getting employee document count", "task/task-service/services/grpc/rpc-handlers.go:176")
+	if employeeCount == 0 || !ok {
+		return nil, status.Errorf(codes.NotFound, "Employee not found")
+	}
+
 	var ut models.Task
 	update := bson.D{{"$set",
 		bson.D{
 			{"division", request.GetDivision()},
-			{"employeeId", request.GetEmployeeId()},
-			{"shiftId", request.GetShiftId()},
-			{"managerId", request.GetManagerId()},
+			{"employeeId", employeeId},
+			{"shiftId", shiftId},
+			{"managerId", mngId},
 			{"allocatedTimeMin", request.GetAllocatedTimeMin()},
 			{"specialRequests", request.GetSpecialRequests()},
 			{"completed", request.GetCompleted()},
 			{"rejectionReason", request.GetRejectionReason()},
 		}}}
+
 	oid, err := primitive.ObjectIDFromHex(request.GetId())
-	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:165")
+	ok = r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:195")
 	err = r.mongo.FindOneAndUpdateTask(ctx, bson.D{{"_id", oid}}, &ut, update, options.FindOneAndUpdate().SetReturnDocument(options.After))
-	ok = r.onFailure(err, logcodes.ERROR, "Task not found", "task/task-service/services/grpc/rpc-handlers.go:167")
+	ok = r.onFailure(err, logcodes.ERROR, "Task not found", "task/task-service/services/grpc/rpc-handlers.go:197")
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("Task not found: %v", err.Error()))
 	}
@@ -173,7 +203,7 @@ func (r *RpcHandlers) UpdateTask(ctx context.Context, request *taskPackage.Task)
 		Status: http.StatusCreated,
 		Data:   ut.ConvertToMessage(),
 	}
-	r.onSuccess(logcodes.INFO, "", "task/task-service/services/grpc/rpc-handlers.go:176",
+	r.onSuccess(logcodes.INFO, "", "task/task-service/services/grpc/rpc-handlers.go:206",
 		fmt.Sprintf("taskId: %v, division: %v", ut.Id, ut.Division))
 	return &payload, nil
 }
@@ -181,7 +211,7 @@ func (r *RpcHandlers) UpdateTask(ctx context.Context, request *taskPackage.Task)
 func (r *RpcHandlers) GetEmployee(ctx context.Context, request *taskPackage.EmployeeRequest) (*taskPackage.EmployeeResponsePayload, error) {
 	var employee models.Employee
 	err := r.mongo.FindOneEmployee(ctx, bson.D{{"_id", request.GetId()}}, &employee)
-	ok := r.onFailure(err, logcodes.ERROR, "Employee not found", "task/task-service/services/grpc/rpc-handlers.go:184")
+	ok := r.onFailure(err, logcodes.ERROR, "Employee not found", "task/task-service/services/grpc/rpc-handlers.go:214")
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, "Employee not found: %v", err.Error())
 	}
@@ -196,10 +226,10 @@ func (r *RpcHandlers) GetAllEmployees(ctx context.Context, request *taskPackage.
 	var employees []*models.Employee
 	var msgEmployees []*taskPackage.Employee
 	cursor, err := r.mongo.FindEmployees(ctx, bson.D{})
-	r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:199")
+	r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:229")
 
 	err = cursor.All(ctx, &employees)
-	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:202")
+	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:232")
 	if !ok {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
 	}
@@ -219,12 +249,12 @@ func (r *RpcHandlers) GetAllEmployees(ctx context.Context, request *taskPackage.
 func (r *RpcHandlers) GetShift(ctx context.Context, request *taskPackage.ShiftRequest) (*taskPackage.ShiftResponsePayload, error) {
 	var s models.Shift
 	oid, err := primitive.ObjectIDFromHex(request.GetId())
-	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:222")
+	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:252")
 	if !ok {
 		return nil, status.Errorf(codes.InvalidArgument, fmt.Sprintf("Payload error: %v", err.Error()))
 	}
 	err = r.mongo.FindOneShift(ctx, bson.D{{"_id", oid}}, &s)
-	ok = r.onFailure(err, logcodes.ERROR, "Shift not found", "task/task-service/services/grpc/rpc-handlers.go:227")
+	ok = r.onFailure(err, logcodes.ERROR, "Shift not found", "task/task-service/services/grpc/rpc-handlers.go:257")
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, "Shift not found: %v", err.Error())
 	}
@@ -239,12 +269,12 @@ func (r *RpcHandlers) GetAllShifts(ctx context.Context, request *taskPackage.All
 	var shifts []*models.Shift
 	var msgShifts []*taskPackage.Shift
 	cursor, err := r.mongo.FindShifts(ctx, bson.D{})
-	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:242")
+	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:272")
 	if !ok {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
 	}
 	err = cursor.All(ctx, &shifts)
-	ok = r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:247")
+	ok = r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:277")
 	if !ok {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
 	}
@@ -268,14 +298,14 @@ func (r *RpcHandlers) CreateShift(ctx context.Context, request *taskPackage.Shif
 		End:      request.GetEnd(),
 	}
 	insertResponse, err := r.mongo.InsertShift(ctx, &ns)
-	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:271")
+	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:301")
 	if !ok {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
 	}
 	oid := insertResponse.InsertedID.(primitive.ObjectID)
 	var s models.Shift
 	err = r.mongo.FindOneShift(ctx, bson.D{{"_id", oid}}, &s)
-	ok = r.onFailure(err, logcodes.ERROR, "Shift not found", "task/task-service/services/grpc/rpc-handlers.go:278")
+	ok = r.onFailure(err, logcodes.ERROR, "Shift not found", "task/task-service/services/grpc/rpc-handlers.go:308")
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("Shift not found: %v", err.Error()))
 	}
@@ -283,7 +313,7 @@ func (r *RpcHandlers) CreateShift(ctx context.Context, request *taskPackage.Shif
 		Status: http.StatusCreated,
 		Data:   s.ConvertToMessage(),
 	}
-	r.onSuccess(logcodes.CREATED, "Task created", "task/task-service/services/grpc/rpc-handlers.go:286",
+	r.onSuccess(logcodes.CREATED, "Task created", "task/task-service/services/grpc/rpc-handlers.go:316",
 		fmt.Sprintf("shiftId: %v, division: %v", s.Id, s.Division))
 	return &payload, nil
 }
@@ -298,9 +328,9 @@ func (r *RpcHandlers) UpdateShift(ctx context.Context, request *taskPackage.Shif
 			{"end", request.GetEnd()}}}}
 
 	oid, err := primitive.ObjectIDFromHex(request.GetId())
-	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:301")
+	ok := r.onFailure(err, logcodes.ERROR, "Object id conversion failure", "task/task-service/services/grpc/rpc-handlers.go:331")
 	err = r.mongo.FindOneAndUpdateShift(ctx, bson.D{{"_id", oid}}, &us, update, options.FindOneAndUpdate().SetReturnDocument(options.After))
-	ok = r.onFailure(err, logcodes.ERROR, "Shift not found", "task/task-service/services/grpc/rpc-handlers.go:133")
+	ok = r.onFailure(err, logcodes.ERROR, "Shift not found", "task/task-service/services/grpc/rpc-handlers.go:333")
 	if !ok {
 		return nil, status.Errorf(codes.NotFound, fmt.Sprintf("Shift not found: %v", err.Error()))
 	}
@@ -309,8 +339,8 @@ func (r *RpcHandlers) UpdateShift(ctx context.Context, request *taskPackage.Shif
 		Status: http.StatusCreated,
 		Data:   us.ConvertToMessage(),
 	}
-	r.onSuccess(logcodes.INFO, "", "task/task-service/services/grpc/rpc-handlers.go:312",
-		fmt.Sprintf("shifId: %v, division: %v", us.Id, us.Division))
+	r.onSuccess(logcodes.INFO, "Shift updated", "task/task-service/services/grpc/rpc-handlers.go:342",
+		fmt.Sprintf("shiftId: %v, division: %v", us.Id, us.Division))
 	return &payload, nil
 }
 
