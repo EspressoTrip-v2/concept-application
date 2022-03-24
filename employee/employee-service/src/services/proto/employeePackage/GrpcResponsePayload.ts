@@ -1,4 +1,4 @@
-// Original file: src/services/proto/employee.proto
+// Original file: proto/employee.proto
 
 import type { GrpcEmployee as _employeePackage_GrpcEmployee, GrpcEmployee__Output as _employeePackage_GrpcEmployee__Output } from '../employeePackage/GrpcEmployee';
 

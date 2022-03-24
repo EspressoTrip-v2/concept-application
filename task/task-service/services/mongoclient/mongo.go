@@ -7,7 +7,6 @@ import (
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/EspressoTrip-v2/concept-go-common/mongodb"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -24,6 +23,7 @@ type MongoDBCruder interface {
 	FindOneAndUpdateTask(ctx context.Context, filter bson.D, variable *models.Task, update bson.D, options *options.FindOneAndUpdateOptions) error
 	FindOneAndDeleteTask(ctx context.Context, filter bson.D, variable *models.Task) error
 	FindTasks(ctx context.Context, filter bson.D) (*mongo.Cursor, error)
+	DeleteManyTasks(ctx context.Context, filter bson.D) error
 	InsertEmployee(ctx context.Context, data *models.Employee) (*mongo.InsertOneResult, error)
 	FindOneEmployee(ctx context.Context, filter bson.D, variable *models.Employee) error
 	FindEmployees(ctx context.Context, filter bson.D) (*mongo.Cursor, error)
@@ -33,6 +33,7 @@ type MongoDBCruder interface {
 	FindOneShift(ctx context.Context, filter bson.D, variable *models.Shift) error
 	FindOneAndUpdateShift(ctx context.Context, filter bson.D, variable *models.Shift, update bson.D, options *options.FindOneAndUpdateOptions) error
 	FindShifts(ctx context.Context, filter bson.D) (*mongo.Cursor, error)
+	Count(ctx context.Context, databaseName mongodb.DatabaseNames, collectionName mongodb.CollectionNames, filter bson.D) (int, error)
 	Disconnect()
 }
 
@@ -43,7 +44,7 @@ type MongoClient struct {
 func (m *MongoClient) Disconnect() {
 	err := m.db.Disconnect(context.TODO())
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB disconnect error", "task/task-service/services/mongoClient/mongo.go:36", err.Error())
+		localLogger.Log(logcodes.ERROR, "MongoDB disconnect error", "task/task-service/services/mongoClient/mongo.go:47", err.Error())
 	}
 }
 
@@ -59,6 +60,16 @@ func (m *MongoClient) InsertTask(ctx context.Context, data *models.Task) (*mongo
 func (m *MongoClient) FindOneTask(ctx context.Context, filter bson.D, variable *models.Task) error {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.TASK_COL))
 	err := collection.FindOne(ctx, filter).Decode(variable)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MongoClient) DeleteManyTasks(ctx context.Context, filter bson.D) error {
+	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.TASK_COL))
+	deleted, err := collection.DeleteMany(ctx, filter)
+	fmt.Println(deleted.DeletedCount)
 	if err != nil {
 		return err
 	}
@@ -137,11 +148,7 @@ func (m *MongoClient) FindOneAndDeleteEmployee(ctx context.Context, filter bson.
 	}
 
 	collection = m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.TASK_COL))
-	oid, err := primitive.ObjectIDFromHex(variable.Id)
-	if err != nil {
-		return err
-	}
-	_, err = collection.DeleteMany(ctx, bson.D{{"employeeId", oid}})
+	_, err = collection.DeleteMany(ctx, bson.D{{"employeeId", variable.Id}})
 	if err != nil {
 		return err
 	}
@@ -185,6 +192,15 @@ func (m *MongoClient) FindShifts(ctx context.Context, filter bson.D) (*mongo.Cur
 
 }
 
+func (m MongoClient) Count(ctx context.Context, databaseName mongodb.DatabaseNames, collectionName mongodb.CollectionNames, filter bson.D) (int, error) {
+	collection := m.db.Database(string(databaseName)).Collection(string(collectionName))
+	count, err := collection.CountDocuments(ctx, filter)
+	if err != nil {
+		return 0, err
+	}
+	return int(count), nil
+}
+
 func GetMongoDB() (*MongoClient, *libErrors.CustomError) {
 	ctx := context.TODO()
 	uri := os.Getenv("MONGO_URI")
@@ -193,7 +209,7 @@ func GetMongoDB() (*MongoClient, *libErrors.CustomError) {
 		return nil, libErrors.NewDatabaseError(fmt.Sprintf("MongoDB error: %v", err.Error()))
 	}
 	if err := client.Ping(ctx, readpref.Primary()); err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/services/mongoClient/mongo.go:81", err.Error())
+		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/services/mongoClient/mongo.go:212", err.Error())
 	} else {
 		fmt.Println("[task-service:mongo]: Connected successfully")
 	}

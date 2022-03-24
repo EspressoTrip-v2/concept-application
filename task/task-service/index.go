@@ -67,7 +67,7 @@ func main() {
 	}
 
 	ueecChannel, err := rabbit.AddChannel("ueec")
-	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:64")
+	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:70")
 	if ok == true {
 		go consumers.NewUpdateEmployeeEmpConsumer(ueecChannel, mClient).Listen()
 	}
@@ -75,7 +75,7 @@ func main() {
 	// gRPC Server
 	err = grpc.NewGrpcServer(os.Getenv("GRPC_SERVER_PORT"), microserviceNames.TASK_SERVICE, mClient).
 		Listen(fmt.Sprintf("[task-service:gRPC-server]: Listening on %v\n", os.Getenv("GRPC_SERVER_PORT")))
-	ok = onFailure(err, logcodes.ERROR, "gRPC server failed", "task/task-service/index.go:72")
+	ok = onFailure(err, logcodes.ERROR, "gRPC server failed", "task/task-service/index.go:78")
 	if ok != true {
 		log.Fatalln("[task-service:gRPC-server]: Failed to connect to gRPC server")
 	}

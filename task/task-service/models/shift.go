@@ -3,7 +3,7 @@ package models
 import taskPackage "task-service/proto"
 
 type Shift struct {
-	Id       string `bson:"_id"`
+	Id       string `bson:"_id,omitempty"`
 	Division string `bson:"division"`
 	Type     string `bson:"type"`
 	Start    string `bson:"start"`
