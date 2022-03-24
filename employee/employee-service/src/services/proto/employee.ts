@@ -9,8 +9,10 @@ type SubtypeConstructor<Constructor extends new (...args: any) => any, Subtype> 
 
 export interface ProtoGrpcType {
   employeePackage: {
+    AllEmployees: MessageTypeDefinition
     EmployeeId: MessageTypeDefinition
     EmployeeService: SubtypeConstructor<typeof grpc.Client, _employeePackage_EmployeeServiceClient> & { service: _employeePackage_EmployeeServiceDefinition }
+    GrpcAllEmployeesResponsePayload: MessageTypeDefinition
     GrpcEmployee: MessageTypeDefinition
     GrpcEmployeeAttributes: MessageTypeDefinition
     GrpcResponsePayload: MessageTypeDefinition

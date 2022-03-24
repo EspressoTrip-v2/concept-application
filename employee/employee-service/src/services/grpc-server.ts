@@ -10,6 +10,8 @@ import { Employee } from "../models";
 import { GrpcResponsePayload } from "./proto/employeePackage/GrpcResponsePayload";
 import { CreateUserPublisher, DeleteUserPublisher, UpdateEmployeeTaskPublisher, UpdateUserPublisher } from "../events";
 import { LocalLogger } from "../utils";
+import { AllEmployees } from "./proto/employeePackage/AllEmployees";
+import { GrpcAllEmployeesResponsePayload } from "./proto/employeePackage/GrpcAllEmployeesResponsePayload";
 
 export class GrpcServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/employee.proto";
@@ -46,7 +48,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 LocalLogger.log(
                     LogCodes.CREATED,
                     "Employee created",
-                    "employee/employee-service/src/services/grpc-server.ts:46",
+                    "employee/employee-service/src/services/grpc-server.ts:48",
                     `email: ${employee.email}, employeeId: ${employee.id}`
                 );
                 const employeeMsg = {
@@ -67,7 +69,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     "Employee create error",
-                    "employee/employee-service/src/services/grpc-server.ts:67",
+                    "employee/employee-service/src/services/grpc-server.ts:69",
                     `error: ${(error as Error).message}`
                 );
                 return callback(serverError);
@@ -81,7 +83,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     "Employee not found",
-                    "employee/employee-service/src/services/grpc-server.ts:81",
+                    "employee/employee-service/src/services/grpc-server.ts:83",
                     `Employee: ${id} does not exist`
                 );
                 return callback({
@@ -92,7 +94,7 @@ export class GrpcServer extends AbstractGrpcServer {
             LocalLogger.log(
                 LogCodes.DELETED,
                 "Employee deleted",
-                "employee/employee-service/src/services/grpc-server.ts:92",
+                "employee/employee-service/src/services/grpc-server.ts:94",
                 `email: ${deletedEmployee.email}, employeeId: ${deletedEmployee.id}`
             );
             DeleteUserPublisher.deleteUserPublisher().publish(Employee.convertToMessage(deletedEmployee, true));
@@ -109,7 +111,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     "Employee not found",
-                    "employee/employee-service/src/services/grpc-server.ts:109",
+                    "employee/employee-service/src/services/grpc-server.ts:111",
                     `Employee: ${id} does not exist`
                 );
                 return callback({
@@ -133,7 +135,7 @@ export class GrpcServer extends AbstractGrpcServer {
                     LocalLogger.log(
                         LogCodes.ERROR,
                         "Employee not found",
-                        "employee/employee-service/src/services/grpc-server.ts:133",
+                        "employee/employee-service/src/services/grpc-server.ts:135",
                         `email: ${employeeUpdate.email}, employeeId: ${id}`
                     );
                     return callback({
@@ -144,7 +146,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 LocalLogger.log(
                     LogCodes.UPDATED,
                     "Employee updated",
-                    "employee/employee-service/src/services/grpc-server.ts:144",
+                    "employee/employee-service/src/services/grpc-server.ts:146",
                     `email: ${employee.email}, employeeId: ${employee.id}`
                 );
 
@@ -167,11 +169,21 @@ export class GrpcServer extends AbstractGrpcServer {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     "Employee update error",
-                    "employee/employee-service/src/services/grpc-server.ts:167",
+                    "employee/employee-service/src/services/grpc-server.ts:169",
                     `error: ${(error as Error).message}`
                 );
                 return callback(serverError);
             }
+        },
+        GetAllEmployees: async (
+            call: grpc.ServerUnaryCall<AllEmployees, GrpcAllEmployeesResponsePayload>,
+            callback: grpc.sendUnaryData<GrpcAllEmployeesResponsePayload>
+        ) => {
+            const employees = await Employee.find({});
+            return callback(null, {
+                status: 200,
+                data: employees || [],
+            });
         },
     };
 
@@ -188,6 +200,7 @@ export class GrpcServer extends AbstractGrpcServer {
             DeleteEmployee: this.m_rpcMethods.DeleteEmployee,
             GetEmployee: this.m_rpcMethods.GetEmployee,
             UpdateEmployee: this.m_rpcMethods.UpdateEmployee,
+            GetAllEmployees: this.m_rpcMethods.GetAllEmployees,
         });
 
         this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error | null, port: number) => {

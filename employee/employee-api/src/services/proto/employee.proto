@@ -52,10 +52,17 @@ message GrpcResponsePayload{
     GrpcEmployee data = 2;
 }
 
+message AllEmployees{}
+
+message GrpcAllEmployeesResponsePayload {
+    int32 status = 1;
+    repeated GrpcEmployee data = 2;
+}
 
 service EmployeeService {
     rpc CreateEmployee(GrpcEmployeeAttributes) returns (GrpcResponsePayload) {};
     rpc UpdateEmployee(GrpcEmployeeAttributes) returns (GrpcResponsePayload) {};
     rpc DeleteEmployee(EmployeeId) returns (GrpcResponsePayload) {};
     rpc GetEmployee(EmployeeId) returns (GrpcResponsePayload) {};
+    rpc GetAllEmployees(AllEmployees) returns (GrpcAllEmployeesResponsePayload);
 }

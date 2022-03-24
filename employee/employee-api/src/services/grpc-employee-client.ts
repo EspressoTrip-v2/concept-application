@@ -6,6 +6,7 @@ import { GrpcEmployeeAttributes } from "./proto/employeePackage/GrpcEmployeeAttr
 import { EmployeeId } from "./proto/employeePackage/EmployeeId";
 import { GrpcResponsePayload } from "./proto/employeePackage/GrpcResponsePayload";
 import { EmployeeServiceClient } from "./proto/employeePackage/EmployeeService";
+import { GrpcAllEmployeesResponsePayload } from "./proto/employeePackage/GrpcAllEmployeesResponsePayload";
 
 export class GrpcEmployeeClient extends AbstractGrpcClient {
     static m_instance: GrpcEmployeeClient | undefined
@@ -82,6 +83,18 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
         };
         return new Promise(async (resolve, reject) => {
             this.m_client.DeleteEmployee(grpcEmployeeId, (error: grpc.ServiceError | null, responsePayload?: GrpcResponsePayload) => {
+                if (error) return reject(grpcErrorTranslator(error));
+                return resolve(responsePayload!);
+            });
+        });
+    }
+
+    /**
+     * Get all employees
+     */
+    getAllEmployees(): Promise<GrpcAllEmployeesResponsePayload> {
+        return new Promise(async (resolve, reject) => {
+            this.m_client.GetAllEmployees({}, (error: grpc.ServiceError | null, responsePayload?: GrpcAllEmployeesResponsePayload) => {
                 if (error) return reject(grpcErrorTranslator(error));
                 return resolve(responsePayload!);
             });

@@ -23,6 +23,7 @@ app.use(validateCurrentUser);
 /** Routes */
 app.use(Routers.createEmployeeRouter);
 app.use(Routers.getEmployeeRouter);
+app.use(Routers.getAllEmployeeRouter);
 app.use(Routers.deleteEmployeeRouter);
 app.use(Routers.updateEmployeeRouter);
 
