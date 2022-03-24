@@ -10,17 +10,16 @@ body {
 }
 
 a {
-    text-decoration: none;
+    text-decoration: none !important;
     cursor: pointer;
-}
-
-a:hover {
-    text-decoration: underline;
-    color: $color-secondary;
+    &:hover {
+        text-decoration: none;
+        color: $color-black;
+    }
 }
 
 ::selection {
-    background-color: $color-secondary;
+    background-color: $color-tertiary;
     color: $color-white;
 }
 

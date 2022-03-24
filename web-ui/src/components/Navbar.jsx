@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useStoreState, useStoreActions } from "easy-peasy";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useState } from "react";
 
@@ -12,6 +12,7 @@ const Navbar = () => {
     const userAuthorised = useStoreState(state => state.userAuthorised);
     const setUserAuthorised = useStoreActions(actions => actions.setUserAuthorised);
     const setUser = useStoreActions(actions => actions.setUser);
+    const { firstName, lastName } = useStoreState(state => state.user);
 
     const [loading, setLoading] = useState(false);
 
@@ -36,21 +37,60 @@ const Navbar = () => {
         }
         setLoading(false);
     };
+
+    const userInitials = () => {
+        if (firstName && lastName) {
+            let initals = `${firstName.charAt(0)}${lastName.charAt(0)}`;
+            return initals.toUpperCase();
+        }
+    };
+
+    const NAV_ITEMS = [
+        {
+            name: "Dashboard",
+            path: "/dashboard",
+        },
+    ];
+
+    let pagePath = useLocation();
+
+    const checkCurrPath = () => {
+        if (pagePath.pathname === "/dashboard") {
+            return "active";
+        } else {
+            return "";
+        }
+    };
+
     return (
         <div className="navigation">
             <nav className="navigation_desktop">
-                <div className="nav_left">
-                    <Link to="/">
-                        <img src={logo} className="navigation_logo" width="111px" height="55px" alt="ACME" />
-                    </Link>
-                </div>
-                <div className="nav">
-                    {userAuthorised && (
-                        <button className="btn btn-dark" disabled={loading} onClick={signOut}>
-                            Sign Out
-                        </button>
-                    )}
-                </div>
+                <Link to="/">
+                    <img src={logo} className="navigation_logo" width="111px" height="55px" alt="ACME" />
+                </Link>
+                {userAuthorised ? (
+                    <div className="navigation_right">
+                        {NAV_ITEMS.map(item => (
+                            <div key={item.name} className={`navigation_right-item `}>
+                                <Link to={item.path}>
+                                    <span className={`${checkCurrPath()}`}>{item.name}</span>
+                                </Link>
+                            </div>
+                        ))}
+                        <div className="navigation_right-item">
+                            <button className="btn btn-dark" disabled={loading} onClick={signOut}>
+                                Sign Out
+                            </button>
+                        </div>
+                        <div className="navigation_right-item">
+                            <div className="navigation_right-item--user">
+                                <Link to="/user">{userInitials()}</Link>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    ""
+                )}
             </nav>
             <nav className="navigation_mobile">
                 <div className="nav_left">
@@ -63,6 +103,4 @@ const Navbar = () => {
     );
 };
 
-{
-}
 export default Navbar;

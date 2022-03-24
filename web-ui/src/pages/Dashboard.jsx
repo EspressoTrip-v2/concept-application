@@ -39,24 +39,7 @@ const Dashboard = () => {
 
     return (
         <div className="container mt-3">
-            <div className="row">
-                {user ? (
-                    <div className="col-md-12">
-                        <h1>User Details</h1>
-                        <ul>
-                            {Object.keys(user).map(key => (
-                                <li key={key}>
-                                    <b>{key}</b>: {user[key]}
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
-                ) : (
-                    <div className="col-md-12">
-                        <h1>Loading...</h1>
-                    </div>
-                )}
-            </div>
+            <div className="row">Dashboard</div>
         </div>
     );
 };
