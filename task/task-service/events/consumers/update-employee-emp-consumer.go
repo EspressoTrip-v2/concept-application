@@ -50,6 +50,11 @@ func (c *UpdateEmployeeEmpConsumer) Listen() {
 			ok := c.updateEmployee(d.Body)
 			if !ok {
 				localLogger.Log(logcodes.ERROR, "go routine error", "task/task-service/events/update-employee-emp-consumer.go:51", "Error updating employee")
+				err := d.Ack(false)
+				if err != nil {
+					localLogger.Log(logcodes.ERROR, "go routine message acknowledge error", "task/task-service/events/update-employee-emp-consumer.go:57",
+						fmt.Sprintf("Error acknowkledging message: %v", string(d.Body)))
+				}
 				continue
 			}
 			err := d.Ack(false)

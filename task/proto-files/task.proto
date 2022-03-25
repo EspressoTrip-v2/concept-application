@@ -67,6 +67,7 @@ message Shift {
   string start = 4;
   string end = 5;
   int32 version = 6;
+  string shiftName = 7;
 }
 
 message ShiftResponsePayload {

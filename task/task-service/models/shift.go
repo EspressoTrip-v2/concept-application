@@ -3,19 +3,21 @@ package models
 import taskPackage "task-service/proto"
 
 type Shift struct {
-	Id       string `bson:"_id,omitempty"`
-	Division string `bson:"division"`
-	Type     string `bson:"type"`
-	Start    string `bson:"start"`
-	End      string `bson:"end"`
+	Id        string `bson:"_id,omitempty"`
+	Division  string `bson:"division"`
+	Type      string `bson:"type"`
+	Start     string `bson:"start"`
+	End       string `bson:"end"`
+	ShiftName string `bson:"shiftName"`
 }
 
 func (s *Shift) ConvertToMessage() *taskPackage.Shift {
 	return &taskPackage.Shift{
-		Id:       s.Id,
-		Division: s.Division,
-		Type:     s.Type,
-		Start:    s.Start,
-		End:      s.End,
+		Id:        s.Id,
+		Division:  s.Division,
+		Type:      s.Type,
+		Start:     s.Start,
+		End:       s.End,
+		ShiftName: s.ShiftName,
 	}
 }

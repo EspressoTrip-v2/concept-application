@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"task-service/events/consumers"
+	"task-service/events/publishers"
 	localLogger "task-service/local-logger"
 	"task-service/services/grpc"
 	"task-service/services/mongoclient"
@@ -38,7 +39,7 @@ func main() {
 	// Logging
 	logChannel, err := rabbit.AddChannel("log")
 	ok := onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:40")
-	if ok == true {
+	if ok {
 		localLogger.Start(logChannel, microserviceNames.TASK_SERVICE)
 	}
 
@@ -47,29 +48,36 @@ func main() {
 	onFailure(err, logcodes.ERROR, "MongoDB error", "task/task-service/index.go:47")
 	defer mClient.Disconnect()
 
-	// Consumers
+	// Rabbit Consumers
 	cecChannel, err := rabbit.AddChannel("cec")
-	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:52")
-	if ok == true {
+	ok = onFailure(err, logcodes.ERROR, "Failed to create CreateEmployeeConsumer channel", "ask/task-service/index.go:52")
+	if ok {
 		go consumers.NewCreateEmployeeConsumer(cecChannel, mClient).Listen()
 	}
 
 	decChannel, err := rabbit.AddChannel("dec")
-	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:58")
-	if ok == true {
+	ok = onFailure(err, logcodes.ERROR, "Failed to create DeleteEmployeeConsumer channel", "ask/task-service/index.go:58")
+	if ok {
 		go consumers.NewDeleteEmployeeConsumer(decChannel, mClient).Listen()
 	}
 
 	usfChannel, err := rabbit.AddChannel("usf")
-	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:64")
-	if ok == true {
+	ok = onFailure(err, logcodes.ERROR, "Failed to create UserSaveFailureConsumer channel", "ask/task-service/index.go:64")
+	if ok {
 		go consumers.NewUserSaveFailureConsumer(usfChannel, mClient).Listen()
 	}
 
 	ueecChannel, err := rabbit.AddChannel("ueec")
-	ok = onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:70")
-	if ok == true {
+	ok = onFailure(err, logcodes.ERROR, "Failed to create UpdateEmployeeEmpConsumer channel", "ask/task-service/index.go:70")
+	if ok {
 		go consumers.NewUpdateEmployeeEmpConsumer(ueecChannel, mClient).Listen()
+	}
+
+	// Rabbit Publishers
+	uerpChannel, err := rabbit.AddChannel("uerp")
+	ok = onFailure(err, logcodes.ERROR, "Failed to create UpdateEmployeeEmpConsumer channel", "ask/task-service/index.go:70")
+	if ok {
+		publishers.NewUpdateEmployeeRequeuePublisher(uerpChannel, mClient)
 	}
 
 	// gRPC Server
