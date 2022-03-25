@@ -28,16 +28,22 @@
         flex-direction: row;
         align-items: center;
 
-        &-item {
-            margin: 0 1rem;
-            cursor: pointer;
-            transition: all 0.15s ease-in-out;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 70%;
-            letter-spacing: 0.12rem;
+        a {
+            height: 100%;
 
+            .navigation_right-item {
+                margin: 0 1rem;
+                padding-bottom: 0.5rem;
+                cursor: pointer;
+                transition: all 0.15s ease-in-out;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                letter-spacing: 0.12rem;
+            }
+        }
+        &-item {
             &--user {
                 border-radius: 50%;
                 height: 50px;
