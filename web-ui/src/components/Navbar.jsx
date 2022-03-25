@@ -71,22 +71,24 @@ const Navbar = () => {
                 {userAuthorised ? (
                     <div className="navigation_right">
                         {NAV_ITEMS.map(item => (
-                            <div key={item.name} className={`navigation_right-item `}>
-                                <Link to={item.path}>
+                            <Link to={item.path}>
+                                <div key={item.name} className="navigation_right-item">
                                     <span className={`${checkCurrPath()}`}>{item.name}</span>
-                                </Link>
-                            </div>
+                                </div>
+                            </Link>
                         ))}
-                        <div className="navigation_right-item">
-                            <button className="btn btn-dark" disabled={loading} onClick={signOut}>
-                                Sign Out
-                            </button>
-                        </div>
-                        <div className="navigation_right-item">
-                            <div className="navigation_right-item--user">
-                                <Link to="/user">{userInitials()}</Link>
+                        <Link to="#">
+                            <div className="navigation_right-item">
+                                <button className="btn btn-dark" disabled={loading} onClick={signOut}>
+                                    Sign Out
+                                </button>
                             </div>
-                        </div>
+                        </Link>
+                        <Link to="/user">
+                            <div className="navigation_right-item">
+                                <div className="navigation_right-item--user">{userInitials()}</div>
+                            </div>
+                        </Link>
                     </div>
                 ) : (
                     ""
