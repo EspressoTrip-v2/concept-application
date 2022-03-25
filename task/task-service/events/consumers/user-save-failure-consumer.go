@@ -80,7 +80,8 @@ func (c *UserSaveFailureConsumer) deleteEmployee(data []byte) bool {
 	if !ok {
 		return ok
 	}
-	c.onSuccess(logcodes.DELETED, "Employee deleted", "", fmt.Sprintf("email: %v, employeeId: %v", employeePayload.Email, employeePayload.Id))
+	c.onSuccess(logcodes.DELETED, "Employee deleted", "task/task-service/events/user-save-failure-consumer.go:83",
+		fmt.Sprintf("email: %v, employeeId: %v", employeePayload.Email, employeePayload.Id))
 	return true
 }
 

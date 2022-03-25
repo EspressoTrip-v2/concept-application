@@ -88,7 +88,7 @@ func (c *CreateEmployeeConsumer) createEmployee(data []byte) bool {
 		Version:         employeePayload.Version,
 	}
 	_, err = c.mongoClient.InsertEmployee(context.TODO(), &employee)
-	ok = c.onFailure(err, logcodes.ERROR, "Insert employee failed", "task/task-service/events/create-employee-consumer.go:91")
+	ok = c.onFailure(err, logcodes.ERROR, "Insert employee failed", "task/task-service/events/create-employee-consumer.go:95")
 	if !ok {
 		return ok
 	}
