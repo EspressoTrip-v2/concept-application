@@ -16,6 +16,8 @@ type CreateTaskPayload struct {
 	SpecialRequests  string `json:"specialRequests" validate:"required"`
 	Completed        string `json:"completed" validate:"required,oneof=yes no"`
 	RejectedReason   string `json:"rejectedReason" validate:"required"`
+	Name             string `json:"name" validate:"required"`
+	Description      string `json:"description" validate:"required"`
 }
 
 func (c *CreateTaskPayload) Validate() (*taskPackage.Task, *libErrors.CustomError) {
@@ -34,6 +36,8 @@ func (c *CreateTaskPayload) Validate() (*taskPackage.Task, *libErrors.CustomErro
 		SpecialRequests:  c.SpecialRequests,
 		Completed:        c.Completed,
 		RejectionReason:  c.RejectedReason,
+		Name:             c.Name,
+		Description:      c.Description,
 	}
 	return &t, nil
 }

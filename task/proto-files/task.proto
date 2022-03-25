@@ -13,6 +13,8 @@ message Task {
   string specialRequests = 7;
   string completed = 8;
   string rejectionReason = 9;
+  string name = 10;
+  string description = 11;
   }
 
 message TaskRequest {
@@ -67,7 +69,7 @@ message Shift {
   string start = 4;
   string end = 5;
   int32 version = 6;
-  string shiftName = 7;
+  string name = 7;
 }
 
 message ShiftResponsePayload {

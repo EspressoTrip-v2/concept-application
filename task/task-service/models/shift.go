@@ -8,7 +8,7 @@ type Shift struct {
 	Type      string `bson:"type"`
 	Start     string `bson:"start"`
 	End       string `bson:"end"`
-	ShiftName string `bson:"shiftName"`
+	Name string `bson:"name"`
 }
 
 func (s *Shift) ConvertToMessage() *taskPackage.Shift {
@@ -18,6 +18,6 @@ func (s *Shift) ConvertToMessage() *taskPackage.Shift {
 		Type:      s.Type,
 		Start:     s.Start,
 		End:       s.End,
-		ShiftName: s.ShiftName,
+		Name: s.Name,
 	}
 }

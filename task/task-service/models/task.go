@@ -16,6 +16,8 @@ type Task struct {
 	SpecialRequests  string             `bson:"specialRequests"`
 	Completed        string             `bson:"completed"`
 	RejectionReason  string             `bson:"rejectionReason"`
+	Name             string             `bson:"name"`
+	Description      string             `bson:"description"`
 }
 
 // ConvertToMessage converts the Task model to the required data structure for gRPC transmission
@@ -33,5 +35,7 @@ func (i *Task) ConvertToMessage() *taskPackage.Task {
 		SpecialRequests:  i.SpecialRequests,
 		Completed:        i.Completed,
 		RejectionReason:  i.RejectionReason,
+		Name:             i.Name,
+		Description:      i.Description,
 	}
 }
