@@ -12,7 +12,7 @@ type CreateShiftPayload struct {
 	Type     string `json:"type" validate:"required"`
 	Start    string `json:"start" validate:"required"`
 	End      string `json:"end" validate:"required"`
-	ShiftName string `json:"shiftName" validate:"required"`
+	Name     string `json:"name" validate:"required"`
 }
 
 func (c *CreateShiftPayload) Validate() (*taskPackage.Shift, *libErrors.CustomError) {
@@ -27,7 +27,7 @@ func (c *CreateShiftPayload) Validate() (*taskPackage.Shift, *libErrors.CustomEr
 		Type:     c.Type,
 		Start:    c.Start,
 		End:      c.End,
-		ShiftName: c.ShiftName,
+		Name:     c.Name,
 	}
 	return &t, nil
 }

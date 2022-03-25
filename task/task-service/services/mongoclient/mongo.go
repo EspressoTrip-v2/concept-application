@@ -68,8 +68,7 @@ func (m *MongoClient) FindOneTask(ctx context.Context, filter bson.D, variable *
 
 func (m *MongoClient) DeleteManyTasks(ctx context.Context, filter bson.D) error {
 	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.TASK_COL))
-	deleted, err := collection.DeleteMany(ctx, filter)
-	fmt.Println(deleted.DeletedCount)
+	_, err := collection.DeleteMany(ctx, filter)
 	if err != nil {
 		return err
 	}
