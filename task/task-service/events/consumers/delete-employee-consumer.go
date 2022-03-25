@@ -82,21 +82,23 @@ func (c *DeleteEmployeeConsumer) deleteEmployee(data []byte) bool {
 	if !ok {
 		return ok
 	}
-	c.onSuccess(logcodes.DELETED, "Employee deleted", "", fmt.Sprintf("email: %v, employeeId: %v", employeePayload.Email, employeePayload.Id))
+	c.onSuccess(logcodes.DELETED, "Employee deleted", "task/task-service/events/delete-employee-consumer.go:85",
+		fmt.Sprintf("email: %v, employeeId: %v", employeePayload.Email, employeePayload.Id))
 	// Delete the tasks associated with the employee
 	err = c.mongoClient.DeleteManyTasks(context.TODO(), bson.D{{"employeeId", employee.Id}})
 	ok = c.onFailure(err, logcodes.ERROR, "Delete tasks failed", "task/task-service/events/delete-employee-consumer.go:88")
 	if !ok {
 		return ok
 	}
-	c.onSuccess(logcodes.DELETED, "Tasks deleted", "", fmt.Sprintf("All tasks deleted for email: %v, employeeId: %v", employeePayload.Email, employeePayload.Id))
+	c.onSuccess(logcodes.DELETED, "Tasks deleted", "task/task-service/events/delete-employee-consumer.go:93",
+		fmt.Sprintf("All tasks deleted for email: %v, employeeId: %v", employeePayload.Email, employeePayload.Id))
 	return true
 }
 
 func (c *DeleteEmployeeConsumer) onFailure(err error, logCode logcodes.LogCodes, message string, origin string) bool {
 	if err != nil {
 		localLogger.Log(logCode, message, origin, err.Error())
-		fmt.Printf("[task-service:consumer]: DeleteEmployeeConsumer error -> %v", err.Error())
+		fmt.Printf("[task-service:consumer]: DeleteEmployeeConsumer error -> %v\n", err.Error())
 		return false
 	}
 	return true

@@ -63,7 +63,7 @@ func main() {
 
 	// GRPC
 	client := grpc.GrpcClient()
-	client.Connect(fmt.Sprintf("[task-api:gRPC-client]: Conneted on %v\n", grpcports.TASK_SERVICE_DNS))
+	client.Connect(fmt.Sprintf("[task-api:gRPC-client]: Connected on %v\n", grpcports.TASK_SERVICE_DNS))
 	defer client.Close()
 
 	// HTTP Server

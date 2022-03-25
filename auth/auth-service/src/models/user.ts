@@ -62,9 +62,6 @@ userSchema.statics.build = function (attributes: UserAttrs): UserDoc {
     return new User(attributes);
 };
 
-userSchema.statics.findByEvent = async function (employee: PersonMsg): Promise<UserDoc | null> {
-    return await User.findOne({ email: employee.email });
-};
 
 userSchema.statics.convertToMessage = function (document: UserDoc, withVersion: boolean): PersonMsg {
     const msg: PersonMsg = {

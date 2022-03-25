@@ -2,6 +2,7 @@ import { AbstractConsumer, BindKey, ExchangeNames, ExchangeTypes, LogCodes, Pers
 import * as amqp from "amqplib";
 import { User } from "../../models";
 import { LocalLogger } from "../../utils";
+import { UserUpdateRequeuePublisher } from "../publishers";
 
 export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
     m_exchangeName: ExchangeNames.AUTH = ExchangeNames.AUTH;
@@ -19,7 +20,7 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
     async onMessage(data: UpdateUserEvent["data"], message: amqp.ConsumeMessage): Promise<void> {
         const employeeData: PersonMsg = JSON.parse(data.toString());
         try {
-            const existingUser = await User.findByEvent(employeeData);
+            const existingUser = await User.findOne({ email: employeeData.email });
             if (existingUser) {
                 delete employeeData.id;
                 existingUser.set({ ...employeeData });
@@ -27,7 +28,7 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
                 LocalLogger.log(
                     LogCodes.UPDATED,
                     "User updated",
-                    "auth/auth-service/src/events/consumers/update-user-consumer.ts:26",
+                    "auth/auth-service/src/events/consumers/update-user-consumer.ts:28",
                     `email: ${existingUser.email}, UserId: ${existingUser.id}, employeeId: ${employeeData.id}`
                 );
                 // Acknowledge message
@@ -37,16 +38,17 @@ export class UpdateUserConsumer extends AbstractConsumer<UpdateUserEvent> {
             LocalLogger.log(
                 LogCodes.ERROR,
                 `Sign-in user not found`,
-                `auth/auth-service/src/events/consumers/update-user-consumer.ts:34`,
+                `auth/auth-service/src/events/consumers/update-user-consumer.ts:38`,
                 `email: ${employeeData.email}, userRole: ${employeeData.userRole}`
             );
             this.nackMessage(message);
+            UserUpdateRequeuePublisher.userUpdateRequeuePublisher().publish(employeeData)
             return;
         } catch (error) {
             LocalLogger.log(
                 LogCodes.ERROR,
                 "Consumer Error",
-                "auth/auth-service/src/events/consumers/update-user-consumer.ts:44",
+                "auth/auth-service/src/events/consumers/update-user-consumer.ts:48",
                 `error: ${(error as Error).message}`
             );
         }

@@ -28,7 +28,6 @@ export interface UserModel extends mongoose.Model<UserDoc> {
     build(attributes: UserAttrs): UserDoc;
     convertToMessage(document: UserDoc, withVersion: boolean): PersonMsg;
     convertToJWTPayload(document: UserDoc): string;
-    findByEvent(employee: PersonMsg): Promise<UserDoc | null>;
 }
 
 /** Extend mongoose document with product document values */

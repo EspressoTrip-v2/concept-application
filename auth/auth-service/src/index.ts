@@ -2,7 +2,7 @@ import "./tracer";
 import { LogCodes, MicroServiceNames, RabbitClient, rabbitClient } from "@espressotrip-org/concept-common";
 import { GrpcServer, grpcServer } from "./services";
 import mongoose from "mongoose";
-import { CreateUserConsumer, DeleteUserConsumer, UpdateEmployeePublisher, UpdateUserConsumer, UserSaveFailurePublisher } from "./events";
+import { CreateUserConsumer, DeleteUserConsumer, UpdateEmployeePublisher, UpdateUserConsumer, UserSaveFailurePublisher, UserUpdateRequeuePublisher } from "./events";
 import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
@@ -33,6 +33,8 @@ async function main(): Promise<void> {
         UpdateEmployeePublisher.NewUpdateEmployeePublisher(uepChannel);
         const usfpChannel = await rabbit.addChannel("usfp")
         UserSaveFailurePublisher.NewUserSaveFailurePublisher(usfpChannel);
+        const uurpChannel = await rabbit.addChannel("uurp")
+        UserUpdateRequeuePublisher.NewUserUpdateRequeuePublisher(uurpChannel);
 
         /** Create RabbitMQ consumers */
         const uucChannel = await rabbit.addChannel("uuc");

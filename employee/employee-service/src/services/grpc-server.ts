@@ -130,7 +130,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 const { id } = employeeUpdate;
                 delete employeeUpdate.id;
 
-                const employee = await Employee.findByIdAndUpdate(id, employeeUpdate);
+                const employee = await Employee.findById(id);
                 if (!employee) {
                     LocalLogger.log(
                         LogCodes.ERROR,
@@ -143,20 +143,35 @@ export class GrpcServer extends AbstractGrpcServer {
                         details: "Employee not found",
                     });
                 }
+
+                if (employee.email != employeeUpdate.email) {
+                    LocalLogger.log(
+                        LogCodes.ERROR,
+                        "Employee email does not match record",
+                        "employee/employee-service/src/services/grpc-server.ts:148",
+                        `email: ${employeeUpdate.email}, employeeId: ${id}`
+                    );
+                    return callback({
+                        code: grpc.status.NOT_FOUND,
+                        details: "Employee email does not match record",
+                    });
+                }
+
+                employee.set(employeeUpdate);
+                await employee.save();
                 LocalLogger.log(
                     LogCodes.UPDATED,
                     "Employee updated",
-                    "employee/employee-service/src/services/grpc-server.ts:146",
+                    "employee/employee-service/src/services/grpc-server.ts:162",
                     `email: ${employee.email}, employeeId: ${employee.id}`
                 );
 
-                const pubMessage = Employee.convertToMessage(employee, true);
                 // Publish changes to all required services
                 UpdateUserPublisher.updateUserPublisher().publish({
-                    ...pubMessage,
+                    ...Employee.convertToMessage(employee, false),
                     password: call.request.password!,
                 });
-                UpdateEmployeeTaskPublisher.updateEmployeeTaskPublisher().publish(pubMessage);
+                UpdateEmployeeTaskPublisher.updateEmployeeTaskPublisher().publish(Employee.convertToMessage(employee, true));
                 return callback(null, {
                     status: 200,
                     data: Employee.convertToMessage(employee, true),
@@ -169,7 +184,7 @@ export class GrpcServer extends AbstractGrpcServer {
                 LocalLogger.log(
                     LogCodes.ERROR,
                     "Employee update error",
-                    "employee/employee-service/src/services/grpc-server.ts:169",
+                    "employee/employee-service/src/services/grpc-server.ts:184",
                     `error: ${(error as Error).message}`
                 );
                 return callback(serverError);
