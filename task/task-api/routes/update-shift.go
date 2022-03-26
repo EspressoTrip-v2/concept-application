@@ -7,15 +7,19 @@ import (
 	"net/http"
 	taskPackage "task-api/proto"
 	"task-api/services/grpc"
+	"task-api/tacer"
 )
 
 func UpdateShift(w http.ResponseWriter, r *http.Request) {
+	ctx, span := tacer.GetTracer().Start(r.Context(), "UpdateShift")
+	defer span.End()
+
 	var s taskPackage.Shift
 	err := json.NewDecoder(r.Body).Decode(&s)
 	if err != nil {
 		utils.WriteResponse(w, http.StatusBadRequest, libErrors.NewBadRequestError("Invalid payload format").GetErrors())
 	} else {
-		response, err := grpc.GrpcClient().UpdateShift(&s)
+		response, err := grpc.GrpcClient().UpdateShift(ctx, &s)
 		if err != nil {
 			utils.WriteResponse(w, http.StatusBadRequest, err.GetErrors())
 		} else {
