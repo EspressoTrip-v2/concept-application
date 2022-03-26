@@ -5,6 +5,7 @@ import (
 	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	"net"
 	localLogger "task-service/local-logger"
@@ -27,12 +28,13 @@ func (g *GrpcServer) Listen(logMsg string) *libErrors.CustomError {
 	// bind port
 	listener, err := net.Listen("tcp", g.port)
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "Could not bind gRPC port", "task-service/services/grpc-server.go:30", err.Error())
+		localLogger.Log(logcodes.ERROR, "Could not bind gRPC port", "task-service/services/grpc-server.go:31", err.Error())
 		g.failOnError(err)
 		return libErrors.GrpcTranslator(err)
 	}
 	// create server
-	server := grpc.NewServer()
+	server := grpc.NewServer(grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()))
 
 	// register rpc methods
 	taskPackage.RegisterTaskServiceServer(server, &RpcHandlers{mongo: g.mongo})
@@ -40,7 +42,7 @@ func (g *GrpcServer) Listen(logMsg string) *libErrors.CustomError {
 	// serve
 	fmt.Println(logMsg)
 	if err := server.Serve(listener); err != nil {
-		localLogger.Log(logcodes.ERROR, "Failed to start gRPC server", "task-service/services/grpc-server.go:43", err.Error())
+		localLogger.Log(logcodes.ERROR, "Failed to start gRPC server", "task-service/services/grpc-server.go:44", err.Error())
 		g.failOnError(err)
 		return libErrors.GrpcTranslator(err)
 	}

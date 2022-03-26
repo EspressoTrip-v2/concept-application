@@ -1,15 +1,19 @@
 package main
 
 import (
+	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
 	"github.com/gorilla/mux"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 	"net/http"
 	"task-api/middleware"
 	"task-api/routes"
 )
 
 func GetRouter() *mux.Router {
+
 	router := mux.NewRouter()
 	// Middleware
+	router.Use(otelmux.Middleware(string(microserviceNames.TASK_API)))
 	router.Use(middleware.JwtValidation())
 
 	// Employees

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"github.com/EspressoTrip-v2/concept-go-common/grpcsevices/grpcports"
 	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
@@ -12,6 +13,7 @@ import (
 	"os"
 	localLogger "task-api/local-logger"
 	"task-api/services/grpc"
+	"task-api/tacer"
 	"time"
 )
 
@@ -51,6 +53,19 @@ func startServer(route http.Handler, logMsg string) {
 
 func main() {
 	envCheck()
+
+	// Tracer
+	traceProvider, err := tacer.NewTraceProvider("jaeger")
+	ok := onFailure(err, logcodes.ERROR,"Open-telemetry error", "task/task-api/index.go:59")
+	if ok {
+		defer func() {
+			err := traceProvider.Shutdown(context.Background())
+			if err != nil {
+				onFailure(libErrors.NewBadRequestError(err.Error()), logcodes.ERROR, "Trace provider shutdown error", "task/task-api/index.go:64")
+			}
+		}()
+	}
+
 	// RabbitMQ
 	rabbit, err := rabbitmq.GetRabbitClient(os.Getenv("RABBIT_URI"), "task-service")
 	if err != nil {
@@ -59,7 +74,7 @@ func main() {
 
 	// Logging
 	logChannel, err := rabbit.AddChannel("log")
-	ok := onFailure(err, logcodes.ERROR, "", "ask/task-service/index.go:59")
+	ok = onFailure(err, logcodes.ERROR, "", "task/task-service/index.go:75")
 	if ok == true {
 		localLogger.Start(logChannel, microserviceNames.TASK_API)
 	}

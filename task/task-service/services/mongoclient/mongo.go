@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"
 	"os"
 	localLogger "task-service/local-logger"
 	"task-service/models"
@@ -203,12 +204,15 @@ func (m MongoClient) Count(ctx context.Context, databaseName mongodb.DatabaseNam
 func GetMongoDB() (*MongoClient, *libErrors.CustomError) {
 	ctx := context.TODO()
 	uri := os.Getenv("MONGO_URI")
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	opts := options.Client()
+	opts.ApplyURI(uri)
+	opts.Monitor = otelmongo.NewMonitor()
+	client, err := mongo.Connect(ctx, opts)
 	if err != nil {
 		return nil, libErrors.NewDatabaseError(fmt.Sprintf("MongoDB error: %v", err.Error()))
 	}
 	if err := client.Ping(ctx, readpref.Primary()); err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/services/mongoClient/mongo.go:212", err.Error())
+		localLogger.Log(logcodes.ERROR, "MongoDB error", "task/task-service/services/mongoClient/mongo.go:215", err.Error())
 	} else {
 		fmt.Println("[task-service:mongo]: Connected successfully")
 	}
