@@ -3,11 +3,15 @@ package main
 import (
 	"github.com/gorilla/mux"
 	"net/http"
+	"task-api/middleware"
 	"task-api/routes"
 )
 
 func GetRouter() *mux.Router {
 	router := mux.NewRouter()
+	// Middleware
+	router.Use(middleware.JwtValidation())
+
 	// Employees
 	router.HandleFunc("/api/task/employee", routes.GetAllEmployees).Methods(http.MethodGet)
 	router.HandleFunc("/api/task/employee/{employeeId}", routes.GetEmployee).Methods(http.MethodGet)

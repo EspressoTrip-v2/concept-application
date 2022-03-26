@@ -8,6 +8,7 @@ require github.com/streadway/amqp v1.0.0
 
 require (
 	github.com/go-playground/validator/v10 v10.10.1
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/golang/protobuf v1.5.2
 	github.com/gorilla/mux v1.8.0
 	google.golang.org/grpc v1.45.0
