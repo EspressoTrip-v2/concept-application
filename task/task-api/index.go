@@ -21,6 +21,9 @@ func envCheck() {
 	if os.Getenv("RABBIT_URI") == "" {
 		log.Fatalln("RABBIT_URI must be defined")
 	}
+	if os.Getenv("JWT_KEY") == "" {
+		log.Fatalln("JWT_KEY must be defined")
+	}
 	if os.Getenv("PORT") == "" {
 		PORT = "3000"
 	} else {
