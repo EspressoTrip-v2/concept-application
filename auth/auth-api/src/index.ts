@@ -1,4 +1,4 @@
-import "./tracer";
+import "./tracer/tracer";
 import { LogCodes, MicroServiceNames, RabbitClient, rabbitClient } from "@espressotrip-org/concept-common";
 import { app } from "./app";
 import { LocalLogger } from "./utils";

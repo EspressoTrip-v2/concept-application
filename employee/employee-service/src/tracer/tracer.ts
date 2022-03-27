@@ -22,6 +22,7 @@ registerInstrumentations({
     instrumentations: [
         new MongooseInstrumentation({
             enabled: true,
+            requireParentSpan: true
         }),
         new GrpcInstrumentation({
             enabled: true,

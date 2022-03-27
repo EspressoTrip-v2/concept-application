@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"github.com/golang-jwt/jwt"
+	"time"
+)
 
 type JwtUser struct {
 	Country            string    `json:"country"`
@@ -22,4 +25,5 @@ type JwtUser struct {
 	FirstName          string    `json:"firstName"`
 	PhoneNumber        string    `json:"phoneNumber"`
 	Iat                int       `json:"iat"`
+	jwt.StandardClaims
 }
