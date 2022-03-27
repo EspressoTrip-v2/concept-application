@@ -1,4 +1,4 @@
-import "./tracer";
+import "./tracer/tracer";
 import { GrpcServer, grpcServer } from "./services";
 import mongoose from "mongoose";
 import { LogCodes, MicroServiceNames, RabbitClient, rabbitClient } from "@espressotrip-org/concept-common";
