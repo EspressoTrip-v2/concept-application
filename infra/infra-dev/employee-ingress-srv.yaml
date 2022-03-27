@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: employee-ingress-srv
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/use-regex: 'true'
+    nginx.ingress.kubernetes.io/service-upstream: 'true'
+spec:
+  # This section needs to be uncommented to use TLS
+  tls:
+    - hosts:
+        - employee.acmefast.dev
+      secretName: mkcert
+    # #########################################
+  rules:
+    - host: employee.acmefast.dev
+      http:
+        paths:
+          # Employee API
+          - path: /api/?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: employee-dash-srv
+                port:
+                  number: 3000
+
+          # Auth-Web UI
+          - path: /?(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: employee-ui-srv
+                port:
+                  number: 3000

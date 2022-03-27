@@ -1,0 +1,11 @@
+{
+  "name": "proto-files",
+  "version": "1.0.0",
+  "description": "Generates the proto type definitions for the services, single point truth for protobuf file",
+  "main": "index.js",
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@grpc/proto-loader": "^0.6.9"
+  }
+}

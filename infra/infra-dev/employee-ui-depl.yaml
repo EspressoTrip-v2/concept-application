@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    name: employee-ui-depl
+spec:
+    replicas: 1
+    selector:
+        matchLabels:
+            app: employee-ui
+    template:
+        metadata:
+            annotations:
+                config.linkerd.io/proxy-log-level: warn
+            labels:
+                app: employee-ui
+        spec:
+            containers:
+                - name: employee-ui
+                  image: espressotrip/concept-employee-ui
+---
+apiVersion: v1
+kind: Service
+metadata:
+    name: employee-ui-srv
+spec:
+    selector:
+        app: employee-ui
+    ports:
+        - name: employee-ui
+          port: 3000
+          targetPort: 3000
