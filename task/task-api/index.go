@@ -56,7 +56,7 @@ func main() {
 
 	// Tracer
 	traceProvider, err := tacer.NewTraceProvider("jaeger")
-	ok := onFailure(err, logcodes.ERROR,"Open-telemetry error", "task/task-api/index.go:59")
+	ok := onFailure(err, logcodes.ERROR, "Open-telemetry error", "task/task-api/index.go:59")
 	if ok {
 		defer func() {
 			err := traceProvider.Shutdown(context.Background())

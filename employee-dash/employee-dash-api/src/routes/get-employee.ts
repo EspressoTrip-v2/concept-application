@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import { requireAuth } from "@espressotrip-org/concept-common";
-import { GrpcEmployeeDashClient } from "../services/grpc-employee-dash-client";
+import { GrpcEmployeeDashClient } from "../services";
 
 const router = express.Router();
 

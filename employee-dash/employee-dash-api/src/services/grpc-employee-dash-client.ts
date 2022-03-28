@@ -5,7 +5,10 @@ import { AbstractGrpcClient, grpcErrorTranslator, GrpcServicePortDns } from "@es
 import { EmployeeServiceClient } from "./proto/employeePackage/EmployeeService";
 import { EmployeeResponsePayload } from "./proto/employeePackage/EmployeeResponsePayload";
 import { EmployeeId } from "./proto/employeePackage/EmployeeId";
-import { EmployeeUpdate } from "./proto/employeePackage/EmployeeUpdate";
+import {GoogleGrpcUser} from "./proto/employeePackage/GoogleGrpcUser";
+import {GrpcResponsePayload} from "./proto/employeePackage/GrpcResponsePayload";
+import {GitHubGrpcUser} from "./proto/employeePackage/GitHubGrpcUser";
+import {LocalGrpcUser} from "./proto/employeePackage/LocalGrpcUser";
 
 export class GrpcEmployeeDashClient extends AbstractGrpcClient {
     static m_instance: GrpcEmployeeDashClient | undefined;
@@ -37,6 +40,33 @@ export class GrpcEmployeeDashClient extends AbstractGrpcClient {
             this.m_client.GetEmployee(grpcEmployeeId, (error: grpc.ServiceError | null, responsePayload?: EmployeeResponsePayload) => {
                 if (error) return reject(grpcErrorTranslator(error));
                 return resolve(responsePayload!);
+            });
+        });
+    }
+ 
+    loginGoogleUser(user: GoogleGrpcUser): Promise<GrpcResponsePayload> {
+        return new Promise(async (resolve, reject) => {
+            this.m_client.LoginGoogleUser(user, (error: grpc.ServiceError | null, createUserInfo?: GrpcResponsePayload) => {
+                if (error) return reject(grpcErrorTranslator(error));
+                return resolve(createUserInfo!);
+            });
+        });
+    }
+
+    loginGitHubUser(user: GitHubGrpcUser): Promise<GrpcResponsePayload> {
+        return new Promise((resolve, reject) => {
+            this.m_client.LoginGitHubUser(user, (error: grpc.ServiceError | null, createUserInfo?: GrpcResponsePayload) => {
+                if (error) return reject(grpcErrorTranslator(error));
+                return resolve(createUserInfo!);
+            });
+        });
+    }
+
+    loginLocalUser(user: LocalGrpcUser): Promise<GrpcResponsePayload> {
+        return new Promise((resolve, reject) => {
+            this.m_client.LoginLocalUser(user, (error: grpc.ServiceError | null, createUserInfo?: GrpcResponsePayload) => {
+                if (error) return reject(grpcErrorTranslator(error));
+                return resolve(createUserInfo!);
             });
         });
     }

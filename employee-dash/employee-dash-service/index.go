@@ -9,6 +9,7 @@ import (
 	"employee-dash-service/services/mongoclient"
 	"employee-dash-service/tracer"
 	"fmt"
+	"github.com/EspressoTrip-v2/concept-go-common/grpcsevices/grpcports"
 	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/EspressoTrip-v2/concept-go-common/microservice/microserviceNames"
@@ -95,10 +96,15 @@ func main() {
 		publishers.NewUpdateEmployeeRequeuePublisher(uerpChannel, mClient)
 	}
 
+	// gRPC Client
+	client := grpc.GrpcClient()
+	client.Connect(fmt.Sprintf("[employee-dash-service:gRPC-client]: Connected on %v\n", grpcports.AUTH_SERVICE_DNS))
+	defer client.Close()
+
 	// gRPC Server
 	err = grpc.NewEmployeeDashGrpcServer(os.Getenv("GRPC_SERVER_PORT"), microserviceNames.EMPLOYEE_DASH_SERVICE, mClient).
 		Listen(fmt.Sprintf("[employee-dash-service:gRPC-server]: Listening on %v\n", os.Getenv("GRPC_SERVER_PORT")))
-	ok = onFailure(err, logcodes.ERROR, "gRPC server failed", "employee-dash/employee-dash-service/index.go:101")
+	ok = onFailure(err, logcodes.ERROR, "gRPC server failed", "employee-dash/employee-dash-service/index.go:107")
 	if ok != true {
 		log.Fatalln("[employee-dash-service:gRPC-server]: Failed to connect to gRPC server")
 	}

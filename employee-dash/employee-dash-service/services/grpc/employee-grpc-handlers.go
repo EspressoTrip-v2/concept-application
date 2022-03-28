@@ -13,12 +13,22 @@ type EmployeeDashRpcHandlers struct {
 	mongo *mongoclient.MongoClient
 }
 
-func (r *EmployeeDashRpcHandlers) UpdateEmployee(ctx context.Context, update *employeePackage.EmployeeUpdate) (*employeePackage.EmployeeResponsePayload, error) {
+func (r *EmployeeDashRpcHandlers) GetEmployee(ctx context.Context, id *employeePackage.EmployeeId) (*employeePackage.EmployeeResponsePayload, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (r *EmployeeDashRpcHandlers) GetEmployee(ctx context.Context, id *employeePackage.EmployeeId) (*employeePackage.EmployeeResponsePayload, error) {
+func (r *EmployeeDashRpcHandlers) LoginGoogleUser(ctx context.Context, user *employeePackage.GoogleGrpcUser) (*employeePackage.GrpcResponsePayload, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *EmployeeDashRpcHandlers) LoginGitHubUser(ctx context.Context, user *employeePackage.GitHubGrpcUser) (*employeePackage.GrpcResponsePayload, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (r *EmployeeDashRpcHandlers) LoginLocalUser(ctx context.Context, user *employeePackage.LocalGrpcUser) (*employeePackage.GrpcResponsePayload, error) {
 	//TODO implement me
 	panic("implement me")
 }

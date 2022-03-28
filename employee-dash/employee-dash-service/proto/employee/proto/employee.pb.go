@@ -24,6 +24,681 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
+type GrpcUser struct {
+	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	FirstName            string   `protobuf:"bytes,2,opt,name=firstName,proto3" json:"firstName,omitempty"`
+	LastName             string   `protobuf:"bytes,3,opt,name=lastName,proto3" json:"lastName,omitempty"`
+	Gender               string   `protobuf:"bytes,4,opt,name=gender,proto3" json:"gender,omitempty"`
+	Race                 string   `protobuf:"bytes,5,opt,name=race,proto3" json:"race,omitempty"`
+	Position             string   `protobuf:"bytes,6,opt,name=position,proto3" json:"position,omitempty"`
+	StartDate            string   `protobuf:"bytes,7,opt,name=startDate,proto3" json:"startDate,omitempty"`
+	ShiftPreference      string   `protobuf:"bytes,8,opt,name=shiftPreference,proto3" json:"shiftPreference,omitempty"`
+	BranchName           string   `protobuf:"bytes,9,opt,name=branchName,proto3" json:"branchName,omitempty"`
+	Region               string   `protobuf:"bytes,10,opt,name=region,proto3" json:"region,omitempty"`
+	Country              string   `protobuf:"bytes,11,opt,name=country,proto3" json:"country,omitempty"`
+	PhoneNumber          string   `protobuf:"bytes,12,opt,name=phoneNumber,proto3" json:"phoneNumber,omitempty"`
+	Email                string   `protobuf:"bytes,13,opt,name=email,proto3" json:"email,omitempty"`
+	Version              int32    `protobuf:"varint,14,opt,name=version,proto3" json:"version,omitempty"`
+	SignInType           string   `protobuf:"bytes,15,opt,name=signInType,proto3" json:"signInType,omitempty"`
+	ProviderId           string   `protobuf:"bytes,16,opt,name=providerId,proto3" json:"providerId,omitempty"`
+	Password             string   `protobuf:"bytes,17,opt,name=password,proto3" json:"password,omitempty"`
+	UserRole             string   `protobuf:"bytes,18,opt,name=userRole,proto3" json:"userRole,omitempty"`
+	RegisteredEmployee   string   `protobuf:"bytes,19,opt,name=registeredEmployee,proto3" json:"registeredEmployee,omitempty"`
+	Division             string   `protobuf:"bytes,20,opt,name=division,proto3" json:"division,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GrpcUser) Reset()         { *m = GrpcUser{} }
+func (m *GrpcUser) String() string { return proto.CompactTextString(m) }
+func (*GrpcUser) ProtoMessage()    {}
+func (*GrpcUser) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f51afe6743d989cb, []int{0}
+}
+
+func (m *GrpcUser) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GrpcUser.Unmarshal(m, b)
+}
+func (m *GrpcUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GrpcUser.Marshal(b, m, deterministic)
+}
+func (m *GrpcUser) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GrpcUser.Merge(m, src)
+}
+func (m *GrpcUser) XXX_Size() int {
+	return xxx_messageInfo_GrpcUser.Size(m)
+}
+func (m *GrpcUser) XXX_DiscardUnknown() {
+	xxx_messageInfo_GrpcUser.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GrpcUser proto.InternalMessageInfo
+
+func (m *GrpcUser) GetId() string {
+	if m != nil {
+		return m.Id
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetFirstName() string {
+	if m != nil {
+		return m.FirstName
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetLastName() string {
+	if m != nil {
+		return m.LastName
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetGender() string {
+	if m != nil {
+		return m.Gender
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetRace() string {
+	if m != nil {
+		return m.Race
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetPosition() string {
+	if m != nil {
+		return m.Position
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetStartDate() string {
+	if m != nil {
+		return m.StartDate
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetShiftPreference() string {
+	if m != nil {
+		return m.ShiftPreference
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetBranchName() string {
+	if m != nil {
+		return m.BranchName
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetRegion() string {
+	if m != nil {
+		return m.Region
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetCountry() string {
+	if m != nil {
+		return m.Country
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetPhoneNumber() string {
+	if m != nil {
+		return m.PhoneNumber
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetEmail() string {
+	if m != nil {
+		return m.Email
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetVersion() int32 {
+	if m != nil {
+		return m.Version
+	}
+	return 0
+}
+
+func (m *GrpcUser) GetSignInType() string {
+	if m != nil {
+		return m.SignInType
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetProviderId() string {
+	if m != nil {
+		return m.ProviderId
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetPassword() string {
+	if m != nil {
+		return m.Password
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetUserRole() string {
+	if m != nil {
+		return m.UserRole
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetRegisteredEmployee() string {
+	if m != nil {
+		return m.RegisteredEmployee
+	}
+	return ""
+}
+
+func (m *GrpcUser) GetDivision() string {
+	if m != nil {
+		return m.Division
+	}
+	return ""
+}
+
+type GoogleGrpcUser struct {
+	Sub                  string   `protobuf:"bytes,1,opt,name=sub,proto3" json:"sub,omitempty"`
+	Name                 string   `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	GivenName            string   `protobuf:"bytes,3,opt,name=given_name,json=givenName,proto3" json:"given_name,omitempty"`
+	FamilyName           string   `protobuf:"bytes,4,opt,name=family_name,json=familyName,proto3" json:"family_name,omitempty"`
+	Picture              string   `protobuf:"bytes,5,opt,name=picture,proto3" json:"picture,omitempty"`
+	Email                string   `protobuf:"bytes,6,opt,name=email,proto3" json:"email,omitempty"`
+	EmailVerified        string   `protobuf:"bytes,7,opt,name=email_verified,json=emailVerified,proto3" json:"email_verified,omitempty"`
+	Locale               string   `protobuf:"bytes,8,opt,name=locale,proto3" json:"locale,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GoogleGrpcUser) Reset()         { *m = GoogleGrpcUser{} }
+func (m *GoogleGrpcUser) String() string { return proto.CompactTextString(m) }
+func (*GoogleGrpcUser) ProtoMessage()    {}
+func (*GoogleGrpcUser) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f51afe6743d989cb, []int{1}
+}
+
+func (m *GoogleGrpcUser) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GoogleGrpcUser.Unmarshal(m, b)
+}
+func (m *GoogleGrpcUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GoogleGrpcUser.Marshal(b, m, deterministic)
+}
+func (m *GoogleGrpcUser) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GoogleGrpcUser.Merge(m, src)
+}
+func (m *GoogleGrpcUser) XXX_Size() int {
+	return xxx_messageInfo_GoogleGrpcUser.Size(m)
+}
+func (m *GoogleGrpcUser) XXX_DiscardUnknown() {
+	xxx_messageInfo_GoogleGrpcUser.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GoogleGrpcUser proto.InternalMessageInfo
+
+func (m *GoogleGrpcUser) GetSub() string {
+	if m != nil {
+		return m.Sub
+	}
+	return ""
+}
+
+func (m *GoogleGrpcUser) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *GoogleGrpcUser) GetGivenName() string {
+	if m != nil {
+		return m.GivenName
+	}
+	return ""
+}
+
+func (m *GoogleGrpcUser) GetFamilyName() string {
+	if m != nil {
+		return m.FamilyName
+	}
+	return ""
+}
+
+func (m *GoogleGrpcUser) GetPicture() string {
+	if m != nil {
+		return m.Picture
+	}
+	return ""
+}
+
+func (m *GoogleGrpcUser) GetEmail() string {
+	if m != nil {
+		return m.Email
+	}
+	return ""
+}
+
+func (m *GoogleGrpcUser) GetEmailVerified() string {
+	if m != nil {
+		return m.EmailVerified
+	}
+	return ""
+}
+
+func (m *GoogleGrpcUser) GetLocale() string {
+	if m != nil {
+		return m.Locale
+	}
+	return ""
+}
+
+type GitHubGrpcUser struct {
+	Login                string   `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
+	Id                   int32    `protobuf:"varint,2,opt,name=id,proto3" json:"id,omitempty"`
+	NodeId               string   `protobuf:"bytes,3,opt,name=node_id,json=nodeId,proto3" json:"node_id,omitempty"`
+	AvatarUrl            string   `protobuf:"bytes,4,opt,name=avatar_url,json=avatarUrl,proto3" json:"avatar_url,omitempty"`
+	GravatarId           string   `protobuf:"bytes,5,opt,name=gravatar_id,json=gravatarId,proto3" json:"gravatar_id,omitempty"`
+	Url                  string   `protobuf:"bytes,6,opt,name=url,proto3" json:"url,omitempty"`
+	HtmlUrl              string   `protobuf:"bytes,7,opt,name=html_url,json=htmlUrl,proto3" json:"html_url,omitempty"`
+	FollowersUrl         string   `protobuf:"bytes,8,opt,name=followers_url,json=followersUrl,proto3" json:"followers_url,omitempty"`
+	FollowingUrl         string   `protobuf:"bytes,9,opt,name=following_url,json=followingUrl,proto3" json:"following_url,omitempty"`
+	GistsUrl             string   `protobuf:"bytes,10,opt,name=gists_url,json=gistsUrl,proto3" json:"gists_url,omitempty"`
+	StarredUrl           string   `protobuf:"bytes,11,opt,name=starred_url,json=starredUrl,proto3" json:"starred_url,omitempty"`
+	SubscriptionsUrl     string   `protobuf:"bytes,12,opt,name=subscriptions_url,json=subscriptionsUrl,proto3" json:"subscriptions_url,omitempty"`
+	OrganizationsUrl     string   `protobuf:"bytes,13,opt,name=organizations_url,json=organizationsUrl,proto3" json:"organizations_url,omitempty"`
+	ReposUrl             string   `protobuf:"bytes,14,opt,name=repos_url,json=reposUrl,proto3" json:"repos_url,omitempty"`
+	EventsUrl            string   `protobuf:"bytes,15,opt,name=events_url,json=eventsUrl,proto3" json:"events_url,omitempty"`
+	ReceivedEventsUrl    string   `protobuf:"bytes,16,opt,name=received_events_url,json=receivedEventsUrl,proto3" json:"received_events_url,omitempty"`
+	Type                 string   `protobuf:"bytes,17,opt,name=type,proto3" json:"type,omitempty"`
+	SiteAdmin            bool     `protobuf:"varint,18,opt,name=site_admin,json=siteAdmin,proto3" json:"site_admin,omitempty"`
+	Name                 string   `protobuf:"bytes,19,opt,name=name,proto3" json:"name,omitempty"`
+	Company              string   `protobuf:"bytes,20,opt,name=company,proto3" json:"company,omitempty"`
+	Blog                 string   `protobuf:"bytes,21,opt,name=blog,proto3" json:"blog,omitempty"`
+	Location             string   `protobuf:"bytes,22,opt,name=location,proto3" json:"location,omitempty"`
+	Email                string   `protobuf:"bytes,23,opt,name=email,proto3" json:"email,omitempty"`
+	Hireable             bool     `protobuf:"varint,24,opt,name=hireable,proto3" json:"hireable,omitempty"`
+	Bio                  string   `protobuf:"bytes,25,opt,name=bio,proto3" json:"bio,omitempty"`
+	TwitterUsername      string   `protobuf:"bytes,26,opt,name=twitter_username,json=twitterUsername,proto3" json:"twitter_username,omitempty"`
+	PublicRepos          int32    `protobuf:"varint,27,opt,name=public_repos,json=publicRepos,proto3" json:"public_repos,omitempty"`
+	PublicGists          int32    `protobuf:"varint,28,opt,name=public_gists,json=publicGists,proto3" json:"public_gists,omitempty"`
+	Followers            int32    `protobuf:"varint,29,opt,name=followers,proto3" json:"followers,omitempty"`
+	Following            int32    `protobuf:"varint,30,opt,name=following,proto3" json:"following,omitempty"`
+	CreatedAt            string   `protobuf:"bytes,31,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt            string   `protobuf:"bytes,32,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GitHubGrpcUser) Reset()         { *m = GitHubGrpcUser{} }
+func (m *GitHubGrpcUser) String() string { return proto.CompactTextString(m) }
+func (*GitHubGrpcUser) ProtoMessage()    {}
+func (*GitHubGrpcUser) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f51afe6743d989cb, []int{2}
+}
+
+func (m *GitHubGrpcUser) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GitHubGrpcUser.Unmarshal(m, b)
+}
+func (m *GitHubGrpcUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GitHubGrpcUser.Marshal(b, m, deterministic)
+}
+func (m *GitHubGrpcUser) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GitHubGrpcUser.Merge(m, src)
+}
+func (m *GitHubGrpcUser) XXX_Size() int {
+	return xxx_messageInfo_GitHubGrpcUser.Size(m)
+}
+func (m *GitHubGrpcUser) XXX_DiscardUnknown() {
+	xxx_messageInfo_GitHubGrpcUser.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GitHubGrpcUser proto.InternalMessageInfo
+
+func (m *GitHubGrpcUser) GetLogin() string {
+	if m != nil {
+		return m.Login
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetId() int32 {
+	if m != nil {
+		return m.Id
+	}
+	return 0
+}
+
+func (m *GitHubGrpcUser) GetNodeId() string {
+	if m != nil {
+		return m.NodeId
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetAvatarUrl() string {
+	if m != nil {
+		return m.AvatarUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetGravatarId() string {
+	if m != nil {
+		return m.GravatarId
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetUrl() string {
+	if m != nil {
+		return m.Url
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetHtmlUrl() string {
+	if m != nil {
+		return m.HtmlUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetFollowersUrl() string {
+	if m != nil {
+		return m.FollowersUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetFollowingUrl() string {
+	if m != nil {
+		return m.FollowingUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetGistsUrl() string {
+	if m != nil {
+		return m.GistsUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetStarredUrl() string {
+	if m != nil {
+		return m.StarredUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetSubscriptionsUrl() string {
+	if m != nil {
+		return m.SubscriptionsUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetOrganizationsUrl() string {
+	if m != nil {
+		return m.OrganizationsUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetReposUrl() string {
+	if m != nil {
+		return m.ReposUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetEventsUrl() string {
+	if m != nil {
+		return m.EventsUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetReceivedEventsUrl() string {
+	if m != nil {
+		return m.ReceivedEventsUrl
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetType() string {
+	if m != nil {
+		return m.Type
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetSiteAdmin() bool {
+	if m != nil {
+		return m.SiteAdmin
+	}
+	return false
+}
+
+func (m *GitHubGrpcUser) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetCompany() string {
+	if m != nil {
+		return m.Company
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetBlog() string {
+	if m != nil {
+		return m.Blog
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetLocation() string {
+	if m != nil {
+		return m.Location
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetEmail() string {
+	if m != nil {
+		return m.Email
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetHireable() bool {
+	if m != nil {
+		return m.Hireable
+	}
+	return false
+}
+
+func (m *GitHubGrpcUser) GetBio() string {
+	if m != nil {
+		return m.Bio
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetTwitterUsername() string {
+	if m != nil {
+		return m.TwitterUsername
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetPublicRepos() int32 {
+	if m != nil {
+		return m.PublicRepos
+	}
+	return 0
+}
+
+func (m *GitHubGrpcUser) GetPublicGists() int32 {
+	if m != nil {
+		return m.PublicGists
+	}
+	return 0
+}
+
+func (m *GitHubGrpcUser) GetFollowers() int32 {
+	if m != nil {
+		return m.Followers
+	}
+	return 0
+}
+
+func (m *GitHubGrpcUser) GetFollowing() int32 {
+	if m != nil {
+		return m.Following
+	}
+	return 0
+}
+
+func (m *GitHubGrpcUser) GetCreatedAt() string {
+	if m != nil {
+		return m.CreatedAt
+	}
+	return ""
+}
+
+func (m *GitHubGrpcUser) GetUpdatedAt() string {
+	if m != nil {
+		return m.UpdatedAt
+	}
+	return ""
+}
+
+type LocalGrpcUser struct {
+	Email                string   `protobuf:"bytes,1,opt,name=email,proto3" json:"email,omitempty"`
+	Password             string   `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *LocalGrpcUser) Reset()         { *m = LocalGrpcUser{} }
+func (m *LocalGrpcUser) String() string { return proto.CompactTextString(m) }
+func (*LocalGrpcUser) ProtoMessage()    {}
+func (*LocalGrpcUser) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f51afe6743d989cb, []int{3}
+}
+
+func (m *LocalGrpcUser) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_LocalGrpcUser.Unmarshal(m, b)
+}
+func (m *LocalGrpcUser) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_LocalGrpcUser.Marshal(b, m, deterministic)
+}
+func (m *LocalGrpcUser) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LocalGrpcUser.Merge(m, src)
+}
+func (m *LocalGrpcUser) XXX_Size() int {
+	return xxx_messageInfo_LocalGrpcUser.Size(m)
+}
+func (m *LocalGrpcUser) XXX_DiscardUnknown() {
+	xxx_messageInfo_LocalGrpcUser.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LocalGrpcUser proto.InternalMessageInfo
+
+func (m *LocalGrpcUser) GetEmail() string {
+	if m != nil {
+		return m.Email
+	}
+	return ""
+}
+
+func (m *LocalGrpcUser) GetPassword() string {
+	if m != nil {
+		return m.Password
+	}
+	return ""
+}
+
+type GrpcResponsePayload struct {
+	Status               int32     `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
+	Jwt                  string    `protobuf:"bytes,2,opt,name=jwt,proto3" json:"jwt,omitempty"`
+	Data                 *GrpcUser `protobuf:"bytes,3,opt,name=data,proto3" json:"data,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}  `json:"-"`
+	XXX_unrecognized     []byte    `json:"-"`
+	XXX_sizecache        int32     `json:"-"`
+}
+
+func (m *GrpcResponsePayload) Reset()         { *m = GrpcResponsePayload{} }
+func (m *GrpcResponsePayload) String() string { return proto.CompactTextString(m) }
+func (*GrpcResponsePayload) ProtoMessage()    {}
+func (*GrpcResponsePayload) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f51afe6743d989cb, []int{4}
+}
+
+func (m *GrpcResponsePayload) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GrpcResponsePayload.Unmarshal(m, b)
+}
+func (m *GrpcResponsePayload) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GrpcResponsePayload.Marshal(b, m, deterministic)
+}
+func (m *GrpcResponsePayload) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GrpcResponsePayload.Merge(m, src)
+}
+func (m *GrpcResponsePayload) XXX_Size() int {
+	return xxx_messageInfo_GrpcResponsePayload.Size(m)
+}
+func (m *GrpcResponsePayload) XXX_DiscardUnknown() {
+	xxx_messageInfo_GrpcResponsePayload.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GrpcResponsePayload proto.InternalMessageInfo
+
+func (m *GrpcResponsePayload) GetStatus() int32 {
+	if m != nil {
+		return m.Status
+	}
+	return 0
+}
+
+func (m *GrpcResponsePayload) GetJwt() string {
+	if m != nil {
+		return m.Jwt
+	}
+	return ""
+}
+
+func (m *GrpcResponsePayload) GetData() *GrpcUser {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
 type Employee struct {
 	Id                   string   `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
 	FirstName            string   `protobuf:"bytes,2,opt,name=firstName,proto3" json:"firstName,omitempty"`
@@ -53,7 +728,7 @@ func (m *Employee) Reset()         { *m = Employee{} }
 func (m *Employee) String() string { return proto.CompactTextString(m) }
 func (*Employee) ProtoMessage()    {}
 func (*Employee) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f51afe6743d989cb, []int{0}
+	return fileDescriptor_f51afe6743d989cb, []int{5}
 }
 
 func (m *Employee) XXX_Unmarshal(b []byte) error {
@@ -222,7 +897,7 @@ func (m *EmployeeUpdate) Reset()         { *m = EmployeeUpdate{} }
 func (m *EmployeeUpdate) String() string { return proto.CompactTextString(m) }
 func (*EmployeeUpdate) ProtoMessage()    {}
 func (*EmployeeUpdate) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f51afe6743d989cb, []int{1}
+	return fileDescriptor_f51afe6743d989cb, []int{6}
 }
 
 func (m *EmployeeUpdate) XXX_Unmarshal(b []byte) error {
@@ -289,7 +964,7 @@ func (m *EmployeeId) Reset()         { *m = EmployeeId{} }
 func (m *EmployeeId) String() string { return proto.CompactTextString(m) }
 func (*EmployeeId) ProtoMessage()    {}
 func (*EmployeeId) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f51afe6743d989cb, []int{2}
+	return fileDescriptor_f51afe6743d989cb, []int{7}
 }
 
 func (m *EmployeeId) XXX_Unmarshal(b []byte) error {
@@ -329,7 +1004,7 @@ func (m *EmployeeResponsePayload) Reset()         { *m = EmployeeResponsePayload
 func (m *EmployeeResponsePayload) String() string { return proto.CompactTextString(m) }
 func (*EmployeeResponsePayload) ProtoMessage()    {}
 func (*EmployeeResponsePayload) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f51afe6743d989cb, []int{3}
+	return fileDescriptor_f51afe6743d989cb, []int{8}
 }
 
 func (m *EmployeeResponsePayload) XXX_Unmarshal(b []byte) error {
@@ -365,6 +1040,11 @@ func (m *EmployeeResponsePayload) GetData() *Employee {
 }
 
 func init() {
+	proto.RegisterType((*GrpcUser)(nil), "employeePackage.GrpcUser")
+	proto.RegisterType((*GoogleGrpcUser)(nil), "employeePackage.GoogleGrpcUser")
+	proto.RegisterType((*GitHubGrpcUser)(nil), "employeePackage.GitHubGrpcUser")
+	proto.RegisterType((*LocalGrpcUser)(nil), "employeePackage.LocalGrpcUser")
+	proto.RegisterType((*GrpcResponsePayload)(nil), "employeePackage.GrpcResponsePayload")
 	proto.RegisterType((*Employee)(nil), "employeePackage.Employee")
 	proto.RegisterType((*EmployeeUpdate)(nil), "employeePackage.EmployeeUpdate")
 	proto.RegisterType((*EmployeeId)(nil), "employeePackage.EmployeeId")
@@ -374,36 +1054,77 @@ func init() {
 func init() { proto.RegisterFile("proto/employee.proto", fileDescriptor_f51afe6743d989cb) }
 
 var fileDescriptor_f51afe6743d989cb = []byte{
-	// 449 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x93, 0x5f, 0x8f, 0x12, 0x31,
-	0x14, 0xc5, 0x05, 0x81, 0x85, 0x8b, 0x82, 0xd6, 0x8d, 0xd6, 0x75, 0x63, 0xc8, 0x3c, 0xf1, 0x22,
-	0x26, 0xeb, 0x57, 0xd0, 0x18, 0x5e, 0x36, 0x64, 0xfc, 0xf3, 0x6c, 0x99, 0x5e, 0xa0, 0x71, 0x98,
-	0x4e, 0x6e, 0x0b, 0x86, 0xef, 0xe2, 0xb3, 0x9f, 0xd3, 0xf4, 0x76, 0x0a, 0x2b, 0xc9, 0x46, 0x1f,
-	0x7c, 0xe3, 0x9c, 0xdf, 0xcd, 0xe1, 0xcc, 0x6d, 0x0b, 0x97, 0x35, 0x59, 0x6f, 0xdf, 0xe2, 0xb6,
-	0x2e, 0xed, 0x01, 0x71, 0xc6, 0x52, 0x8c, 0x93, 0x5e, 0xa8, 0xe2, 0xbb, 0x5a, 0x63, 0xf6, 0xb3,
-	0x03, 0xfd, 0x0f, 0x8d, 0x27, 0x46, 0xd0, 0x36, 0x5a, 0xb6, 0x26, 0xad, 0xe9, 0x20, 0x6f, 0x1b,
-	0x2d, 0xae, 0x61, 0xb0, 0x32, 0xe4, 0xfc, 0xad, 0xda, 0xa2, 0x6c, 0xb3, 0x7d, 0x32, 0xc4, 0x15,
-	0xf4, 0x4b, 0xd5, 0xc0, 0x87, 0x0c, 0x8f, 0x5a, 0x3c, 0x87, 0xde, 0x1a, 0x2b, 0x8d, 0x24, 0x3b,
-	0x4c, 0x1a, 0x25, 0x04, 0x74, 0x48, 0x15, 0x28, 0xbb, 0xec, 0xf2, 0xef, 0x90, 0x53, 0x5b, 0x67,
-	0xbc, 0xb1, 0x95, 0xec, 0xc5, 0x9c, 0xa4, 0x43, 0x03, 0xe7, 0x15, 0xf9, 0xf7, 0xca, 0xa3, 0xbc,
-	0x88, 0x0d, 0x8e, 0x86, 0x98, 0xc2, 0xd8, 0x6d, 0xcc, 0xca, 0x2f, 0x08, 0x57, 0x48, 0x58, 0x15,
-	0x28, 0xfb, 0x3c, 0x73, 0x6e, 0x8b, 0xd7, 0x00, 0x4b, 0x52, 0x55, 0xb1, 0xe1, 0xb6, 0x03, 0x1e,
-	0xba, 0xe3, 0x84, 0xbe, 0x84, 0xeb, 0xd0, 0x00, 0x62, 0xdf, 0xa8, 0x84, 0x84, 0x8b, 0xc2, 0xee,
-	0x2a, 0x4f, 0x07, 0x39, 0x64, 0x90, 0xa4, 0x98, 0xc0, 0xb0, 0xde, 0xd8, 0x0a, 0x6f, 0x77, 0xdb,
-	0x25, 0x92, 0x7c, 0xc4, 0xf4, 0xae, 0x25, 0x2e, 0xa1, 0x8b, 0x5b, 0x65, 0x4a, 0xf9, 0x98, 0x59,
-	0x14, 0x21, 0x71, 0x8f, 0xe4, 0xc2, 0x5f, 0x8d, 0x26, 0xad, 0x69, 0x37, 0x4f, 0x32, 0x74, 0x74,
-	0x66, 0x5d, 0xcd, 0xab, 0xcf, 0x87, 0x1a, 0xe5, 0x38, 0x76, 0x3c, 0x39, 0x81, 0xd7, 0x64, 0xf7,
-	0x46, 0x23, 0xcd, 0xb5, 0x7c, 0x12, 0xf9, 0xc9, 0xe1, 0x3d, 0x2a, 0xe7, 0x7e, 0x58, 0xd2, 0xf2,
-	0x69, 0xb3, 0xc7, 0x46, 0x07, 0xb6, 0x73, 0x48, 0xb9, 0x2d, 0x51, 0x8a, 0xc8, 0x92, 0x0e, 0x4c,
-	0x9b, 0xbd, 0xe1, 0x4a, 0xcf, 0x22, 0x4b, 0x3a, 0xfb, 0xd5, 0x82, 0x51, 0xba, 0x1e, 0x5f, 0x6a,
-	0x1d, 0x96, 0xfe, 0xff, 0x2e, 0xc9, 0xbf, 0x1f, 0xdf, 0x5f, 0x97, 0x9d, 0x5d, 0x03, 0xa4, 0x9e,
-	0x73, 0x7d, 0xde, 0x31, 0xfb, 0x06, 0x2f, 0x12, 0xcd, 0xd1, 0xd5, 0xb6, 0x72, 0xb8, 0x50, 0x87,
-	0xd2, 0x2a, 0x1d, 0x4e, 0xde, 0x79, 0xe5, 0x77, 0x8e, 0xc7, 0xbb, 0x79, 0xa3, 0xc4, 0x1b, 0xe8,
-	0x68, 0xe5, 0x15, 0x7f, 0xd1, 0xf0, 0xe6, 0xe5, 0xec, 0xec, 0xe1, 0xcc, 0x8e, 0x79, 0x3c, 0x76,
-	0x63, 0x60, 0x9c, 0x9c, 0x4f, 0x48, 0x7b, 0x53, 0xa0, 0xf8, 0x0a, 0xc3, 0x8f, 0xe8, 0x8f, 0x8f,
-	0xeb, 0xd5, 0xbd, 0x11, 0x73, 0x7d, 0x35, 0xbd, 0x3f, 0xff, 0xcf, 0xbe, 0xd9, 0x83, 0x65, 0x8f,
-	0x9f, 0xf2, 0xbb, 0xdf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x25, 0x65, 0x99, 0xe1, 0xe2, 0x03, 0x00,
-	0x00,
+	// 1107 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x57, 0xdd, 0x6e, 0x23, 0x45,
+	0x13, 0xfd, 0xec, 0x75, 0x62, 0xbb, 0xbc, 0x71, 0xb2, 0x93, 0x7c, 0xbb, 0x9d, 0xff, 0x60, 0x40,
+	0x0a, 0x42, 0x04, 0x69, 0x79, 0x82, 0x48, 0xac, 0x82, 0xa5, 0xd5, 0x2a, 0x32, 0x64, 0x85, 0xb8,
+	0x31, 0xed, 0x99, 0xf2, 0xa4, 0x61, 0xdc, 0x3d, 0xea, 0x69, 0x3b, 0x32, 0xcf, 0xc2, 0x35, 0x0f,
+	0x83, 0x78, 0x0d, 0x9e, 0x82, 0x1b, 0x54, 0xd5, 0x3d, 0xe3, 0x71, 0x76, 0x03, 0xb9, 0xe0, 0x0e,
+	0xee, 0xba, 0xce, 0x29, 0xd7, 0x54, 0xf7, 0x9c, 0x53, 0x3d, 0x86, 0xbd, 0xdc, 0x1a, 0x67, 0x3e,
+	0xc7, 0x59, 0x9e, 0x99, 0x25, 0xe2, 0x05, 0x87, 0xd1, 0x76, 0x19, 0x5f, 0xcb, 0xf8, 0x47, 0x99,
+	0xe2, 0xe0, 0xb7, 0x16, 0x74, 0xae, 0x6c, 0x1e, 0xdf, 0x14, 0x68, 0xa3, 0x3e, 0x34, 0x55, 0x22,
+	0x1a, 0x67, 0x8d, 0xf3, 0xee, 0xa8, 0xa9, 0x92, 0xe8, 0x08, 0xba, 0x53, 0x65, 0x0b, 0xf7, 0x46,
+	0xce, 0x50, 0x34, 0x19, 0x5e, 0x01, 0xd1, 0x01, 0x74, 0x32, 0x19, 0xc8, 0x27, 0x4c, 0x56, 0x71,
+	0xf4, 0x1c, 0x36, 0x53, 0xd4, 0x09, 0x5a, 0xd1, 0x62, 0x26, 0x44, 0x51, 0x04, 0x2d, 0x2b, 0x63,
+	0x14, 0x1b, 0x8c, 0xf2, 0x9a, 0xea, 0xe4, 0xa6, 0x50, 0x4e, 0x19, 0x2d, 0x36, 0x7d, 0x9d, 0x32,
+	0xa6, 0x0e, 0x0a, 0x27, 0xad, 0xfb, 0x52, 0x3a, 0x14, 0x6d, 0xdf, 0x41, 0x05, 0x44, 0xe7, 0xb0,
+	0x5d, 0xdc, 0xaa, 0xa9, 0xbb, 0xb6, 0x38, 0x45, 0x8b, 0x3a, 0x46, 0xd1, 0xe1, 0x9c, 0xfb, 0x70,
+	0x74, 0x02, 0x30, 0xb1, 0x52, 0xc7, 0xb7, 0xdc, 0x6d, 0x97, 0x93, 0x6a, 0x08, 0xf5, 0x6b, 0x31,
+	0xa5, 0x0e, 0xc0, 0xf7, 0xeb, 0xa3, 0x48, 0x40, 0x3b, 0x36, 0x73, 0xed, 0xec, 0x52, 0xf4, 0x98,
+	0x28, 0xc3, 0xe8, 0x0c, 0x7a, 0xf9, 0xad, 0xd1, 0xf8, 0x66, 0x3e, 0x9b, 0xa0, 0x15, 0x4f, 0x99,
+	0xad, 0x43, 0xd1, 0x1e, 0x6c, 0xe0, 0x4c, 0xaa, 0x4c, 0x6c, 0x31, 0xe7, 0x03, 0xaa, 0xb8, 0x40,
+	0x5b, 0xd0, 0xa3, 0xfa, 0x67, 0x8d, 0xf3, 0x8d, 0x51, 0x19, 0x52, 0x8f, 0x85, 0x4a, 0xf5, 0x50,
+	0x7f, 0xb3, 0xcc, 0x51, 0x6c, 0xfb, 0x1e, 0x57, 0x08, 0xf1, 0xb9, 0x35, 0x0b, 0x95, 0xa0, 0x1d,
+	0x26, 0x62, 0xc7, 0xf3, 0x2b, 0x84, 0xcf, 0x51, 0x16, 0xc5, 0x9d, 0xb1, 0x89, 0x78, 0x16, 0xce,
+	0x31, 0xc4, 0xc4, 0xcd, 0x0b, 0xb4, 0x23, 0x93, 0xa1, 0x88, 0x3c, 0x57, 0xc6, 0xd1, 0x05, 0x44,
+	0xb4, 0xdb, 0xc2, 0xa1, 0xc5, 0xe4, 0x55, 0xd0, 0x87, 0xd8, 0xe5, 0xac, 0xf7, 0x30, 0x54, 0x2b,
+	0x51, 0x0b, 0xc5, 0x5b, 0xd8, 0xf3, 0xb5, 0xca, 0x78, 0xf0, 0x7b, 0x03, 0xfa, 0x57, 0xc6, 0xa4,
+	0x19, 0x56, 0xa2, 0xda, 0x81, 0x27, 0xc5, 0x7c, 0x12, 0x54, 0x45, 0x4b, 0x12, 0x81, 0x5e, 0x29,
+	0x8a, 0xd7, 0xd1, 0x31, 0x40, 0xaa, 0x16, 0xa8, 0xc7, 0x7a, 0x25, 0xa7, 0x2e, 0x23, 0xfc, 0x7e,
+	0x4e, 0xa1, 0x37, 0x95, 0x33, 0x95, 0x2d, 0x3d, 0xef, 0x45, 0x05, 0x1e, 0xe2, 0x04, 0x01, 0xed,
+	0x5c, 0xc5, 0x6e, 0x6e, 0x4b, 0x6d, 0x95, 0xe1, 0xea, 0x35, 0x6c, 0xd6, 0x5f, 0xc3, 0xc7, 0xd0,
+	0xe7, 0xc5, 0x78, 0x81, 0x56, 0x4d, 0x15, 0x26, 0x41, 0x5d, 0x5b, 0x8c, 0xbe, 0x0d, 0x20, 0xe9,
+	0x22, 0x33, 0xb1, 0xcc, 0x4a, 0x61, 0x85, 0x68, 0xf0, 0x6b, 0x1b, 0xfa, 0x57, 0xca, 0x7d, 0x35,
+	0x9f, 0x54, 0xfb, 0xdc, 0x83, 0x8d, 0xcc, 0xa4, 0x4a, 0x87, 0x9d, 0xfa, 0x20, 0x58, 0xaa, 0xc9,
+	0x6f, 0x9a, 0x2c, 0xf5, 0x02, 0xda, 0xda, 0x24, 0x38, 0x56, 0x49, 0xd8, 0xe4, 0x26, 0x85, 0xc3,
+	0x84, 0x0e, 0x40, 0x2e, 0xa4, 0x93, 0x76, 0x3c, 0xb7, 0x59, 0xd8, 0x60, 0xd7, 0x23, 0x37, 0x36,
+	0xa3, 0x03, 0x48, 0x6d, 0x48, 0x50, 0x49, 0xd8, 0x23, 0x94, 0xd0, 0x30, 0xa1, 0x63, 0xa6, 0x1f,
+	0xfa, 0x4d, 0xd2, 0x32, 0xda, 0x87, 0xce, 0xad, 0x9b, 0x65, 0x5c, 0xcf, 0x6f, 0xae, 0x4d, 0x31,
+	0x55, 0xfb, 0x10, 0xb6, 0xa6, 0x26, 0xcb, 0xcc, 0x1d, 0xda, 0x82, 0x79, 0xbf, 0xbb, 0xa7, 0x15,
+	0xb8, 0x96, 0xa4, 0x74, 0xca, 0x49, 0xdd, 0x7a, 0x92, 0xd2, 0x29, 0x25, 0x1d, 0x42, 0x97, 0x04,
+	0xe2, 0xab, 0x78, 0xef, 0x74, 0x18, 0x08, 0x4d, 0x93, 0x59, 0x2d, 0x26, 0x4c, 0xf7, 0x82, 0xa4,
+	0x3d, 0x44, 0x09, 0x9f, 0xc2, 0xb3, 0x62, 0x3e, 0x29, 0x62, 0xab, 0x72, 0xb2, 0xbb, 0xaf, 0xe2,
+	0xad, 0xb4, 0xb3, 0x46, 0x84, 0x64, 0x63, 0x53, 0xa9, 0xd5, 0x4f, 0x72, 0x95, 0xec, 0xbd, 0xb5,
+	0xb3, 0x46, 0x84, 0xbe, 0x2c, 0xe6, 0xc6, 0x27, 0xf5, 0x7d, 0x5f, 0x0c, 0x10, 0x79, 0x0c, 0x80,
+	0x0b, 0xd4, 0xa1, 0x6b, 0xef, 0xb4, 0xae, 0x47, 0x88, 0xbe, 0x80, 0x5d, 0x8b, 0x31, 0xaa, 0x05,
+	0x26, 0xe3, 0x5a, 0x9e, 0x77, 0xdc, 0xb3, 0x92, 0x7a, 0x55, 0xe5, 0x47, 0xd0, 0x72, 0x64, 0x59,
+	0x6f, 0x3a, 0x5e, 0xd3, 0x23, 0x0a, 0xe5, 0x70, 0x2c, 0x93, 0x99, 0xd2, 0x6c, 0xb9, 0xce, 0xa8,
+	0x4b, 0xc8, 0x25, 0x01, 0x95, 0x05, 0x76, 0x6b, 0x16, 0xe0, 0x59, 0x33, 0xcb, 0xa5, 0x5e, 0x06,
+	0x5b, 0x95, 0x21, 0x65, 0x4f, 0x32, 0x93, 0x8a, 0xff, 0xfb, 0x6c, 0x5a, 0xf3, 0xf4, 0x35, 0x31,
+	0x6f, 0x58, 0x3c, 0x0f, 0xd3, 0x37, 0xc4, 0x2b, 0xc9, 0xbf, 0xa8, 0x4b, 0xfe, 0x00, 0x3a, 0xb7,
+	0xca, 0xa2, 0x9c, 0x64, 0x28, 0x04, 0x37, 0x54, 0xc5, 0xa4, 0x9e, 0x89, 0x32, 0x62, 0xdf, 0xab,
+	0x67, 0xa2, 0x4c, 0xf4, 0x09, 0xec, 0xb8, 0x3b, 0xe5, 0x1c, 0xda, 0x31, 0x4d, 0x0a, 0xee, 0xf6,
+	0xc0, 0x0f, 0xd7, 0x80, 0xdf, 0x04, 0x38, 0xfa, 0x00, 0x9e, 0xe6, 0xf3, 0x49, 0xa6, 0xe2, 0x31,
+	0x9f, 0xb0, 0x38, 0x64, 0xb5, 0xf7, 0x3c, 0x36, 0x22, 0xa8, 0x96, 0xc2, 0xe2, 0x10, 0x47, 0xf5,
+	0x94, 0x2b, 0x82, 0xf8, 0xb2, 0x29, 0xe5, 0x27, 0x8e, 0x99, 0x5f, 0x01, 0x2b, 0x56, 0xe9, 0x54,
+	0x9c, 0xd4, 0x59, 0xa5, 0x53, 0x3a, 0xed, 0xd8, 0xa2, 0x74, 0x98, 0x8c, 0xa5, 0x13, 0xa7, 0xfe,
+	0x85, 0x06, 0xe4, 0xd2, 0x11, 0x3d, 0xcf, 0x93, 0x92, 0x3e, 0xf3, 0x74, 0x40, 0x2e, 0xdd, 0xe0,
+	0x12, 0xb6, 0x5e, 0x93, 0xad, 0xeb, 0x56, 0xf6, 0xe7, 0xd7, 0xb8, 0x77, 0x7e, 0xd5, 0x7c, 0x6d,
+	0xae, 0xcf, 0xd7, 0x81, 0x86, 0x5d, 0xfa, 0xf5, 0x08, 0x8b, 0xdc, 0xe8, 0x02, 0xaf, 0xe5, 0x32,
+	0x33, 0x92, 0xc7, 0x47, 0xe1, 0xa4, 0x9b, 0x17, 0x5c, 0x69, 0x63, 0x14, 0x22, 0x3a, 0xee, 0x1f,
+	0xee, 0x5c, 0xa8, 0x42, 0xcb, 0xe8, 0x33, 0x68, 0x25, 0xd2, 0x49, 0x1e, 0x0a, 0xbd, 0x97, 0xfb,
+	0x17, 0xf7, 0xee, 0xe9, 0x8b, 0xb2, 0xb7, 0x11, 0xa7, 0x0d, 0x7e, 0x6e, 0x41, 0xa7, 0x1a, 0xc8,
+	0xff, 0x5d, 0xdb, 0xff, 0xc6, 0x6b, 0xbb, 0x7e, 0x0d, 0xef, 0xde, 0xbb, 0x86, 0x7f, 0x69, 0x40,
+	0xbf, 0x94, 0xc7, 0x0d, 0xeb, 0xfc, 0x1f, 0x14, 0xc9, 0xe3, 0x5f, 0xdf, 0xdf, 0x1e, 0xf6, 0xe0,
+	0x08, 0xa0, 0xec, 0x73, 0x98, 0xdc, 0xef, 0x71, 0xf0, 0x3d, 0xbc, 0x28, 0xd9, 0xc7, 0x3a, 0xab,
+	0xf4, 0x51, 0xf3, 0x01, 0x1f, 0x55, 0xf5, 0x38, 0xed, 0xe5, 0x1f, 0x4d, 0xd8, 0x2e, 0xa1, 0xaf,
+	0xd1, 0x2e, 0x54, 0x8c, 0xd1, 0x5b, 0xe8, 0x5d, 0xa1, 0xab, 0xdc, 0x75, 0xf8, 0x60, 0x8d, 0x61,
+	0x72, 0x70, 0xfe, 0xf0, 0x03, 0xd6, 0x1b, 0x1e, 0xfc, 0x2f, 0xfa, 0x0e, 0xb6, 0x5f, 0xd3, 0x37,
+	0x81, 0xff, 0x3e, 0xe2, 0x41, 0x73, 0xfa, 0xae, 0xcf, 0xd7, 0x3e, 0x9e, 0x0e, 0x3e, 0x7a, 0xef,
+	0x20, 0xf8, 0x8b, 0xda, 0xfc, 0x4d, 0xf2, 0x50, 0xed, 0xb5, 0x0f, 0x96, 0x47, 0xd7, 0xfe, 0x16,
+	0xfa, 0x5c, 0x9b, 0x67, 0x24, 0x97, 0x3e, 0x79, 0xe7, 0x97, 0x6b, 0xf3, 0xf3, 0xb1, 0x95, 0x27,
+	0x9b, 0xfc, 0xa7, 0xe4, 0x8b, 0x3f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x0d, 0x81, 0xe5, 0x58, 0xac,
+	0x0c, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -419,6 +1140,9 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type EmployeeServiceClient interface {
 	GetEmployee(ctx context.Context, in *EmployeeId, opts ...grpc.CallOption) (*EmployeeResponsePayload, error)
+	LoginGoogleUser(ctx context.Context, in *GoogleGrpcUser, opts ...grpc.CallOption) (*GrpcResponsePayload, error)
+	LoginGitHubUser(ctx context.Context, in *GitHubGrpcUser, opts ...grpc.CallOption) (*GrpcResponsePayload, error)
+	LoginLocalUser(ctx context.Context, in *LocalGrpcUser, opts ...grpc.CallOption) (*GrpcResponsePayload, error)
 }
 
 type employeeServiceClient struct {
@@ -438,9 +1162,39 @@ func (c *employeeServiceClient) GetEmployee(ctx context.Context, in *EmployeeId,
 	return out, nil
 }
 
+func (c *employeeServiceClient) LoginGoogleUser(ctx context.Context, in *GoogleGrpcUser, opts ...grpc.CallOption) (*GrpcResponsePayload, error) {
+	out := new(GrpcResponsePayload)
+	err := c.cc.Invoke(ctx, "/employeePackage.EmployeeService/LoginGoogleUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *employeeServiceClient) LoginGitHubUser(ctx context.Context, in *GitHubGrpcUser, opts ...grpc.CallOption) (*GrpcResponsePayload, error) {
+	out := new(GrpcResponsePayload)
+	err := c.cc.Invoke(ctx, "/employeePackage.EmployeeService/LoginGitHubUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *employeeServiceClient) LoginLocalUser(ctx context.Context, in *LocalGrpcUser, opts ...grpc.CallOption) (*GrpcResponsePayload, error) {
+	out := new(GrpcResponsePayload)
+	err := c.cc.Invoke(ctx, "/employeePackage.EmployeeService/LoginLocalUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // EmployeeServiceServer is the server API for EmployeeService service.
 type EmployeeServiceServer interface {
 	GetEmployee(context.Context, *EmployeeId) (*EmployeeResponsePayload, error)
+	LoginGoogleUser(context.Context, *GoogleGrpcUser) (*GrpcResponsePayload, error)
+	LoginGitHubUser(context.Context, *GitHubGrpcUser) (*GrpcResponsePayload, error)
+	LoginLocalUser(context.Context, *LocalGrpcUser) (*GrpcResponsePayload, error)
 }
 
 // UnimplementedEmployeeServiceServer can be embedded to have forward compatible implementations.
@@ -449,6 +1203,15 @@ type UnimplementedEmployeeServiceServer struct {
 
 func (*UnimplementedEmployeeServiceServer) GetEmployee(ctx context.Context, req *EmployeeId) (*EmployeeResponsePayload, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetEmployee not implemented")
+}
+func (*UnimplementedEmployeeServiceServer) LoginGoogleUser(ctx context.Context, req *GoogleGrpcUser) (*GrpcResponsePayload, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginGoogleUser not implemented")
+}
+func (*UnimplementedEmployeeServiceServer) LoginGitHubUser(ctx context.Context, req *GitHubGrpcUser) (*GrpcResponsePayload, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginGitHubUser not implemented")
+}
+func (*UnimplementedEmployeeServiceServer) LoginLocalUser(ctx context.Context, req *LocalGrpcUser) (*GrpcResponsePayload, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method LoginLocalUser not implemented")
 }
 
 func RegisterEmployeeServiceServer(s *grpc.Server, srv EmployeeServiceServer) {
@@ -473,6 +1236,60 @@ func _EmployeeService_GetEmployee_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _EmployeeService_LoginGoogleUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GoogleGrpcUser)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EmployeeServiceServer).LoginGoogleUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/employeePackage.EmployeeService/LoginGoogleUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EmployeeServiceServer).LoginGoogleUser(ctx, req.(*GoogleGrpcUser))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EmployeeService_LoginGitHubUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GitHubGrpcUser)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EmployeeServiceServer).LoginGitHubUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/employeePackage.EmployeeService/LoginGitHubUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EmployeeServiceServer).LoginGitHubUser(ctx, req.(*GitHubGrpcUser))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _EmployeeService_LoginLocalUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(LocalGrpcUser)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(EmployeeServiceServer).LoginLocalUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/employeePackage.EmployeeService/LoginLocalUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(EmployeeServiceServer).LoginLocalUser(ctx, req.(*LocalGrpcUser))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _EmployeeService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "employeePackage.EmployeeService",
 	HandlerType: (*EmployeeServiceServer)(nil),
@@ -480,6 +1297,18 @@ var _EmployeeService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetEmployee",
 			Handler:    _EmployeeService_GetEmployee_Handler,
+		},
+		{
+			MethodName: "LoginGoogleUser",
+			Handler:    _EmployeeService_LoginGoogleUser_Handler,
+		},
+		{
+			MethodName: "LoginGitHubUser",
+			Handler:    _EmployeeService_LoginGitHubUser_Handler,
+		},
+		{
+			MethodName: "LoginLocalUser",
+			Handler:    _EmployeeService_LoginLocalUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

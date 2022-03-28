@@ -1,1 +1,1 @@
-export * from "./grpc-user-client";
+export * from "./grpc-employee-dash-client"

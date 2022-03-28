@@ -30,10 +30,6 @@ export class GrpcAuthClient extends AbstractGrpcClient {
         return this.m_instance
     }
 
-    /**
-     * Save a Google user
-     * @param user {GoogleGrpcUser}
-     */
     loginGoogleUser(user: GoogleGrpcUser): Promise<GrpcResponsePayload> {
         return new Promise(async (resolve, reject) => {
             this.m_client.LoginGoogleUser(user, (error: grpc.ServiceError | null, createUserInfo?: GrpcResponsePayload) => {
@@ -43,10 +39,7 @@ export class GrpcAuthClient extends AbstractGrpcClient {
         });
     }
 
-    /**
-     * Save a GitHub user
-     * @param user {GitHubGrpcUser}
-     */
+
     loginGitHubUser(user: GitHubGrpcUser): Promise<GrpcResponsePayload> {
         return new Promise((resolve, reject) => {
             this.m_client.LoginGitHubUser(user, (error: grpc.ServiceError | null, createUserInfo?: GrpcResponsePayload) => {
@@ -56,10 +49,7 @@ export class GrpcAuthClient extends AbstractGrpcClient {
         });
     }
 
-    /**
-     * Save a local user
-     * @param user {LocalGrpcUser}
-     */
+
     loginLocalUser(user: LocalGrpcUser): Promise<GrpcResponsePayload> {
         return new Promise((resolve, reject) => {
             this.m_client.LoginLocalUser(user, (error: grpc.ServiceError | null, createUserInfo?: GrpcResponsePayload) => {

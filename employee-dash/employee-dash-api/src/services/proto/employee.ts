@@ -14,6 +14,11 @@ export interface ProtoGrpcType {
     EmployeeResponsePayload: MessageTypeDefinition
     EmployeeService: SubtypeConstructor<typeof grpc.Client, _employeePackage_EmployeeServiceClient> & { service: _employeePackage_EmployeeServiceDefinition }
     EmployeeUpdate: MessageTypeDefinition
+    GitHubGrpcUser: MessageTypeDefinition
+    GoogleGrpcUser: MessageTypeDefinition
+    GrpcResponsePayload: MessageTypeDefinition
+    GrpcUser: MessageTypeDefinition
+    LocalGrpcUser: MessageTypeDefinition
   }
 }
 

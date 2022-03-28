@@ -2,17 +2,17 @@ import "./tracer/tracer";
 import { LogCodes, MicroServiceNames, RabbitClient, rabbitClient } from "@espressotrip-org/concept-common";
 import { app } from "./app";
 import { LocalLogger } from "./utils";
-import { GrpcUserClient } from "./services";
+import { GrpcEmployeeDashClient } from "./services";
 
 const PORT = process.env.PORT || 3000;
 
 async function main(): Promise<void> {
     let rabbit: RabbitClient | undefined;
-    let gRPC: GrpcUserClient | undefined;
+    let gRPC: GrpcEmployeeDashClient | undefined;
     try {
         /** gRPC Client */
-        gRPC = GrpcUserClient.getClient();
-        gRPC.connect("[auth-api:gRPC-client]: ");
+        gRPC = GrpcEmployeeDashClient.getClient();
+        gRPC.connect("[employee-dash-api:gRPC-client]: ");
         /** RabbitMQ */
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
         /** Google */
@@ -26,7 +26,7 @@ async function main(): Promise<void> {
         if (!process.env.EMPLOYEE_GITHUB_CALLBACK_URL) throw new Error("EMPLOYEE_GITHUB_CALLBACK_URL must be defined");
 
         /** Create RabbitMQ connection */
-        rabbit = await rabbitClient.connect(process.env.RABBIT_URI!, `[auth-api:rabbitmq]: Connected successfully`);
+        rabbit = await rabbitClient.connect(process.env.RABBIT_URI!, `[employee-dash-api:rabbitmq]: Connected successfully`);
 
         /** Start logger */
         const logChannel = await rabbit.addChannel("log");
@@ -41,7 +41,7 @@ async function main(): Promise<void> {
 }
 
 app.listen(PORT, async () => {
-    console.log(`[auth-api:express-service]: Listening port ${PORT}`);
+    console.log(`[employee-dash-api:express-service]: Listening port ${PORT}`);
 });
 
 main();

@@ -2,7 +2,7 @@ import express, { Request, Response } from "express";
 import { LogCodes } from "@espressotrip-org/concept-common";
 import { GitHubGrpcUser } from "../services/proto/userPackage/GitHubGrpcUser";
 import { LocalLogger } from "../utils";
-import { GrpcUserClient } from "../services";
+import {GrpcEmployeeDashClient} from "../services";
 
 const router = express.Router();
 
@@ -11,7 +11,7 @@ router.get("/api/auth/github/redirect", async (req: Request, res: Response) => {
         const gitHubUser: GitHubGrpcUser = req.session?.grant.response.profile;
 
         /** Make the request to the gRPC auth-service server */
-        const rpcResponse = await GrpcUserClient.getClient().loginGitHubUser(gitHubUser);
+        const rpcResponse = await GrpcEmployeeDashClient.getClient().loginGitHubUser(gitHubUser);
 
         /** Log Event */
         LocalLogger.log(LogCodes.INFO, `GitHub SignIn`, "employee-dash/employee-dash-api/src/routes/github-auth.ts:17", `email: ${gitHubUser.email}`);
