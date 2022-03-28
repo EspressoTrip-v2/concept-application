@@ -28,7 +28,7 @@ func (p *UpdateEmployeeRequeuePublisher) Publish(body []byte) *libErrors.CustomE
 		ContentType: "text/plain",
 		Body:        body,
 	})
-	ok := p.onFailure(err, logcodes.ERROR, "Failed to publish UpdateEmployeeRequeuePublisher message", "task/employee-dash-service/events/publishers/update-employee-requeue.go:31")
+	ok := p.onFailure(err, logcodes.ERROR, "Failed to publish UpdateEmployeeRequeuePublisher message", "employee-dash/employee-dash-service/events/publishers/update-employee-requeue.go:31")
 	if !ok {
 		return libErrors.NewEventPublisherError("Publisher error")
 	}

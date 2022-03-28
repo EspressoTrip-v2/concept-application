@@ -34,12 +34,12 @@ func main() {
 
 	// Tracer
 	traceProvider, err := tracer.NewTraceProvider("jaeger")
-	ok := onFailure(err, logcodes.ERROR, "Open-telemetry error", "task/employee-dash-service/index.go:36")
+	ok := onFailure(err, logcodes.ERROR, "Open-telemetry error", "employee-dash/employee-dash-service/index.go:36")
 	if ok {
 		defer func() {
 			err := traceProvider.Shutdown(context.Background())
 			if err != nil {
-				onFailure(libErrors.NewBadRequestError(err.Error()), logcodes.ERROR, "Trace provider shutdown error", "task/employee-dash-service/index.go:42")
+				onFailure(libErrors.NewBadRequestError(err.Error()), logcodes.ERROR, "Trace provider shutdown error", "employee-dash/employee-dash-service/index.go:42")
 			}
 		}()
 	}
@@ -60,7 +60,7 @@ func main() {
 
 	// MongoDB
 	mClient, err = mongoclient.GetMongoDB()
-	onFailure(err, logcodes.ERROR, "MongoDB error", "task/employee-dash-service/index.go:63")
+	onFailure(err, logcodes.ERROR, "MongoDB error", "employee-dash/employee-dash-service/index.go:63")
 	defer mClient.Disconnect()
 
 	// Rabbit Consumers
@@ -98,7 +98,7 @@ func main() {
 	// gRPC Server
 	err = grpc.NewEmployeeDashGrpcServer(os.Getenv("GRPC_SERVER_PORT"), microserviceNames.EMPLOYEE_DASH_SERVICE, mClient).
 		Listen(fmt.Sprintf("[employee-dash-service:gRPC-server]: Listening on %v\n", os.Getenv("GRPC_SERVER_PORT")))
-	ok = onFailure(err, logcodes.ERROR, "gRPC server failed", "task/employee-dash-service/index.go:101")
+	ok = onFailure(err, logcodes.ERROR, "gRPC server failed", "employee-dash/employee-dash-service/index.go:101")
 	if ok != true {
 		log.Fatalln("[employee-dash-service:gRPC-server]: Failed to connect to gRPC server")
 	}
