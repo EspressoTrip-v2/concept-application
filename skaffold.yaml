@@ -70,25 +70,25 @@ build:
                   - src: "src/**/*.ts"
                     dest: .
 
-      # Employee-Dash-API service
+        # Employee-Dash-API service
         - image: espressotrip/concept-employee-dash-api
           context: employee-dash/employee-dash-api
           docker:
-            dockerfile: Dockerfile
+              dockerfile: Dockerfile
           sync:
-            manual:
-              - src: "src/**/*.ts"
-                dest: .
+              manual:
+                  - src: "src/**/*.ts"
+                    dest: .
 
-      # Employee-Dash-Service service
+        # Employee-Dash-Service service
         - image: espressotrip/concept-employee-dash-service
           context: employee-dash/employee-dash-service
           docker:
-            dockerfile: Dockerfile
+              dockerfile: Dockerfile
           sync:
-            manual:
-              - src: "**/*.go"
-                dest: .
+              manual:
+                  - src: "**/*.go"
+                    dest: .
 
         # Log-Service service
         - image: espressotrip/concept-log-service
@@ -100,25 +100,25 @@ build:
                   - src: "src/**/*.ts"
                     dest: .
 
-      # Task-API service
+        # Task-API service
         - image: espressotrip/concept-task-api
           context: task/task-api
           docker:
-            dockerfile: Dockerfile
+              dockerfile: Dockerfile
           sync:
-            manual:
-              - src: "**/*.go"
-                dest: .
+              manual:
+                  - src: "**/*.go"
+                    dest: .
 
-      # Task-Service service
+        # Task-Service service
         - image: espressotrip/concept-task-service
           context: task/task-service
           docker:
-            dockerfile: Dockerfile
+              dockerfile: Dockerfile
           sync:
-            manual:
-              - src: "**/*.go"
-                dest: .
+              manual:
+                  - src: "**/*.go"
+                    dest: .
 
         # Web UI
         - image: espressotrip/concept-auth-web
@@ -136,18 +136,22 @@ build:
                   - src: "src/**/*.scss"
                     dest: .
 
-      # Employee UI
+        # Employee UI
         - image: espressotrip/concept-employee-ui
           context: employee-ui
           docker:
-            dockerfile: Dockerfile
+              dockerfile: Dockerfile
           sync:
-            manual:
-              - src: "src/**/*.jsx"
-                dest: .
-              - src: "src/**/*.js"
-                dest: .
-              - src: "src/**/*.css"
-                dest: .
-              - src: "src/**/*.scss"
-                dest: .
+              manual:
+                  - src: "src/**/*.jsx"
+                    dest: .
+                  - src: "src/**/*.js"
+                    dest: .
+                  - src: "src/**/*.css"
+                    dest: .
+                  - src: "src/**/*.scss"
+                    dest: .
+                  - src: "src/**/*.ts"
+                    dest: .
+                  - src: "src/**/*.tsx"
+                    dest: .
