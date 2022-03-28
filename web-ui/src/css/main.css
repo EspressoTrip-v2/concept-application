@@ -136,7 +136,7 @@ img {
       background-size: cover;
       background-position: center;
       clip-path: polygon(19% 30%, 100% 10%, 100% 88%, 27% 77%);
-      height: 100%; }
+      -webkit-clip-path: polygon(19% 30%, 100% 10%, 100% 88%, 27% 77%); }
     .home_right-bg {
       clip-path: polygon(55% 0, 100% 0, 100% 100%, 0 100%, 80% 60%);
       background-color: #ec1c24;
