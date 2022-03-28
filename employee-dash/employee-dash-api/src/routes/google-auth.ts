@@ -14,7 +14,7 @@ router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
         const rpcResponse = await GrpcUserClient.getClient().loginGoogleUser(googleUser);
 
         /** Log Event */
-        LocalLogger.log(LogCodes.INFO, `Google SignIn`, "auth/auth-api/src/routes/google-auth.ts:17", `email: ${googleUser.email}`);
+        LocalLogger.log(LogCodes.INFO, `Google SignIn`, "employee-dash/employee-dash-api/src/routes/google-auth.ts:17", `email: ${googleUser.email}`);
 
         /** Add to the session */
         req.session = {

@@ -34,7 +34,7 @@ type MongoClient struct {
 func (m *MongoClient) Disconnect() {
 	err := m.db.Disconnect(context.TODO())
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB disconnect error", "employee-dash/employee-dash-service/services/mongoClient/mongo.go:47", err.Error())
+		localLogger.Log(logcodes.ERROR, "MongoDB disconnect error", "employee-dash/employee-dash-service/services/mongoClient/mongo.go:37", err.Error())
 	}
 }
 func (m *MongoClient) InsertEmployee(ctx context.Context, data *models.Employee) (*mongo.InsertOneResult, error) {
@@ -99,7 +99,7 @@ func GetMongoDB() (*MongoClient, *libErrors.CustomError) {
 		return nil, libErrors.NewDatabaseError(fmt.Sprintf("MongoDB error: %v", err.Error()))
 	}
 	if err := client.Ping(ctx, readpref.Primary()); err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB error", "employee-dash/employee-dash-service/services/mongoClient/mongo.go:215", err.Error())
+		localLogger.Log(logcodes.ERROR, "MongoDB error", "employee-dash/employee-dash-service/services/mongoClient/mongo.go:102", err.Error())
 	} else {
 		fmt.Println("[employee-dash-service:mongo]: Connected successfully")
 	}

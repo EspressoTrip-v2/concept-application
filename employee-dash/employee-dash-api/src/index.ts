@@ -34,7 +34,7 @@ async function main(): Promise<void> {
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-api:error]: Service start up error -> ${msg}`);
-        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "auth/auth-api/srv/index.ts:37", msg.stack! || "No stack trace");
+        LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "employee-dash/employee-dash-api/src/index.ts:37", msg.stack! || "No stack trace");
         if (rabbit) await rabbit.connection.close();
         if (gRPC) gRPC.m_client.close();
     }
