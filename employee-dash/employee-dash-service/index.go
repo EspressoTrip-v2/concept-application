@@ -56,7 +56,7 @@ func main() {
 	logChannel, err := rabbit.AddChannel("log")
 	ok = onFailure(err, logcodes.ERROR, "", "ask/employee-dash-service/index.go:57")
 	if ok {
-		localLogger.Start(logChannel, microserviceNames.TASK_SERVICE)
+		localLogger.Start(logChannel, microserviceNames.EMPLOYEE_DASH_SERVICE)
 	}
 
 	// MongoDB

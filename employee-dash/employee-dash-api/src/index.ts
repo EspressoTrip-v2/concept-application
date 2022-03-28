@@ -30,7 +30,7 @@ async function main(): Promise<void> {
 
         /** Start logger */
         const logChannel = await rabbit.addChannel("log");
-        LocalLogger.start(logChannel, MicroServiceNames.AUTH_API);
+        LocalLogger.start(logChannel, MicroServiceNames.EMPLOYEE_DASH_API);
     } catch (error) {
         const msg = error as Error;
         console.log(`[auth-api:error]: Service start up error -> ${msg}`);

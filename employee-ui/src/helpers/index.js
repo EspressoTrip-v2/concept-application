@@ -1,7 +1,7 @@
-import axios from 'axios';
+import axios from "axios";
+
 const getUser = async () => {
-  const result = await axios.get('https://acmefast.dev/api/auth/login-success');
-  return result;
+  return await axios.get('https://employee.acmefast.dev/api/auth/login-success');
 };
 
 export default getUser;
