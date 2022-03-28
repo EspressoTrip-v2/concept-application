@@ -6,6 +6,7 @@ import (
 	localLogger "employee-dash-service/local-logger"
 	"employee-dash-service/models"
 	"employee-dash-service/services/mongoclient"
+	"employee-dash-service/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/EspressoTrip-v2/concept-go-common/exchange/bindkeys"
@@ -77,6 +78,11 @@ func (c *UpdateEmployeeEmpConsumer) updateEmployee(data []byte) bool {
 		return ok
 	}
 
+	hashedPassword, err := utils.HashPassword(employeePayload.Password, 8)
+	ok = c.onFailure(err, logcodes.ERROR, "Password hashing failure", "employee-dash/employee-dash-service/events/update-employee-consumer.go:82")
+	if !ok {
+		return ok
+	}
 	var employee models.Employee
 	filter := bson.D{{"email", employeePayload.Email}, {"version", employeePayload.Version - 1}}
 	update := bson.D{{"$set", bson.D{
@@ -87,9 +93,19 @@ func (c *UpdateEmployeeEmpConsumer) updateEmployee(data []byte) bool {
 		{"lastName", employeePayload.LastName},
 		{"position", employeePayload.Position},
 		{"country", employeePayload.Country},
+		{"startDate", employeePayload.StartDate},
 		{"shiftPreference", employeePayload.ShiftPreference},
+		{"gender", employeePayload.Gender},
+		{"race", employeePayload.Race},
+		{"signInType", employeePayload.SignInType},
+		{"phoneNumber", employeePayload.PhoneNumber},
+		{"providerId", employeePayload.ProviderId},
+		{"userRole", employeePayload.UserRole},
+		{"region", employeePayload.Region},
+		{"password", hashedPassword},
 		{"version", employeePayload.Version},
 	}}}
+
 	err = c.mongoClient.FindOneAndUpdateEmployee(context.TODO(), filter, &employee, update, nil)
 	if err == mongo.ErrNoDocuments {
 		publishers.GetUpdateEmployeeRequeuePublisher().Publish(data)

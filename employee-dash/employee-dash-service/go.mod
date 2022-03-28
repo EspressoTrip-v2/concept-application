@@ -3,7 +3,7 @@ module employee-dash-service
 go 1.18
 
 require (
-	github.com/EspressoTrip-v2/concept-go-common v1.0.64
+	github.com/EspressoTrip-v2/concept-go-common v1.0.65
 	github.com/golang/protobuf v1.5.2
 	github.com/streadway/amqp v1.0.0
 	go.mongodb.org/mongo-driver v1.8.4
@@ -13,6 +13,7 @@ require (
 	go.opentelemetry.io/otel/exporters/jaeger v1.6.0
 	go.opentelemetry.io/otel/sdk v1.6.0
 	go.opentelemetry.io/otel/trace v1.6.0
+	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064
 	google.golang.org/grpc v1.45.0
 )
 
@@ -31,11 +32,10 @@ require (
 	github.com/xdg-go/scram v1.1.1 // indirect
 	github.com/xdg-go/stringprep v1.0.3 // indirect
 	github.com/youmark/pkcs8 v0.0.0-20201027041543-1326539a0a0a // indirect
-	golang.org/x/crypto v0.0.0-20220321153916-2c7772ba3064 // indirect
 	golang.org/x/net v0.0.0-20220325170049-de3da57026de // indirect
 	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20220325203850-36772127a21f // indirect
+	golang.org/x/sys v0.0.0-20220328115105-d36c6a25d886 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	google.golang.org/genproto v0.0.0-20220324131243-acbaeb5b85eb // indirect
+	google.golang.org/genproto v0.0.0-20220328150716-24ca77f39d1f // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 )

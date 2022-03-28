@@ -38,7 +38,7 @@ func (m *MongoClient) Disconnect() {
 	}
 }
 func (m *MongoClient) InsertEmployee(ctx context.Context, data *models.Employee) (*mongo.InsertOneResult, error) {
-	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
+	collection := m.db.Database(string(mongodb.DASHBOARD_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	result, err := collection.InsertOne(ctx, data)
 	if err != nil {
 		return nil, err
@@ -47,7 +47,7 @@ func (m *MongoClient) InsertEmployee(ctx context.Context, data *models.Employee)
 }
 
 func (m *MongoClient) FindOneEmployee(ctx context.Context, filter bson.D, variable *models.Employee) error {
-	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
+	collection := m.db.Database(string(mongodb.DASHBOARD_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	err := collection.FindOne(ctx, filter).Decode(variable)
 	if err != nil {
 		return err
@@ -56,7 +56,7 @@ func (m *MongoClient) FindOneEmployee(ctx context.Context, filter bson.D, variab
 }
 
 func (m *MongoClient) FindOneAndUpdateEmployee(ctx context.Context, filter bson.D, variable *models.Employee, update bson.D, options *options.FindOneAndUpdateOptions) error {
-	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
+	collection := m.db.Database(string(mongodb.DASHBOARD_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	err := collection.FindOneAndUpdate(ctx, filter, update, options).Decode(variable)
 	if err != nil {
 		return err
@@ -65,14 +65,8 @@ func (m *MongoClient) FindOneAndUpdateEmployee(ctx context.Context, filter bson.
 }
 
 func (m *MongoClient) FindOneAndDeleteEmployee(ctx context.Context, filter bson.D, variable *models.Employee) error {
-	collection := m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.EMPLOYEE_COL))
+	collection := m.db.Database(string(mongodb.DASHBOARD_DB)).Collection(string(mongodb.EMPLOYEE_COL))
 	err := collection.FindOneAndDelete(ctx, filter).Decode(variable)
-	if err != nil {
-		return err
-	}
-
-	collection = m.db.Database(string(mongodb.TASK_DB)).Collection(string(mongodb.TASK_COL))
-	_, err = collection.DeleteMany(ctx, bson.D{{"employeeId", variable.Id}})
 	if err != nil {
 		return err
 	}

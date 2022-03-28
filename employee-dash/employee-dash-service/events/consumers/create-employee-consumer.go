@@ -5,6 +5,7 @@ import (
 	localLogger "employee-dash-service/local-logger"
 	"employee-dash-service/models"
 	"employee-dash-service/services/mongoclient"
+	"employee-dash-service/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/EspressoTrip-v2/concept-go-common/exchange/bindkeys"
@@ -66,12 +67,17 @@ func (c *CreateEmployeeConsumer) Listen() {
 func (c *CreateEmployeeConsumer) createEmployee(data []byte) bool {
 	var employeePayload models.EmployeePayload
 	err := json.Unmarshal(data, &employeePayload)
-	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "employee-dash/employee-dash-service/events/create-employee-consumer.go:69")
+	ok := c.onFailure(err, logcodes.ERROR, "Failed to unmarshal json", "employee-dash/employee-dash-service/events/create-employee-consumer.go:70")
 	if !ok {
 		return ok
 	}
 	oid, err := primitive.ObjectIDFromHex(employeePayload.Id)
-	ok = c.onFailure(err, logcodes.ERROR, "Object id conversion failure", "employee-dash/employee-dash-service/events/create-employee-consumer.go:74")
+	ok = c.onFailure(err, logcodes.ERROR, "Object id conversion failure", "employee-dash/employee-dash-service/events/create-employee-consumer.go:75")
+	if !ok {
+		return ok
+	}
+	hashedPassword, err := utils.HashPassword(employeePayload.Password, 8)
+	ok = c.onFailure(err, logcodes.ERROR, "Password hashing failure", "employee-dash/employee-dash-service/events/create-employee-consumer.go:80")
 	if !ok {
 		return ok
 	}
@@ -82,7 +88,7 @@ func (c *CreateEmployeeConsumer) createEmployee(data []byte) bool {
 		Gender:             employeePayload.Gender,
 		BranchName:         employeePayload.BranchName,
 		LastName:           employeePayload.LastName,
-		Password:           employeePayload.Password,
+		Password:           hashedPassword,
 		Race:               employeePayload.Race,
 		Region:             employeePayload.Region,
 		RegisteredEmployee: false,
