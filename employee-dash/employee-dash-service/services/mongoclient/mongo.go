@@ -93,7 +93,7 @@ func GetMongoDB() (*MongoClient, *libErrors.CustomError) {
 		return nil, libErrors.NewDatabaseError(fmt.Sprintf("MongoDB error: %v", err.Error()))
 	}
 	if err := client.Ping(ctx, readpref.Primary()); err != nil {
-		localLogger.Log(logcodes.ERROR, "MongoDB error", "employee-dash/employee-dash-service/services/mongoClient/mongo.go:102", err.Error())
+		localLogger.Log(logcodes.ERROR, "MongoDB error", "employee-dash/employee-dash-service/services/mongoClient/mongo.go:96", err.Error())
 	} else {
 		fmt.Println("[employee-dash-service:mongo]: Connected successfully")
 	}

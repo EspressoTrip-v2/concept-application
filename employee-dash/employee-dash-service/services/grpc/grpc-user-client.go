@@ -59,7 +59,7 @@ func (c *GrpcClientInstance) Connect(msg string) {
 		grpc.WithUnaryInterceptor(otelgrpc.UnaryClientInterceptor()),
 		grpc.WithStreamInterceptor(otelgrpc.StreamClientInterceptor()))
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "gRPC client failed to connect to server", "task/task-api/services/grpc-user-client.go:36", err.Error())
+		localLogger.Log(logcodes.ERROR, "gRPC client failed to connect to server", "task/task-api/services/grpc-user-client.go:62", err.Error())
 	} else {
 		fmt.Println(msg)
 	}

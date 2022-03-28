@@ -42,7 +42,7 @@ func (g *EmployeeDashGrpcServer) Listen(logMsg string) *libErrors.CustomError {
 	// serve
 	fmt.Println(logMsg)
 	if err := server.Serve(listener); err != nil {
-		localLogger.Log(logcodes.ERROR, "Failed to start gRPC server", "employee-dash-service/services/grpc-server.go:44", err.Error())
+		localLogger.Log(logcodes.ERROR, "Failed to start gRPC server", "employee-dash-service/services/grpc-server.go:45", err.Error())
 		g.failOnError(err)
 		return libErrors.GrpcTranslator(err)
 	}

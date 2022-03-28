@@ -35,12 +35,12 @@ func main() {
 
 	// Tracer
 	traceProvider, err := tracer.NewTraceProvider("jaeger")
-	ok := onFailure(err, logcodes.ERROR, "Open-telemetry error", "employee-dash/employee-dash-service/index.go:36")
+	ok := onFailure(err, logcodes.ERROR, "Open-telemetry error", "employee-dash/employee-dash-service/index.go:38")
 	if ok {
 		defer func() {
 			err := traceProvider.Shutdown(context.Background())
 			if err != nil {
-				onFailure(libErrors.NewBadRequestError(err.Error()), logcodes.ERROR, "Trace provider shutdown error", "employee-dash/employee-dash-service/index.go:42")
+				onFailure(libErrors.NewBadRequestError(err.Error()), logcodes.ERROR, "Trace provider shutdown error", "employee-dash/employee-dash-service/index.go:43")
 			}
 		}()
 	}
@@ -54,44 +54,44 @@ func main() {
 
 	// Logging
 	logChannel, err := rabbit.AddChannel("log")
-	ok = onFailure(err, logcodes.ERROR, "", "ask/employee-dash-service/index.go:56")
+	ok = onFailure(err, logcodes.ERROR, "", "ask/employee-dash-service/index.go:57")
 	if ok {
 		localLogger.Start(logChannel, microserviceNames.TASK_SERVICE)
 	}
 
 	// MongoDB
 	mClient, err = mongoclient.GetMongoDB()
-	onFailure(err, logcodes.ERROR, "MongoDB error", "employee-dash/employee-dash-service/index.go:63")
+	onFailure(err, logcodes.ERROR, "MongoDB error", "employee-dash/employee-dash-service/index.go:64")
 	defer mClient.Disconnect()
 
 	// Rabbit Consumers
 	cecChannel, err := rabbit.AddChannel("cec")
-	ok = onFailure(err, logcodes.ERROR, "Failed to create CreateEmployeeConsumer channel", "ask/employee-dash-service/index.go:68")
+	ok = onFailure(err, logcodes.ERROR, "Failed to create CreateEmployeeConsumer channel", "ask/employee-dash-service/index.go:69")
 	if ok {
 		go consumers.NewCreateEmployeeConsumer(cecChannel, mClient).Listen()
 	}
 
 	decChannel, err := rabbit.AddChannel("dec")
-	ok = onFailure(err, logcodes.ERROR, "Failed to create DeleteEmployeeConsumer channel", "ask/employee-dash-service/index.go:74")
+	ok = onFailure(err, logcodes.ERROR, "Failed to create DeleteEmployeeConsumer channel", "ask/employee-dash-service/index.go:75")
 	if ok {
 		go consumers.NewDeleteEmployeeConsumer(decChannel, mClient).Listen()
 	}
 
 	usfChannel, err := rabbit.AddChannel("usf")
-	ok = onFailure(err, logcodes.ERROR, "Failed to create UserSaveFailureConsumer channel", "ask/employee-dash-service/index.go:80")
+	ok = onFailure(err, logcodes.ERROR, "Failed to create UserSaveFailureConsumer channel", "ask/employee-dash-service/index.go:81")
 	if ok {
 		go consumers.NewUserSaveFailureConsumer(usfChannel, mClient).Listen()
 	}
 
 	ueecChannel, err := rabbit.AddChannel("ueec")
-	ok = onFailure(err, logcodes.ERROR, "Failed to create UpdateEmployeeEmpConsumer channel", "ask/employee-dash-service/index.go:86")
+	ok = onFailure(err, logcodes.ERROR, "Failed to create UpdateEmployeeEmpConsumer channel", "ask/employee-dash-service/index.go:87")
 	if ok {
 		go consumers.NewUpdateEmployeeEmpConsumer(ueecChannel, mClient).Listen()
 	}
 
 	// Rabbit Publishers
 	uerpChannel, err := rabbit.AddChannel("uerp")
-	ok = onFailure(err, logcodes.ERROR, "Failed to create UpdateEmployeeEmpConsumer channel", "ask/employee-dash-service/index.go:93")
+	ok = onFailure(err, logcodes.ERROR, "Failed to create UpdateEmployeeEmpConsumer channel", "ask/employee-dash-service/index.go:94")
 	if ok {
 		publishers.NewUpdateEmployeeRequeuePublisher(uerpChannel, mClient)
 	}

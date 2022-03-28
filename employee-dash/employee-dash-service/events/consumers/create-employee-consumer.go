@@ -33,16 +33,16 @@ func NewCreateEmployeeConsumer(rabbitChannel *amqp.Channel, mongoClient *mongocl
 func (c *CreateEmployeeConsumer) Listen() {
 	var err error
 	err = c.rabbitChannel.ExchangeDeclare(string(c.exchangeName), string(c.exchangeType), true, false, false, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to declare exchange", "employee-dash/employee-dash-service/events/create-employee-consumer.go:35")
+	c.onFailure(err, logcodes.ERROR, "Failure to declare exchange", "employee-dash/employee-dash-service/events/create-employee-consumer.go:36")
 
 	queue, err := c.rabbitChannel.QueueDeclare("", false, false, true, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to declare queue", "employee-dash/employee-dash-service/events/create-employee-consumer.go:38")
+	c.onFailure(err, logcodes.ERROR, "Failure to declare queue", "employee-dash/employee-dash-service/events/create-employee-consumer.go:39")
 
 	err = c.rabbitChannel.QueueBind(queue.Name, string(c.bindKey), string(c.exchangeName), false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "employee-dash/employee-dash-service/events/create-employee-consumer.go:41")
+	c.onFailure(err, logcodes.ERROR, "Failure to bind queue to exchange", "employee-dash/employee-dash-service/events/create-employee-consumer.go:42")
 
 	messages, err := c.rabbitChannel.Consume(queue.Name, "", false, false, false, false, nil)
-	c.onFailure(err, logcodes.ERROR, "Failure to listen on queue", "employee-dash/employee-dash-service/events/create-employee-consumer.go:44")
+	c.onFailure(err, logcodes.ERROR, "Failure to listen on queue", "employee-dash/employee-dash-service/events/create-employee-consumer.go:45")
 
 	fmt.Printf("[consumer:%v]: Subscribed on exchange:%v | route:%v\n", c.consumerName, c.exchangeName, c.bindKey)
 	forever := make(chan bool)
@@ -50,12 +50,12 @@ func (c *CreateEmployeeConsumer) Listen() {
 		for d := range messages {
 			ok := c.createEmployee(d.Body)
 			if !ok {
-				localLogger.Log(logcodes.ERROR, "go routine error", "employee-dash/employee-dash-service/events/create-employee-consumer.go:52", "Error creating employee")
+				localLogger.Log(logcodes.ERROR, "go routine error", "employee-dash/employee-dash-service/events/create-employee-consumer.go:53", "Error creating employee")
 				continue
 			}
 			err := d.Ack(false)
 			if err != nil {
-				localLogger.Log(logcodes.ERROR, "go routine message acknowledge error", "employee-dash/employee-dash-service/events/create-employee-consumer.go:57",
+				localLogger.Log(logcodes.ERROR, "go routine message acknowledge error", "employee-dash/employee-dash-service/events/create-employee-consumer.go:58",
 					fmt.Sprintf("Error acknowkledging message: %v", string(d.Body)))
 			}
 
@@ -104,11 +104,11 @@ func (c *CreateEmployeeConsumer) createEmployee(data []byte) bool {
 		Version:            employeePayload.Version,
 	}
 	_, err = c.mongoClient.InsertEmployee(context.TODO(), &employee)
-	ok = c.onFailure(err, logcodes.ERROR, "Insert employee failed", "employee-dash/employee-dash-service/events/create-employee-consumer.go:101")
+	ok = c.onFailure(err, logcodes.ERROR, "Insert employee failed", "employee-dash/employee-dash-service/events/create-employee-consumer.go:107")
 	if !ok {
 		return ok
 	}
-	c.onSuccess(logcodes.CREATED, "Employee created", "employee-dash/employee-dash-service/events/create-employee-consumer.go:105", "Employee view created")
+	c.onSuccess(logcodes.CREATED, "Employee created", "employee-dash/employee-dash-service/events/create-employee-consumer.go:111", "Employee view created")
 	return true
 }
 
