@@ -1,13 +1,13 @@
 import "./tracer/tracer";
 import { LogCodes, MicroServiceNames, RabbitClient, rabbitClient } from "@espressotrip-org/concept-common";
-import { GrpcServer, grpcServer } from "./services";
+import { GrpcAuthServer, grpcServer } from "./services";
 import mongoose from "mongoose";
 import { CreateUserConsumer, DeleteUserConsumer, UpdateEmployeePublisher, UpdateUserConsumer, UserSaveFailurePublisher, UserUpdateRequeuePublisher } from "./events";
 import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
     let rabbit: RabbitClient | undefined
-    let gRPC: GrpcServer | undefined
+    let gRPC: GrpcAuthServer | undefined
     try {
         if (!process.env.JWT_KEY) throw new Error("JWT_KEY must be defined");
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");

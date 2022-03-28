@@ -8,8 +8,8 @@ import { LocalGrpcUser } from "./proto/userPackage/LocalGrpcUser";
 import { GrpcResponsePayload } from "./proto/userPackage/GrpcResponsePayload";
 import { UserServiceClient } from "./proto/userPackage/UserService";
 
-export class GrpcUserClient extends AbstractGrpcClient {
-    static m_instance: GrpcUserClient | undefined
+export class GrpcAuthClient extends AbstractGrpcClient {
+    static m_instance: GrpcAuthClient | undefined
     readonly m_protoPath = __dirname + "/proto/user.proto";
     readonly m_port = GrpcServicePortDns.AUTH_SERVICE_DNS;
     readonly m_packageDefinition = protoLoader.loadSync(this.m_protoPath, { longs: String, enums: String, keepCase: true });
@@ -22,9 +22,9 @@ export class GrpcUserClient extends AbstractGrpcClient {
         super();
     }
 
-    static getClient(): GrpcUserClient {
+    static getClient(): GrpcAuthClient {
         if (this.m_instance === undefined) {
-            this.m_instance = new GrpcUserClient()
+            this.m_instance = new GrpcAuthClient()
             return this.m_instance
         }
         return this.m_instance

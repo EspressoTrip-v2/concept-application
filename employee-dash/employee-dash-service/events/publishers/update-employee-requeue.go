@@ -1,6 +1,8 @@
 package publishers
 
 import (
+	localLogger "employee-dash-service/local-logger"
+	"employee-dash-service/services/mongoclient"
 	"fmt"
 	"github.com/EspressoTrip-v2/concept-go-common/exchange/bindkeys"
 	"github.com/EspressoTrip-v2/concept-go-common/exchange/exchangeNames"
@@ -8,8 +10,6 @@ import (
 	libErrors "github.com/EspressoTrip-v2/concept-go-common/liberrors"
 	"github.com/EspressoTrip-v2/concept-go-common/logcodes"
 	"github.com/streadway/amqp"
-	localLogger "task-service/local-logger"
-	"task-service/services/mongoclient"
 )
 
 var updateEmployeeRequeuePublisher *UpdateEmployeeRequeuePublisher
@@ -28,7 +28,7 @@ func (p *UpdateEmployeeRequeuePublisher) Publish(body []byte) *libErrors.CustomE
 		ContentType: "text/plain",
 		Body:        body,
 	})
-	ok := p.onFailure(err, logcodes.ERROR, "Failed to publish UpdateEmployeeRequeuePublisher message", "task/task-service/events/publishers/update-employee-requeue.go:31")
+	ok := p.onFailure(err, logcodes.ERROR, "Failed to publish UpdateEmployeeRequeuePublisher message", "task/employee-dash-service/events/publishers/update-employee-requeue.go:31")
 	if !ok {
 		return libErrors.NewEventPublisherError("Publisher error")
 	}

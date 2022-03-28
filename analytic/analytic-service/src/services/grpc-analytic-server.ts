@@ -4,7 +4,7 @@ import { ProtoGrpcType } from "./proto/analytic";
 import { AbstractGrpcServer } from "@espressotrip-org/concept-common/build/grpc";
 import amqp from "amqplib";
 
-export class GrpcServer extends AbstractGrpcServer {
+export class GrpcAnalyticServer extends AbstractGrpcServer {
     readonly m_protoPath = __dirname + "/proto/analytic.proto";
     readonly m_port = process.env.GRPC_SERVER_PORT!;
 
@@ -20,7 +20,7 @@ export class GrpcServer extends AbstractGrpcServer {
 
     // TODO: NEED TO CREATE SERVICE RPC CALLS HERE
 
-    listen(logMessage: string): GrpcServer {
+    listen(logMessage: string): GrpcAnalyticServer {
         this.m_server.addService(this.m_package.AnalyticService.service, {});
 
         this.m_server.bindAsync(this.m_port, grpc.ServerCredentials.createInsecure(), (error: Error | null, port: number) => {
@@ -33,4 +33,4 @@ export class GrpcServer extends AbstractGrpcServer {
     }
 }
 
-export const grpcServer = (rabbitConnection: amqp.Connection): GrpcServer => new GrpcServer(rabbitConnection);
+export const grpcServer = (rabbitConnection: amqp.Connection): GrpcAnalyticServer => new GrpcAnalyticServer(rabbitConnection);

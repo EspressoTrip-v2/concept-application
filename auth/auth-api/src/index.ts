@@ -2,16 +2,16 @@ import "./tracer/tracer";
 import { LogCodes, MicroServiceNames, RabbitClient, rabbitClient } from "@espressotrip-org/concept-common";
 import { app } from "./app";
 import { LocalLogger } from "./utils";
-import { GrpcUserClient } from "./services";
+import { GrpcAuthClient } from "./services";
 
 const PORT = process.env.PORT || 3000;
 
 async function main(): Promise<void> {
     let rabbit: RabbitClient | undefined;
-    let gRPC: GrpcUserClient | undefined;
+    let gRPC: GrpcAuthClient | undefined;
     try {
         /** gRPC Client */
-        gRPC = GrpcUserClient.getClient();
+        gRPC = GrpcAuthClient.getClient();
         gRPC.connect("[auth-api:gRPC-client]: ");
         /** RabbitMQ */
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");

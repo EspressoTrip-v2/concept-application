@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: employee-dash-mongo-srv
+spec:
+    clusterIP: None
+    selector:
+        app: employee-dash-mongo
+    ports:
+        - port: 27017
+          targetPort: 27017
+          name: employee-dash-db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+    name: employee-dash-mongo-ss
+    labels:
+        app: employee-dash-mongo
+spec:
+    serviceName: employee-dash-mongo-srv
+    replicas: 1
+    template:
+        metadata:
+            annotations:
+                config.linkerd.io/proxy-log-level: warn
+            name: employee-dash-mongo
+            labels:
+                app: employee-dash-mongo
+        spec:
+            terminationGracePeriodSeconds: 10
+            containers:
+                - name: employee-dash-mongo
+                  image: mongo:4.2.18
+                  imagePullPolicy: IfNotPresent
+                  volumeMounts:
+                      - mountPath: /data/db
+                        name: employee-dash-mongo-storage
+            restartPolicy: Always
+    volumeClaimTemplates:
+        - metadata:
+              name: employee-dash-mongo-storage
+          spec:
+              accessModes:
+                  - ReadWriteOnce
+              storageClassName: standard
+              resources:
+                  requests:
+                      storage: 250Mi
+    persistentVolumeClaimRetentionPolicy:
+        whenDeleted: Delete
+        whenScaled: Delete
+
+    selector:
+        matchLabels:
+            app: employee-dash-mongo

@@ -50,7 +50,7 @@ build:
                   - src: "src/**/*.ts"
                     dest: .
 
-        # Employee-api service
+        # Employee-API service
         - image: espressotrip/concept-employee-api
           context: employee/employee-api
           docker:
@@ -70,6 +70,26 @@ build:
                   - src: "src/**/*.ts"
                     dest: .
 
+      # Employee-Dash-API service
+        - image: espressotrip/concept-employee-dash-api
+          context: employee-dash/employee-dash-api
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "src/**/*.ts"
+                dest: .
+
+      # Employee-Dash-Service service
+        - image: espressotrip/concept-employee-dash-service
+          context: employee-dash/employee-dash-service
+          docker:
+            dockerfile: Dockerfile
+          sync:
+            manual:
+              - src: "**/*.go"
+                dest: .
+
         # Log-Service service
         - image: espressotrip/concept-log-service
           context: log/log-service
@@ -80,7 +100,7 @@ build:
                   - src: "src/**/*.ts"
                     dest: .
 
-      # Task-api service
+      # Task-API service
         - image: espressotrip/concept-task-api
           context: task/task-api
           docker:
@@ -90,7 +110,7 @@ build:
               - src: "**/*.go"
                 dest: .
 
-      # Task-api service
+      # Task-Service service
         - image: espressotrip/concept-task-service
           context: task/task-service
           docker:

@@ -2,42 +2,33 @@ package models
 
 import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	taskPackage "task-service/proto"
 	"time"
 )
 
 // Employee is the data structure used by the task service
 type Employee struct {
-	Id              primitive.ObjectID `bson:"_id"`
-	Division        string             `bson:"division"`
-	NumberTasks     int32              `bson:"numberTasks"`
-	Email           string             `bson:"email"`
-	BranchName      string             `bson:"branchName"`
-	FirstName       string             `bson:"firstName"`
-	LastName        string             `bson:"lastName"`
-	Position        string             `bson:"position"`
-	Country         string             `bson:"country"`
-	ShiftPreference string             `bson:"shiftPreference"`
-	Version         int                `bson:"version"`
+	Id                 primitive.ObjectID `bson:"_id"`
+	Country            string             `bson:"country"`
+	Email              string             `bson:"email"`
+	Gender             string             `bson:"gender"`
+	BranchName         string             `bson:"branchName"`
+	LastName           string             `bson:"lastName"`
+	Password           string             `bson:"password"`
+	Race               string             `bson:"race"`
+	Region             string             `bson:"region"`
+	RegisteredEmployee bool               `bson:"registeredEmployee"`
+	Position           string             `bson:"position"`
+	ProviderId         string             `bson:"providerId"`
+	ShiftPreference    string             `bson:"shiftPreference"`
+	StartDate          time.Time          `bson:"startDate"`
+	SignInType         string             `bson:"signInType"`
+	UserRole           string             `bson:"userRole"`
+	FirstName          string             `bson:"firstName"`
+	PhoneNumber        string             `bson:"phoneNumber"`
+	Division           string             `bson:"division"`
+	Version            int                `bson:"version"`
 }
 
-// ConvertToMessage converts the Employee model to the required data structure for gRPC transmission
-func (e Employee) ConvertToMessage() *taskPackage.Employee {
-	id := e.Id.Hex() // Convert the objectId to a string for gRPC message
-	return &taskPackage.Employee{
-		Id:              id,
-		Division:        e.Division,
-		NumberTasks:     e.NumberTasks,
-		Email:           e.Email,
-		BranchName:      e.BranchName,
-		Country:         e.Country,
-		Position:        e.Position,
-		FirstName:       e.FirstName,
-		LastName:        e.LastName,
-		ShiftPreference: e.ShiftPreference,
-		Version:         int32(e.Version),
-	}
-}
 
 // EmployeePayload is the payload received from the Rabbit publishers
 type EmployeePayload struct {

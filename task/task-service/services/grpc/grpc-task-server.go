@@ -28,7 +28,7 @@ func (g *GrpcServer) Listen(logMsg string) *libErrors.CustomError {
 	// bind port
 	listener, err := net.Listen("tcp", g.port)
 	if err != nil {
-		localLogger.Log(logcodes.ERROR, "Could not bind gRPC port", "task-service/services/grpc-server.go:31", err.Error())
+		localLogger.Log(logcodes.ERROR, "Could not bind gRPC port", "task-service/services/grpc-task-server.go:31", err.Error())
 		g.failOnError(err)
 		return libErrors.GrpcTranslator(err)
 	}
@@ -42,7 +42,7 @@ func (g *GrpcServer) Listen(logMsg string) *libErrors.CustomError {
 	// serve
 	fmt.Println(logMsg)
 	if err := server.Serve(listener); err != nil {
-		localLogger.Log(logcodes.ERROR, "Failed to start gRPC server", "task-service/services/grpc-server.go:44", err.Error())
+		localLogger.Log(logcodes.ERROR, "Failed to start gRPC server", "task-service/services/grpc-task-server.go:44", err.Error())
 		g.failOnError(err)
 		return libErrors.GrpcTranslator(err)
 	}

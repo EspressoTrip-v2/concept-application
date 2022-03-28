@@ -3,7 +3,7 @@ import { GrantConfig } from "grant";
 export function grantConfig(): GrantConfig {
     return {
         defaults: {
-            origin: "https://acmefast.dev",
+            origin: "https://employee.acmefast.dev",
             transport: "session",
             prefix: "/api/auth/connect",
         },
@@ -11,17 +11,17 @@ export function grantConfig(): GrantConfig {
             scope: ["email", "profile"],
             key: process.env.GOOGLE_CLIENT_ID,
             secret: process.env.GOOGLE_SECRET,
-            callback: process.env.GOOGLE_CALLBACK_URL,
+            callback: process.env.EMPLOYEE_GOOGLE_CALLBACK_URL,
             response: ["tokens", "profile"],
-            redirect_uri: `${process.env.BASE_URI}/api/auth/connect/google/callback`,
+            redirect_uri: `${process.env.EMPLOYEE_BASE_URI}/api/auth/connect/google/callback`,
         },
         github: {
             scope: ["email", "profile"],
-            key: process.env.GITHUB_CLIENT_ID,
-            secret: process.env.GITHUB_SECRET,
-            callback: process.env.GITHUB_CALLBACK_URL,
+            key: process.env.EMPLOYEE_GITHUB_CLIENT_ID,
+            secret: process.env.EMPLOYEE_GITHUB_SECRET,
+            callback: process.env.EMPLOYEE_GITHUB_CALLBACK_URL,
             response: ["tokens", "profile"],
-            redirect_uri: `${process.env.BASE_URI}/api/auth/connect/github/callback`,
+            redirect_uri: `${process.env.EMPLOYEE_BASE_URI}/api/auth/connect/github/callback`,
         },
     };
 }

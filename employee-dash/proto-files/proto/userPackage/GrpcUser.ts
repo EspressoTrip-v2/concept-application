@@ -1,7 +1,7 @@
 // Original file: proto/user.proto
 
 
-export interface ServerStreamUserResponse {
+export interface GrpcUser {
   'id'?: (string);
   'firstName'?: (string);
   'lastName'?: (string);
@@ -18,12 +18,13 @@ export interface ServerStreamUserResponse {
   'version'?: (number);
   'signInType'?: (string);
   'providerId'?: (string);
+  'password'?: (string);
   'userRole'?: (string);
   'registeredEmployee'?: (string);
   'division'?: (string);
 }
 
-export interface ServerStreamUserResponse__Output {
+export interface GrpcUser__Output {
   'id': (string);
   'firstName': (string);
   'lastName': (string);
@@ -40,6 +41,7 @@ export interface ServerStreamUserResponse__Output {
   'version': (number);
   'signInType': (string);
   'providerId': (string);
+  'password': (string);
   'userRole': (string);
   'registeredEmployee': (string);
   'division': (string);

@@ -13,8 +13,11 @@ const exporter = new JaegerExporter({
     host: "jaeger",
 });
 const provider = new NodeTracerProvider({
-    resource: new Resource({ [SemanticResourceAttributes.SERVICE_NAME]: MicroServiceNames.EMPLOYEE_API,
-        version: process.env.VERSION! || "v1.0.0", environment: process.env.ENVIRONMENT || "develop"  }),
+    resource: new Resource({
+        [SemanticResourceAttributes.SERVICE_NAME]: MicroServiceNames.EMPLOYEE_API,
+        version: process.env.VERSION! || "v1.0.0",
+        environment: process.env.ENVIRONMENT || "develop",
+    }),
 });
 
 provider.addSpanProcessor(new BatchSpanProcessor(exporter));

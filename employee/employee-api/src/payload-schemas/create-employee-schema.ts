@@ -18,5 +18,4 @@ export const createEmployeeSchema = Joi.object({
     phoneNumber: Joi.string().required(),
     password: Joi.string().required(),
     userRole: Joi.string().valid(UserRoles.EMPLOYEE, UserRoles.ADMIN).required(),
-
 });

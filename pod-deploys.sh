@@ -23,6 +23,7 @@ kubectl apply -f infra/infra-pods/auth-mongo.yaml
 kubectl apply -f infra/infra-pods/division-mongo.yaml
 kubectl apply -f infra/infra-pods/employee-mongo.yaml
 kubectl apply -f infra/infra-pods/task-mongo.yaml
+kubectl apply -f infra/infra-pods/employee-dash-mongo.yaml
 
 # RabbitMQ Deployments
 kubectl apply -f infra/infra-pods/rabbitmq.yaml

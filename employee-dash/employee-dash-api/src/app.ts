@@ -31,6 +31,7 @@ app.use(Routers.gitHubAuthRouter);
 app.use(Routers.localAuthRouter);
 app.use(Routers.signOutRouter);
 app.use(Routers.checkLogInRouter);
+app.use(Routers.getEmployeeRouter);
 
 /** Not Found */
 app.all("*", async () => {
