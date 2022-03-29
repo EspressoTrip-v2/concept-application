@@ -12,7 +12,6 @@ router.get("/api/auth/google/redirect", async (req: Request, res: Response) => {
 
         /** Make the request to the gRPC auth-service server */
         const rpcResponse = await GrpcEmployeeDashClient.getClient().loginGoogleUser(googleUser);
-
         /** Log Event */
         LocalLogger.log(LogCodes.INFO, `Google SignIn`, "employee-dash/employee-dash-api/src/routes/google-auth.ts:17", `email: ${googleUser.email}`);
 
