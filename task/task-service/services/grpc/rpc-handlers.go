@@ -256,10 +256,12 @@ func (r *RpcHandlers) GetAllEmployees(ctx context.Context, request *taskPackage.
 	var employees []*models.Employee
 	var msgEmployees []*taskPackage.Employee
 	cursor, err := r.mongo.FindEmployees(ctx, bson.D{})
-	r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:259")
-
+	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:259")
+	if !ok {
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
+	}
 	err = cursor.All(ctx, &employees)
-	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:262")
+	ok = r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:262")
 	if !ok {
 		return nil, status.Errorf(codes.Internal, fmt.Sprintf("Mongo CRUD operation failure: %v", err.Error()))
 	}
@@ -326,7 +328,7 @@ func (r *RpcHandlers) CreateShift(ctx context.Context, request *taskPackage.Shif
 		Type:     request.GetType(),
 		Start:    request.GetStart(),
 		End:      request.GetEnd(),
-		Name: request.GetName(),
+		Name:     request.GetName(),
 	}
 	insertResponse, err := r.mongo.InsertShift(ctx, &ns)
 	ok := r.onFailure(err, logcodes.ERROR, "MongoDB CRUD operation error", "task/task-service/services/grpc/rpc-handlers.go:332")

@@ -64,6 +64,7 @@ Add the minikube ip with the domains of the application into the hosts file.
 to get to the service mesh dashboard.
 ```text
 <MINIKUBE IP> acmefast.dev
+<MINIKUBE IP> employee.acmefast.dev
 <MINIKUBE IP> rabbit.acmefast.dev
 <MINIKUBE IP> linkerd.acmefast.dev ** Add this if you are also going to install the service mesh **
 <MINIKUBE IP> jaeger.acmefast.dev ** This is for distributed tracing that gets deployed with the service mesh **
@@ -77,12 +78,13 @@ Minikube can use ```mkcert``` to insert a SSL certificate into the ingress addon
 You will then need to add the certificates for the ```acmefast``` domain:
 ```bash
 #  Replace <MINIKUBE IP> with the correct ip address of your Minikube instance
-~$ mkcert acmefast.dev rabbit.acmefast.dev linkerd.acmefast.dev jaeger.acmefast.dev <MINIKUBE IP>
+~$ mkcert acmefast.dev employee.acmefast.dev rabbit.acmefast.dev linkerd.acmefast.dev jaeger.acmefast.dev <MINIKUBE IP>
 ```
 You will get an output that looks like this:
 ```
 Created a new certificate valid for the following names 📜
  - "acmefast.dev"
+ - "employee.acmefast.dev"
  - "rabbit.acmefast.dev"
  - "linkerd.acmefast.dev"
  - "jaeger.acmefast.dev"

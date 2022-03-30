@@ -4,6 +4,7 @@ metadata:
   name: global-config
 data:
   BASE_URI: "https://acmefast.dev"
+  EMPLOYEE_BASE_URI: "https://employee.acmefast.dev"
   GRPC_SERVER_PORT: "0.0.0.0:8080"
   RABBIT_URI: "amqp://rabbit-cluster"
   ENVIRONMENT: "develop"

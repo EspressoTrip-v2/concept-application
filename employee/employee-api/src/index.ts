@@ -7,11 +7,11 @@ import { GrpcEmployeeClient } from "./services";
 const PORT = process.env.PORT || 3000;
 
 async function main(): Promise<void> {
-    let rabbit: RabbitClient | undefined
-    let gRPC: GrpcEmployeeClient | undefined
+    let rabbit: RabbitClient | undefined;
+    let gRPC: GrpcEmployeeClient | undefined;
     try {
         /** gRPC Client */
-        gRPC = GrpcEmployeeClient.getClient()
+        gRPC = GrpcEmployeeClient.getClient();
         gRPC.connect("[employee-api:gRPC-client]: ");
 
         /** RabbitMQ */
@@ -28,8 +28,8 @@ async function main(): Promise<void> {
         const msg = error as Error;
         console.log(`[employee-api:error]: Service start up error -> ${msg}`);
         LocalLogger.log(LogCodes.ERROR, msg.message || "Service Error", "employee/employee-api/src/index.ts:30", msg.stack! || "No stack trace");
-        if (rabbit) await rabbit.connection.close()
-        if(gRPC) gRPC.m_client.close()
+        if (rabbit) await rabbit.connection.close();
+        if (gRPC) gRPC.m_client.close();
     }
 }
 

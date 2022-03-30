@@ -78,6 +78,7 @@ Add the minikube ip with the domains of the application into the hosts file,
 ```text
 <MINIKUBE IP> acmefast.dev
 <MINIKUBE IP> rabbit.acmefast.dev
+<MINIKUBE IP> employee.acmefast.dev
 ```
 
 Once **Minikube** is running, move to next step.

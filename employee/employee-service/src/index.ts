@@ -1,5 +1,5 @@
 import "./tracer/tracer";
-import { GrpcServer, grpcServer } from "./services";
+import { GrpcEmployeeServer, grpcServer } from "./services";
 import mongoose from "mongoose";
 import { LogCodes, MicroServiceNames, RabbitClient, rabbitClient } from "@espressotrip-org/concept-common";
 import { CreateUserPublisher, DeleteUserPublisher, UpdateEmployeeConsumer, UpdateEmployeeTaskPublisher, UpdateUserPublisher, UserSaveFailureConsumer } from "./events";
@@ -7,7 +7,7 @@ import { LocalLogger } from "./utils";
 
 async function main(): Promise<void> {
     let rabbit: RabbitClient | undefined;
-    let gRPC: GrpcServer | undefined;
+    let gRPC: GrpcEmployeeServer | undefined;
     try {
         if (!process.env.RABBIT_URI) throw new Error("RABBIT_URI must be defined");
         if (!process.env.MONGO_URI) throw new Error("MONGO_URI must be defined");

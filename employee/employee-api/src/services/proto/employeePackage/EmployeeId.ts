@@ -1,10 +1,9 @@
 // Original file: proto/employee.proto
 
-
 export interface EmployeeId {
-  'id'?: (string);
+    id?: string;
 }
 
 export interface EmployeeId__Output {
-  'id': (string);
+    id: string;
 }

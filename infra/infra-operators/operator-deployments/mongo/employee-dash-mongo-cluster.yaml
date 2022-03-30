@@ -1,0 +1,32 @@
+---
+apiVersion: mongodbcommunity.mongodb.com/v1
+kind: MongoDBCommunity
+metadata:
+    name: employee-dash-mongo
+spec:
+    members: 1
+    type: ReplicaSet
+    version: "4.2.6"
+    security:
+        authentication:
+            modes: ["SCRAM"]
+    users:
+        - name: root
+          db: employee-dash
+          passwordSecretRef:
+              name: employee-dash-mongo-password
+          roles:
+              - name: root
+                db: admin
+          scramCredentialsSecretName: employee-dash-scram
+    additionalMongodConfig:
+        storage.wiredTiger.engineConfig.journalCompressor: zlib
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+    name: employee-dash-mongo-password
+type: Opaque
+stringData:
+    password: "8103"

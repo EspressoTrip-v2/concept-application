@@ -1,1 +1,1 @@
-export * from "./grpc-server";
+export * from "./grpc-auth-server";

@@ -9,7 +9,7 @@ import { EmployeeServiceClient } from "./proto/employeePackage/EmployeeService";
 import { GrpcAllEmployeesResponsePayload } from "./proto/employeePackage/GrpcAllEmployeesResponsePayload";
 
 export class GrpcEmployeeClient extends AbstractGrpcClient {
-    static m_instance: GrpcEmployeeClient | undefined
+    static m_instance: GrpcEmployeeClient | undefined;
     readonly m_protoPath = __dirname + "/proto/employee.proto";
     readonly m_port = GrpcServicePortDns.EMPLOYEE_SERVICE_DNS;
 
@@ -17,7 +17,7 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
     readonly m_grpcObject = grpc.loadPackageDefinition(this.m_packageDefinition) as unknown as ProtoGrpcType;
     readonly m_package = this.m_grpcObject.employeePackage;
     // @ts-ignore
-    m_client: EmployeeServiceClient
+    m_client: EmployeeServiceClient;
 
     constructor() {
         super();
@@ -25,17 +25,13 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
 
     static getClient(): GrpcEmployeeClient {
         if (this.m_instance === undefined) {
-            this.m_instance = new GrpcEmployeeClient()
-            return this.m_instance
+            this.m_instance = new GrpcEmployeeClient();
+            return this.m_instance;
         }
-        return this.m_instance
+        return this.m_instance;
     }
 
-    /**
-     * Creates a new employee
-     * @param employee {GrpcEmployeeAttributes}
-     */
-    createEmployee(employee: GrpcEmployeeAttributes): Promise< GrpcResponsePayload> {
+    createEmployee(employee: GrpcEmployeeAttributes): Promise<GrpcResponsePayload> {
         return new Promise(async (resolve, reject) => {
             this.m_client.CreateEmployee(employee, (error: grpc.ServiceError | null, responsePayload?: GrpcResponsePayload) => {
                 if (error) return reject(grpcErrorTranslator(error));
@@ -44,10 +40,6 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
         });
     }
 
-    /**
-     * Get single employee
-     * @param employeeId {string}
-     */
     getEmployee(employeeId: string): Promise<GrpcResponsePayload> {
         const grpcEmployeeId: EmployeeId = {
             id: employeeId,
@@ -60,10 +52,6 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
         });
     }
 
-    /**
-     * Creates a new employee
-     * @param employee {GrpcEmployeeAttributes}
-     */
     updateEmployee(employee: GrpcEmployeeAttributes): Promise<GrpcResponsePayload> {
         return new Promise(async (resolve, reject) => {
             this.m_client.UpdateEmployee(employee, (error: grpc.ServiceError | null, responsePayload?: GrpcResponsePayload) => {
@@ -73,11 +61,7 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
         });
     }
 
-    /**
-     * Delete single employee
-     * @param employeeId {string}
-     */
-    deleteEmployee(employeeId: string): Promise< GrpcResponsePayload> {
+    deleteEmployee(employeeId: string): Promise<GrpcResponsePayload> {
         const grpcEmployeeId: EmployeeId = {
             id: employeeId,
         };
@@ -89,9 +73,6 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
         });
     }
 
-    /**
-     * Get all employees
-     */
     getAllEmployees(): Promise<GrpcAllEmployeesResponsePayload> {
         return new Promise(async (resolve, reject) => {
             this.m_client.GetAllEmployees({}, (error: grpc.ServiceError | null, responsePayload?: GrpcAllEmployeesResponsePayload) => {
@@ -104,6 +85,4 @@ export class GrpcEmployeeClient extends AbstractGrpcClient {
         this.m_client = new this.m_package.EmployeeService(this.m_port, grpc.credentials.createInsecure());
         console.log(loMsg + "Connected on " + GrpcServicePortDns.EMPLOYEE_SERVICE_DNS);
     }
-
 }
-

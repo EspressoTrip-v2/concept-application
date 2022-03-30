@@ -1,0 +1,88 @@
+.user {
+    height: 91vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &_top {
+        background-color: rgba($color: $color-primary, $alpha: 0.2);
+        height: 220px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+
+        &-logo {
+            border-radius: 50%;
+            height: 7rem;
+            width: 7rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: $color-white;
+            margin: 0;
+            padding: 0;
+            font-size: 2.5rem;
+            color: rgba($color: $color-black, $alpha: 0.15);
+            font-weight: 500;
+        }
+
+        &-name {
+            margin-top: 1rem;
+            font-size: 1.5rem;
+        }
+    }
+    &_bottom {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        box-shadow: 0px -2px 4px rgba($color: $color-black, $alpha: 0.2);
+
+        .user_details {
+            width: 80%;
+            display: flex;
+            flex-direction: row;
+
+            &__column {
+                width: 100%;
+                padding-top: 1.5rem;
+
+                .box {
+                    padding: 1.5rem;
+                    margin: 0.7rem;
+                    box-shadow: 0px 3px 6px rgba($color: $color-black, $alpha: 0.3);
+                    border-radius: 0.3rem;
+
+                    &--title {
+                        font-size: 1.5rem;
+                        color: rgba($color: $color-black, $alpha: 0.7);
+                        margin-bottom: 1rem;
+                    }
+
+                    &--subtitle {
+                        font-size: 1rem;
+                        color: $color-primary;
+                        margin-bottom: 0.5rem;
+                    }
+
+                    &_details {
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                        &-col {
+                            width: 50%;
+                            margin: 0.7rem 0;
+                        }
+                    }
+
+                    &--value .emojiFlag {
+                        margin-right: 0.5rem;
+                    }
+                }
+            }
+        }
+    }
+}

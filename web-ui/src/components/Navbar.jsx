@@ -47,18 +47,16 @@ const Navbar = () => {
 
     const NAV_ITEMS = [
         {
-            name: "Dashboard",
+            linkName: "Dashboard",
             path: "/dashboard",
         },
     ];
 
     let pagePath = useLocation();
 
-    const checkCurrPath = () => {
-        if (pagePath.pathname === "/dashboard") {
+    const checkCurrPath = path => {
+        if (pagePath.pathname.includes(path)) {
             return "active";
-        } else {
-            return "";
         }
     };
 
@@ -70,10 +68,10 @@ const Navbar = () => {
                 </Link>
                 {userAuthorised ? (
                     <div className="navigation_right">
-                        {NAV_ITEMS.map(item => (
-                            <Link to={item.path}>
-                                <div key={item.name} className="navigation_right-item">
-                                    <span className={`${checkCurrPath()}`}>{item.name}</span>
+                        {NAV_ITEMS.map(({ linkName, path }) => (
+                            <Link key={linkName} to={path}>
+                                <div className="navigation_right-item">
+                                    <span className={`${checkCurrPath(path)}`}>{linkName}</span>
                                 </div>
                             </Link>
                         ))}
