@@ -268,6 +268,9 @@ You can see and use the API here: [ACME Fast Food API](https://www.postman.com/c
 
 ---
 
+### NOTICE:
+This is a POC application built in 5 weeks, there are no tests included. Just starting stubs for stakeholder indication.
+
 ### Architectural Model:
 
 ![acme-fast-foods](https://user-images.githubusercontent.com/9296659/156255276-422bcf05-6605-4815-98e9-6c125087c0d8.png)
