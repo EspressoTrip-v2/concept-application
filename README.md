@@ -2,6 +2,9 @@
 
 Event driven microservice concept application using RabbitMQ, gRPC and Nodejs.
 
+### NOTICE:
+This is a POC application built in 5 weeks, there are no tests included.
+
 ### Reference for available URL's:
 
 -   [https://acmefast.dev](https://acmefast.dev) -> Main Application
@@ -267,9 +270,6 @@ Using the -a flag will wipe all images and Skaffold will have to rebuild them al
 You can see and use the API here: [ACME Fast Food API](https://www.postman.com/cloudy-crater-370854/workspace/acme-fast-foods/collection/17320608-dd78a46c-8c0e-4f69-806e-46f05cf907e7)
 
 ---
-
-### NOTICE:
-This is a POC application built in 5 weeks, there are no tests included. Just starting stubs for stakeholder indication.
 
 ### Architectural Model:
 
